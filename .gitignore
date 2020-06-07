@@ -1,6 +1,6 @@
 #cuckoolib
 src/main/java/com/github/zi_jing/cuckoolib_testmod
-src/main/resources
+src/main/resources/cuckoolib_testmod
 
 # eclipse
 bin
@@ -26,3 +26,4 @@ eclipse
 run
 server
 .vscode/
+gradle.properties
