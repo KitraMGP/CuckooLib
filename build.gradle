@@ -1,7 +1,3 @@
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 
 buildscript {
     repositories {
@@ -54,11 +50,16 @@ publishing {
     }
 }
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 publish.doLast {
     if(project.hasProperty('localPublishMavenPath')) {
         /*
         artifacts.json结构:
         artifacts.json:
+
         {
             "artifacts" : [
                 {
@@ -72,28 +73,12 @@ publish.doLast {
                             "version": "1.0.0"
                         },
                         {
-                            "name": "TestLibrary",
-                            "group": "com.test.libs",
-                            "version": "1.0.1"
+                            ...
                         }
                     ]
                 },
                 {
-                    "name": "AnotherTestLibrary",
-                    "group": "com.test.libs",
-                    "description": "Another Test Library",
-                    "archives": [
-                        {
-                            "name": "AnotherTestLibrary",
-                            "group": "com.test.libs",
-                            "version": "1.0.0"
-                        },
-                        {
-                            "name": "TestLibrary",
-                            "group": "com.test.libs",
-                            "version": "1.0.1"
-                        }
-                    ]
+                    ...
                 }
             ]
         }
@@ -139,7 +124,7 @@ publish.doLast {
         boolean found = false
         for(Artifact artifact : artifactList) {
             if(artifact.name == artifactName && artifact.group == project.group) {
-                currentArticaft = artifact
+                currentArtifact = artifact
                 found = true
                 if(artifact.description != project.description) {
                     artifact.description = project.description  // 更新描述
