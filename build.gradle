@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         jcenter()
@@ -15,6 +14,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven-publish'
 
 String artifactName = 'CuckooLib'
+String mcVersion = '1.12.2'
 
 // 在这里更改版本
 version = '1.0.0'
@@ -41,7 +41,7 @@ publishing {
         }
     }
     repositories {
-        if(project.hasProperty('localPublishMavenPath')) {
+        if (project.hasProperty('localPublishMavenPath')) {
             maven {
                 name = 'CuckooMaven'
                 url = uri(project.properties.localPublishMavenPath)
@@ -54,8 +54,9 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+
 publish.doLast {
-    if(project.hasProperty('localPublishMavenPath')) {
+    if (project.hasProperty('localPublishMavenPath')) {
         /*
         artifacts.json结构:
         artifacts.json:
@@ -70,7 +71,9 @@ publish.doLast {
                         {
                             "name": "TestLibrary",
                             "group": "com.test.libs",
-                            "version": "1.0.0"
+                            "version": "1.0.0",
+                            "mcVersion": "1.12.2"
+                            "releaseDate": 1592056973818
                         },
                         {
                             ...
@@ -83,16 +86,16 @@ publish.doLast {
             ]
         }
          */
-        File jsonFile = new File(new File((String)project.properties.localPublishMavenPath).getAbsolutePath() + File.separator + 'artifacts.json')
-        if(jsonFile.isDirectory()) {
+        File jsonFile = new File(new File((String) project.properties.localPublishMavenPath).getAbsolutePath() + File.separator + 'artifacts.json')
+        if (jsonFile.isDirectory()) {
             throw new FileNotFoundException('artifacts.json can\'t be a directory!')
         }
-        if(!jsonFile.exists()) {
+        if (!jsonFile.exists()) {
             println jsonFile.getAbsolutePath() + ' can\'t be found, creating a new one.'
             jsonFile.createNewFile()
         }
         println 'Generating artifacts.json'
-        if(jsonFile.size() == 0) {
+        if (jsonFile.size() == 0) {
             jsonFile.setText('{}', 'UTF-8')
         }
 
@@ -100,21 +103,21 @@ publish.doLast {
         JsonObject json
         try {
             json = parser.parse(jsonFile.getText('UTF-8')).asJsonObject
-        } catch(Exception e) {
+        } catch (Exception e) {
             println 'FATAL ERROR: Can\'t parse artifacts.json!'
             throw e
         }
-        if(!json.has('artifacts')) {
+        if (!json.has('artifacts')) {
             json.add('artifacts', new JsonArray())
         }
-        List<Artifact> artifactList = new ArrayList<Artifact>();
+        List<Artifact> artifactList = new ArrayList<Artifact>()
         // 获取所有归档
-        for(JsonElement artifactElement : json.getAsJsonArray('artifacts')) {
+        for (JsonElement artifactElement : json.getAsJsonArray('artifacts')) {
             JsonObject artifactJson = artifactElement.asJsonObject
             Artifact artifact = new Artifact(artifactJson.get('name').getAsString(), artifactJson.get('group').getAsString(), artifactJson.get('description').getAsString())
-            for(JsonElement archiveElement : artifactJson.getAsJsonArray('archives')) {
+            for (JsonElement archiveElement : artifactJson.getAsJsonArray('archives')) {
                 JsonObject archiveJson = archiveElement.asJsonObject
-                artifact.archives.add(new Archive(archiveJson.get('name').getAsString(), archiveJson.get('group').getAsString(), archiveJson.get('version').getAsString()))
+                artifact.archives.add(new Archive(archiveJson.get('name').getAsString(), archiveJson.get('group').getAsString(), archiveJson.get('version').getAsString(), archiveJson.get('mcVersion').getAsString(), archiveJson.get('releaseDate').getAsLong()))
             }
             artifactList.add(artifact)
         }
@@ -122,37 +125,37 @@ publish.doLast {
         Artifact currentArtifact = null
         // 判断是否有相同库，没有则创建
         boolean found = false
-        for(Artifact artifact : artifactList) {
-            if(artifact.name == artifactName && artifact.group == project.group) {
+        for (Artifact artifact : artifactList) {
+            if (artifact.name == artifactName && artifact.group == project.group) {
                 currentArtifact = artifact
                 found = true
-                if(artifact.description != project.description) {
+                if (artifact.description != project.description) {
                     artifact.description = project.description  // 更新描述
                 }
-                break;
+                break
             }
         }
-        if(!found) {
-            currentArtifact = new Artifact(artifactName, (String)project.group, (String)project.description)
+        if (!found) {
+            currentArtifact = new Artifact(artifactName, (String) project.group, (String) project.description)
             artifactList.add(currentArtifact)
         }
 
-        found = false;
+        found = false
         // 判断是否有相同归档，没有则创建
-        for(Archive archive : currentArtifact.archives) {
-            if(archive.name == artifactName && archive.group == project.group && archive.version == project.version) {
+        for (Archive archive : currentArtifact.archives) {
+            if (archive.name == artifactName && archive.group == project.group && archive.version == project.version && archive.mcVersion == mcVersion) {
                 found = true
-                break;
+                break
             }
         }
-        if(!found) {
-            currentArtifact.archives.add(new Archive(artifactName, (String)project.group, (String)project.version))
+        if (!found) {
+            currentArtifact.archives.add(new Archive(artifactName, (String) project.group, (String) project.version, mcVersion, new Date().time))
         }
 
         // 序列化
         JsonObject newJson = new JsonObject()
         newJson.add('artifacts', new JsonArray())
-        for(Artifact artifact : artifactList) {
+        for (Artifact artifact : artifactList) {
             JsonObject artifactJson = new JsonObject()
             newJson.getAsJsonArray('artifacts').add(artifactJson)
             artifactJson.addProperty('name', artifact.name)
@@ -160,11 +163,13 @@ publish.doLast {
             artifactJson.addProperty('description', artifact.description)
             JsonArray archives = new JsonArray()
             artifactJson.add('archives', archives)
-            for(Archive archive : artifact.archives) {
+            for (Archive archive : artifact.archives) {
                 JsonObject archiveJson = new JsonObject()
                 archiveJson.addProperty('name', archive.name)
                 archiveJson.addProperty('group', archive.group)
                 archiveJson.addProperty('version', archive.version)
+                archiveJson.addProperty('mcVersion', archive.mcVersion)
+                archiveJson.addProperty('releaseDate', archive.releaseDate)
                 archives.add(archiveJson)
             }
         }
@@ -197,11 +202,15 @@ class Archive {
     String name
     String group
     String version
+    String mcVersion
+    long releaseDate
 
-    Archive(String name, String group, String version) {
+    Archive(String name, String group, String version, String mcVersion, long releaseDate) {
         this.name = name
         this.group = group
         this.version = version
+        this.mcVersion = mcVersion
+        this.releaseDate = releaseDate
     }
 }
 
@@ -227,11 +236,11 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
@@ -240,5 +249,5 @@ processResources {
 
 compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
