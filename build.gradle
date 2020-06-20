@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenLocal()
         jcenter()
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url = 'https://zi-jing.github.io/cuckoo-maven/maven' }
@@ -7,17 +8,15 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'com.github.zi_jing.cuckoogradle:CuckooGradle:1.0.0'
-        classpath 'com.google.code.gson:gson:2.8.0'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.github.zi_jing.cuckoogradle'
 apply plugin: 'maven-publish'
 
-String mcVersion = '1.12.2'
-
 // 在这里更改版本
-version = '1.0.0'
+version = '1.0.1'
 group = 'com.github.zi_jing.cuckoolib'
 description = 'The Cuckoo commons library.'
 archivesBaseName = 'CuckooLib'
@@ -27,11 +26,27 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+CuckooGradle {
+    mcVersion = '1.12.2'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier 'javadoc'
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
 publishing {
     publications {
         cuckooLib(MavenPublication) {
             artifact jar
             artifact sourceJar
+            artifact javadocJar
             pom {
                 groupId = project.group
                 artifactId = archivesBaseName
@@ -50,169 +65,7 @@ publishing {
     }
 }
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-
-publish.doLast {
-    if (project.hasProperty('localPublishMavenPath')) {
-        /*
-        artifacts.json结构:
-        artifacts.json:
-
-        {
-            "artifacts" : [
-                {
-                    "name": "TestLibrary",
-                    "group": "com.test.libs",
-                    "description": "The Test Library",
-                    "archives": [
-                        {
-                            "name": "TestLibrary",
-                            "group": "com.test.libs",
-                            "version": "1.0.0",
-                            "mcVersion": "1.12.2"
-                            "releaseDate": 1592056973818
-                        },
-                        {
-                            ...
-                        }
-                    ]
-                },
-                {
-                    ...
-                }
-            ]
-        }
-         */
-        File jsonFile = new File(new File((String) project.properties.localPublishMavenPath).getAbsolutePath() + File.separator + 'artifacts.json')
-        if (jsonFile.isDirectory()) {
-            throw new FileNotFoundException('artifacts.json can\'t be a directory!')
-        }
-        if (!jsonFile.exists()) {
-            println jsonFile.getAbsolutePath() + ' can\'t be found, creating a new one.'
-            jsonFile.createNewFile()
-        }
-        println 'Generating artifacts.json'
-        if (jsonFile.size() == 0) {
-            jsonFile.setText('{}', 'UTF-8')
-        }
-
-        JsonParser parser = new JsonParser()
-        JsonObject json
-        try {
-            json = parser.parse(jsonFile.getText('UTF-8')).asJsonObject
-        } catch (Exception e) {
-            println 'FATAL ERROR: Can\'t parse artifacts.json!'
-            throw e
-        }
-        if (!json.has('artifacts')) {
-            json.add('artifacts', new JsonArray())
-        }
-        List<Artifact> artifactList = new ArrayList<Artifact>()
-        // 获取所有归档
-        for (JsonElement artifactElement : json.getAsJsonArray('artifacts')) {
-            JsonObject artifactJson = artifactElement.asJsonObject
-            Artifact artifact = new Artifact(artifactJson.get('name').getAsString(), artifactJson.get('group').getAsString(), artifactJson.get('description').getAsString())
-            for (JsonElement archiveElement : artifactJson.getAsJsonArray('archives')) {
-                JsonObject archiveJson = archiveElement.asJsonObject
-                artifact.archives.add(new Archive(archiveJson.get('name').getAsString(), archiveJson.get('group').getAsString(), archiveJson.get('version').getAsString(), archiveJson.get('mcVersion').getAsString(), archiveJson.get('releaseDate').getAsLong()))
-            }
-            artifactList.add(artifact)
-        }
-
-        Artifact currentArtifact = null
-        // 判断是否有相同库，没有则创建
-        boolean found = false
-        for (Artifact artifact : artifactList) {
-            if (artifact.name == archivesBaseName && artifact.group == project.group) {
-                currentArtifact = artifact
-                found = true
-                if (artifact.description != project.description) {
-                    artifact.description = project.description  // 更新描述
-                }
-                break
-            }
-        }
-        if (!found) {
-            currentArtifact = new Artifact(archivesBaseName, (String) project.group, (String) project.description)
-            artifactList.add(currentArtifact)
-        }
-
-        found = false
-        // 判断是否有相同归档，没有则创建
-        for (Archive archive : currentArtifact.archives) {
-            if (archive.name == archivesBaseName && archive.group == project.group && archive.version == project.version && archive.mcVersion == mcVersion) {
-                found = true
-                break
-            }
-        }
-        if (!found) {
-            currentArtifact.archives.add(new Archive(archivesBaseName, (String) project.group, (String) project.version, mcVersion, new Date().time))
-        }
-
-        // 序列化
-        JsonObject newJson = new JsonObject()
-        newJson.add('artifacts', new JsonArray())
-        for (Artifact artifact : artifactList) {
-            JsonObject artifactJson = new JsonObject()
-            newJson.getAsJsonArray('artifacts').add(artifactJson)
-            artifactJson.addProperty('name', artifact.name)
-            artifactJson.addProperty('group', artifact.group)
-            artifactJson.addProperty('description', artifact.description)
-            JsonArray archives = new JsonArray()
-            artifactJson.add('archives', archives)
-            for (Archive archive : artifact.archives) {
-                JsonObject archiveJson = new JsonObject()
-                archiveJson.addProperty('name', archive.name)
-                archiveJson.addProperty('group', archive.group)
-                archiveJson.addProperty('version', archive.version)
-                archiveJson.addProperty('mcVersion', archive.mcVersion)
-                archiveJson.addProperty('releaseDate', archive.releaseDate)
-                archives.add(archiveJson)
-            }
-        }
-        jsonFile.setText(newJson.toString(), 'UTF-8')
-
-        println 'Completed.'
-
-    } else {
-        println '##############################'
-        println 'WARNING: The property called \"localPublishMavenPath\" can\'t be found.'
-        println 'artifacts.json will not be created.'
-        println '##############################'
-    }
-}
-
-class Artifact {
-    String name
-    String group
-    String description
-    List<Archive> archives = new ArrayList<Archive>()
-
-    Artifact(String name, String group, String description) {
-        this.name = name
-        this.group = group
-        this.description = description
-    }
-}
-
-class Archive {
-    String name
-    String group
-    String version
-    String mcVersion
-    long releaseDate
-
-    Archive(String name, String group, String version, String mcVersion, long releaseDate) {
-        this.name = name
-        this.group = group
-        this.version = version
-        this.mcVersion = mcVersion
-        this.releaseDate = releaseDate
-    }
-}
+publish.dependsOn generateArtifactsJson
 
 minecraft {
     version = '1.12.2-14.23.5.2847'
@@ -247,6 +100,7 @@ processResources {
     }
 }
 
+javadoc.options.encoding = 'UTF-8'
 compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
