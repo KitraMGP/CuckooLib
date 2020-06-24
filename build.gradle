@@ -1,18 +1,18 @@
 buildscript {
     repositories {
-        mavenLocal()
         jcenter()
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://zi-jing.github.io/cuckoo-maven/maven' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'com.github.zi_jing.cuckoogradle:CuckooGradle:1.0.0'
     }
 }
 
+plugins {
+    id "com.github.zi_jing.cuckoogradle" version "1.0.1"
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.github.zi_jing.cuckoogradle'
 apply plugin: 'maven-publish'
 
 // 在这里更改版本

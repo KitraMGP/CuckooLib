@@ -1,0 +1,8 @@
+rootProject.name = 'CuckooLib'
+
+Properties properties = new Properties()
+properties.load(new StringReader(new File(rootProject.projectDir.getPath() + File.separator + 'gradle.properties').text))
+
+if (properties.containsKey('CuckooGradleIncludeBuildPath')) {
+    includeBuild(properties.getProperty('CuckooGradleIncludeBuildPath'))
+}
