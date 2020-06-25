@@ -16,6 +16,10 @@ public class CuckooLib {
 
     private static Logger logger;
 
+    public static Logger getLogger() {
+        return logger;
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
@@ -24,9 +28,5 @@ public class CuckooLib {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
 
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 }
