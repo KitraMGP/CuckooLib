@@ -42,6 +42,7 @@ public class GLUtils {
      *            它也支持以'#'开头的字符串<br>
      *            strings like "3FFF3F", "3fff3f" or "3FfF3f"<br>
      *            It also supports strings what starts with '#'
+     * @return 颜色
      */
     public static ColorRGB hexStringToRGB(String hex) {
         hex = hex.toUpperCase();
@@ -227,6 +228,12 @@ public class GLUtils {
 
     /**
      * 绘制一个矩形，<strong>颜色必须使用ARGB格式(例如<code>0x60FFFFFF</code>)</strong>。
+     *
+     * @param x1    左上角横坐标
+     * @param y1    左上角纵坐标
+     * @param x2    右下角横坐标
+     * @param y2    右下角纵坐标
+     * @param color 颜色(ARGB)
      */
     public static void drawRect(int x1, int y1, int x2, int y2, int color) {
         Gui.drawRect(x1, y1, x2, y2, color);
@@ -234,6 +241,13 @@ public class GLUtils {
 
     /**
      * 绘制一个贴图，整个贴图的大小必须是256*256.
+     *
+     * @param x        左上角横坐标
+     * @param y        左上角纵坐标
+     * @param textureX 纹理中的左上角横坐标
+     * @param textureY 纹理中的左上角纵坐标
+     * @param width    宽度
+     * @param height   高度
      */
     public static void drawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height) {
         GUI.drawTexturedModalRect(x, y, textureX, textureY, width, height);
@@ -242,6 +256,15 @@ public class GLUtils {
     /**
      * 绘制一个自定义贴图大小的贴图，<code>width</code>和<code>height</code>是要绘制贴图区域的大小，
      * <code>textureWidth</code>和<code>textureHeight</code>是整个贴图的大小。
+     *
+     * @param x             左上角横坐标
+     * @param y             左上角纵坐标
+     * @param u             纹理中的左上角横坐标
+     * @param v             纹理中的左上角纵坐标
+     * @param width         实际绘制宽度
+     * @param height        实际绘制高度
+     * @param textureWidth  纹理总宽度
+     * @param textureHeight 纹理总高度
      */
     public static void drawModalRectWithCustomSizedTexture(int x, int y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
         Gui.drawModalRectWithCustomSizedTexture(x, y, u, v, width, height, textureWidth, textureHeight);
@@ -252,6 +275,17 @@ public class GLUtils {
      * <code>uWidth</code>和<code>vHeight</code>是要绘制的贴图区域的大小，
      * <code>width</code>和<code>height</code>是要绘制到屏幕上的实际大小(缩放后的)
      * ，<code>tileWidth</code>和<code>tileHeight</code>是整个贴图的大小。
+     *
+     * @param x          左上角横坐标
+     * @param y          左上角纵坐标
+     * @param u          纹理中的左上角横坐标
+     * @param v          纹理中的左上角纵坐标
+     * @param uWidth     要绘制的纹理宽度
+     * @param vHeight    要绘制的纹理高度
+     * @param width      实际绘制宽度
+     * @param height     实际绘制高度
+     * @param tileWidth  纹理总宽度
+     * @param tileHeight 纹理总高度
      */
     public static void drawScaledCustomSizeModalRect(int x, int y, float u, float v, int uWidth, int vHeight, int width, int height, float tileWidth, float tileHeight) {
         Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);

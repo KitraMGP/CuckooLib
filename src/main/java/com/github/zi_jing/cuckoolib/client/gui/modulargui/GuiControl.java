@@ -258,6 +258,8 @@ public class GuiControl {
 
         /**
          * 设置进度，进度必须为0-100的整数。
+         *
+         * @param progress 进度值
          */
         public void setProgress(int progress) {
             if (progress < 0 || progress > 100)
@@ -283,7 +285,9 @@ public class GuiControl {
         public final int direction;
 
         /**
+         * @param id   id
          * @param type the orientation of the scrollbar, 0 is horizontal, 1 is vertical
+         * @param gui  The Gui it belongs to
          */
         protected ScrollBar(int id, int type, ModularGuiScreen gui) {
             super(id, gui, EnumControlType.SCROLLBAR);

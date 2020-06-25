@@ -58,7 +58,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * <strong>注意/Warning: <br>要使控件被添加进Gui中，必须使用<code>this.addControl(...);
 	 * </code>来添加。</strong><br>
 	 * <br>If you want to add a control to this Gui, you must use
-	 * <code>this.addControl(...);</code>.</strong>
+	 * <code>this.addControl(...);</code>.
 	 */
 	public GuiControl.ControlFactory controlFactory = new GuiControl.ControlFactory(this);
 	private ResourceLocation TEXTURE = new ResourceLocation("");
@@ -227,6 +227,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * Sets the function that will be called before the code in <code>drawScreen()</code>
 	 * is executed, it is usually used to draw custom Gui.
 	 *
+	 * @param func 函数
 	 * @see ModularGuiScreen#preRenderFunction
 	 * @see ModularGuiScreen#drawScreen
 	 */
@@ -240,6 +241,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * Gets the texture location of this Gui. If the texture isn't set, it will
 	 * return a empty ResourceLocation(<code>new ResourceLocation("minecraft:")</code>)
 	 *
+	 * @return 贴图位置
 	 * @see ModularGuiScreen#TEXTURE
 	 * @see ModularGuiScreen#setTexture
 	 */
@@ -252,6 +254,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * Sets the texture location of this Gui. If you don't set the texture, the texture won't
 	 * be drawn.
 	 *
+	 * @param texture 贴图位置
 	 * @see ModularGuiScreen#setPreRenderFunction
 	 * @see ModularGuiScreen#drawScreen
 	 */
@@ -272,6 +275,8 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	/**
 	 * 获取界面的实际宽度。<br><br>
 	 * Gets the real width of this Gui.
+	 *
+	 * @return 贴图实际宽度(像素)
 	 */
 	public int getWindowWidth() {
 		return windowWidth;
@@ -280,6 +285,8 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	/**
 	 * 获取界面的实际高度。<br><br>
 	 * Gets the real height of this Gui.
+	 *
+	 * @return 贴图实际高度(像素)
 	 */
 	public int getWindowHeight() {
 		return windowHeight;
@@ -289,6 +296,9 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * 设置界面的实际大小，<strong>不建议在构造函数/initGui()之外使用。</strong><br><br>
 	 * Sets the real width of this Gui, <strong>it's not recommended to use this
 	 * outside of the constructor/initGui().</strong>
+	 *
+	 * @param width  宽度(像素)
+	 * @param height 高度(像素)
 	 */
 	public void setWindowSize(int width, int height) {
 		if (width <= 0 || height <= 0) {
@@ -301,6 +311,8 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	/**
 	 * 获取Gui左上角的横坐标。<br><br>
 	 * Gets the abscissa of the top left corner of Gui.
+	 *
+	 * @return 左上角横坐标(像素)
 	 */
 	public int getOffsetX() {
 		return offsetX;
@@ -309,6 +321,8 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	/**
 	 * 获取Gui左上角的纵坐标。<br><br>
 	 * Gets the vertical coordinate of the top left corner of Gui.
+	 *
+	 * @return 左上角纵坐标(像素)
 	 */
 	public int getOffsetY() {
 		return offsetY;
@@ -323,6 +337,9 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * 指定贴图大小，<strong>不建议在构造函数/initGui()之外使用。</strong><br><br>
 	 * Appoints the texture size, <strong>it's not recommended to use this
 	 * outside of the constructor/initGui().</strong>
+	 *
+	 * @param width  贴图宽度(像素)
+	 * @param height 贴图高度(像素)
 	 */
 	public void setTextureSize(int width, int height) {
 		if (width <= 0 || height <= 0) {
@@ -336,6 +353,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * 获取这个Gui的标题。<br><br>
 	 * Gets the title of this Gui.
 	 *
+	 * @return 标题
 	 * @see ModularGuiScreen#setTitle
 	 */
 	public String getTitle() {
@@ -347,6 +365,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * Set the title of the interface, which is displayed in the middle of the upper
 	 * part of the interface by default, <strong>doesn't support multi line yet</strong>.
 	 *
+	 * @param title 标题
 	 * @see ModularGuiScreen#drawScreen
 	 */
 	public void setTitle(String title) {
@@ -360,6 +379,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	 * Gets whether the Gui will force the interface scaling settings to be modified
 	 * when it is opened.
 	 *
+	 * @return forceChangeGuiScale
 	 * @see ModularGuiScreen#forceChangeGuiScale
 	 * @see ModularGuiScreen#ModularGuiScreen
 	 * @see ModularGuiScreen#onGuiClosed
@@ -375,6 +395,8 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	/**
 	 * 仅供内部使用。<br><br>
 	 * Internal use only.
+	 *
+	 * @return buttonList
 	 */
 	protected List<GuiButton> getButtonList() {
 		return this.buttonList;
