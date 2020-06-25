@@ -31,11 +31,11 @@ public class DataUtils {
         CompressedStreamTools.writeCompressed(compound, stream);
     }
 
-    public static NBTTagCompound readTagFromFile(File file) throws FileNotFoundException, IOException {
+    public static NBTTagCompound readTagFromFile(File file) throws IOException {
         return readTagFromStream(new FileInputStream(file));
     }
 
-    public static void writeTagToFile(File file, NBTTagCompound compound) throws FileNotFoundException, IOException {
+    public static void writeTagToFile(File file, NBTTagCompound compound) throws IOException {
         writeTagToStream(new FileOutputStream(file), compound);
     }
 }

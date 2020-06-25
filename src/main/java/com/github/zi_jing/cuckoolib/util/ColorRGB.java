@@ -1,9 +1,9 @@
 package com.github.zi_jing.cuckoolib.util;
 
 public class ColorRGB {
-    private int r;
-    private int g;
-    private int b;
+    private final int r;
+    private final int g;
+    private final int b;
 
     public ColorRGB(int r, int g, int b) {
         this.r = r;

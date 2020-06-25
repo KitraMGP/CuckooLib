@@ -7,6 +7,7 @@ import com.github.zi_jing.cuckoolib.client.util.ClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public class GuiControl {
@@ -73,6 +74,9 @@ public class GuiControl {
      * 设置控件的<strong>相对</strong>位置，必须在{@link ModularGuiScreen#initGui}中调用。<br><br>
      * Sets the control's <strong>relative</strong> position, it must be called in
      * {@link ModularGuiScreen#initGui}.
+     *
+     * @param x 横坐标
+     * @param y 纵坐标
      */
     public void setPos(int x, int y) {
         this.x = x;
@@ -83,6 +87,7 @@ public class GuiControl {
      * 获取控件的<strong>相对</strong>横坐标。<br><br>
      * Gets this control's <strong>relative</strong> X coordinate.
      *
+     * @return 横坐标
      * @see GuiControl#x
      */
     public int getX() {
@@ -93,6 +98,7 @@ public class GuiControl {
      * 获取控件的<strong>相对</strong>纵坐标。<br><br>
      * Gets this control's <strong>relative</strong> Y coordinate.
      *
+     * @return 纵坐标
      * @see GuiControl#y
      */
     public int getY() {
@@ -106,8 +112,8 @@ public class GuiControl {
         INPUTBOX("inputbox", 3),
         CHECKBOX("checkbox", 4);
 
-        String name;
-        int index;
+        final String name;
+        final int index;
 
         EnumControlType(String name, int index) {
             this.name = name;
@@ -148,11 +154,11 @@ public class GuiControl {
 
     public static class Button extends GuiControl {
 
-        protected int u;
-        protected int v;
-        protected int u2;
-        protected int v2;
-        protected Consumer<ModularGuiScreen> func;
+        protected final int u;
+        protected final int v;
+        protected final int u2;
+        protected final int v2;
+        protected final Consumer<ModularGuiScreen> func;
         protected String text = "";
         protected int color = 0;
         protected net.minecraft.client.gui.GuiButton buttonMc;
@@ -178,7 +184,7 @@ public class GuiControl {
             this.buttonMc = new net.minecraft.client.gui.GuiButton(id, x, y, width, height, text) {
 
                 @Override
-                public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+                public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
                     if (this.visible) {
 
                         int x = gui.getOffsetX() + getX();

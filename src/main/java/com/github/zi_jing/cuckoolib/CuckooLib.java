@@ -1,7 +1,6 @@
 package com.github.zi_jing.cuckoolib;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
@@ -25,8 +24,4 @@ public class CuckooLib {
         logger = event.getModLog();
     }
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-
-    }
 }

@@ -1,10 +1,10 @@
 package com.github.zi_jing.cuckoolib.util;
 
 public class Rectangle {
-    private int width;
-    private int height;
-    private int x;
-    private int y;
+    private final int width;
+    private final int height;
+    private final int x;
+    private final int y;
 
     public Rectangle(int width, int height, int x, int y) {
         this.width = width;

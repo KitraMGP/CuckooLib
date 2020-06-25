@@ -23,7 +23,6 @@ public class GLUtils {
 
     public static final int tmpGlTextureId = GlStateManager.generateTexture();
     private static final Gui GUI = new Gui();
-    ;
 
     public static int rgbToHex(int r, int g, int b) {
         r <<= 16;
@@ -52,7 +51,7 @@ public class GLUtils {
                 case '#':
                     continue;
                 case '0':
-                    color = color << 4 | 0x00000000;
+                    color = color << 4;
                     break;
                 case '1':
                     color = color << 4 | 0x00000001;
@@ -258,16 +257,17 @@ public class GLUtils {
         Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
     }
 
+    @SuppressWarnings({"IfStatementWithIdenticalBranches", "DuplicateExpressions", "RedundantSuppression", "ConstantConditions"})
     public static void drawSimpleToolTip(List<String> lines) {
         ScaledResolution r = new ScaledResolution(Minecraft.getMinecraft());
         int screenWidth = r.getScaledWidth();
         int screenHeight = r.getScaledHeight();
         int mouseX = ClientUtils.getMouseX();
         int mouseY = ClientUtils.getMouseY();
-        int width = 0;
-        int height = 0;
-        int x = 0;
-        int y = 0;
+        int width;
+        int height;
+        int x;
+        int y;
         int longest = 0;
         int current;
         for (String s : lines) {

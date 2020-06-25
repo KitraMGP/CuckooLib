@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +166,7 @@ public class ModularGuiScreen extends GuiScreen implements IModularGui {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton button) throws IOException {
+	protected void actionPerformed(@Nonnull GuiButton button) throws IOException {
 		for (Map.Entry<Integer, GuiControl> entry : controls.entrySet()) {
 			if (entry.getValue() instanceof GuiControl.Button) {
 				if (button == ((GuiControl.Button) entry.getValue()).buttonMc) {

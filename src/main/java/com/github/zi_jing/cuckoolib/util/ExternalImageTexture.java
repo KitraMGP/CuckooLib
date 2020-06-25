@@ -5,17 +5,17 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 
+import javax.annotation.Nonnull;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ExternalImageTexture extends AbstractTexture {
 
-    private BufferedImage image;
+    private final BufferedImage image;
 
-    public ExternalImageTexture(File file) throws FileNotFoundException, IOException {
+    public ExternalImageTexture(File file) throws IOException {
         this.image = TextureUtil.readBufferedImage(new FileInputStream(file));
     }
 
@@ -24,7 +24,7 @@ public class ExternalImageTexture extends AbstractTexture {
     }
 
     @Override
-    public void loadTexture(IResourceManager resourceManager) throws IOException {
+    public void loadTexture(@Nonnull IResourceManager resourceManager) {
         GLUtils.deleteTempTexture();
         TextureUtil.uploadTextureImageAllocate(GLUtils.tmpGlTextureId, image, false, false);
     }
