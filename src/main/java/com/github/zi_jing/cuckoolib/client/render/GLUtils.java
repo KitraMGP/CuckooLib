@@ -17,12 +17,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.List;
 
 public class GLUtils {
 
-    public static final int tmpGlTextureId = GlStateManager.generateTexture();
-    private static final Gui GUI = new Gui();
+    private static final Gui GUI = new Gui();   // 黑魔法
+
+    private static int tmpR;
+    private static int tmpG;
+    private static volatile int tmpB;
 
     public static int rgbToHex(int r, int g, int b) {
         r <<= 16;
@@ -31,10 +35,14 @@ public class GLUtils {
     }
 
     public static ColorRGB hexToRGB(int hex) {
-        int r = (hex & 0xFF0000) >> 16;
-        int g = (hex & 0x00FF00) >> 8;
-        int b = (hex & 0x0000FF);
-        return new ColorRGB(r, g, b);
+        hexToRGBInternal(hex);
+        return new ColorRGB(tmpR, tmpG, tmpB);
+    }
+
+    private static void hexToRGBInternal(int hex) {
+        tmpR = (hex & 0xFF0000) >> 16;
+        tmpG = (hex & 0x00FF00) >> 8;
+        tmpB = (hex & 0x0000FF);
     }
 
     /**
@@ -176,11 +184,13 @@ public class GLUtils {
         GlStateManager.bindTexture(textureId);
     }
 
+    @Deprecated
     public static void loadTexture(File file) throws IOException {
         ITextureObject texture = new ExternalImageTexture(file);
         texture.loadTexture(Minecraft.getMinecraft().getResourceManager());
     }
 
+    @Deprecated
     public static void loadTexture(BufferedImage image) throws IOException {
         ITextureObject texture = new ExternalImageTexture(image);
         texture.loadTexture(Minecraft.getMinecraft().getResourceManager());
@@ -188,10 +198,6 @@ public class GLUtils {
 
     public static void deleteTexture(int textureId) {
         TextureUtil.deleteTexture(textureId);
-    }
-
-    public static void deleteTempTexture() {
-        deleteTexture(tmpGlTextureId);
     }
 
     public static void enableBlend() {
@@ -289,6 +295,14 @@ public class GLUtils {
      */
     public static void drawScaledCustomSizeModalRect(int x, int y, float u, float v, int uWidth, int vHeight, int width, int height, float tileWidth, float tileHeight) {
         Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
+    }
+
+    public static void drawPixels(int width, int height, int format, int type, ByteBuffer pixels) {
+        GL11.glDrawPixels(width, height, format, type, pixels);
+    }
+
+    public static void drawPixels(int width, int height, int format, int type, IntBuffer pixels) {
+        GL11.glDrawPixels(width, height, format, type, pixels);
     }
 
     @SuppressWarnings({"IfStatementWithIdenticalBranches", "DuplicateExpressions", "RedundantSuppression", "ConstantConditions"})
