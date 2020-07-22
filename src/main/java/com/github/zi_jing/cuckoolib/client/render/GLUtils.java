@@ -2,7 +2,7 @@ package com.github.zi_jing.cuckoolib.client.render;
 
 import com.github.zi_jing.cuckoolib.client.gui.Colors;
 import com.github.zi_jing.cuckoolib.client.util.ClientUtils;
-import com.github.zi_jing.cuckoolib.util.ColorRGB;
+import com.github.zi_jing.cuckoolib.uti.math.ColorRGB;
 import com.github.zi_jing.cuckoolib.util.ExternalImageTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

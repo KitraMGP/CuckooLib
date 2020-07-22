@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.common.text;
+package com.github.zi_jing.cuckoolib.util;
 
 import com.github.zi_jing.cuckoolib.client.render.GLUtils;
 
