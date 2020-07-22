@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.uti.registry;
+package com.github.zi_jing.cuckoolib.util.registry;
 
 import java.util.ArrayList;
 import java.util.List;

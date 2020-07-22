@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.uti.math;
+package com.github.zi_jing.cuckoolib.util.math;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

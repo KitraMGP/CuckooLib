@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.uti.math;
+package com.github.zi_jing.cuckoolib.util.math;
 
 public class Rectangle {
     private final int width;
