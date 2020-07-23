@@ -36,6 +36,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -79,6 +80,11 @@ public class MetaItem extends Item {
 
 	public static List<MetaItem> getMetaItems() {
 		return Collections.unmodifiableList(META_ITEMS);
+	}
+
+	@SubscribeEvent
+	public static void registerModels(ModelRegistryEvent event) {
+		META_ITEMS.forEach((item) -> item.registerItemModel());
 	}
 
 	@SubscribeEvent
