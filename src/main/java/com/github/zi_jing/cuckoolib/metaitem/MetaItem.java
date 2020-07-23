@@ -1,21 +1,7 @@
 package com.github.zi_jing.cuckoolib.metaitem;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.lang3.Validate;
-
 import com.github.zi_jing.cuckoolib.CuckooLib;
-import com.github.zi_jing.cuckoolib.metaitem.module.IContainerItemProvider;
-import com.github.zi_jing.cuckoolib.metaitem.module.IDurabilityBarProvider;
-import com.github.zi_jing.cuckoolib.metaitem.module.IItemInteraction;
-import com.github.zi_jing.cuckoolib.metaitem.module.IItemNameProvider;
-import com.github.zi_jing.cuckoolib.metaitem.module.IItemTooltipProvider;
-import com.github.zi_jing.cuckoolib.metaitem.module.IItemUse;
-import com.github.zi_jing.cuckoolib.metaitem.module.IToolDamage;
-
+import com.github.zi_jing.cuckoolib.metaitem.module.*;
 import gnu.trove.map.TShortObjectMap;
 import gnu.trove.map.hash.TShortObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -28,12 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -43,25 +24,32 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.Validate;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @EventBusSubscriber(modid = CuckooLib.MODID)
 public class MetaItem extends Item {
 	protected static final ModelResourceLocation EMPTY_MODEL = new ModelResourceLocation("builtin/missing",
 			"inventory");
 
-	protected static final List<MetaItem> META_ITEMS = new ArrayList<MetaItem>();
+	protected static final List<MetaItem> META_ITEMS = new ArrayList<>();
 
-	protected String modid;
+	protected final String modid;
 
 	/**
 	 * 用于存储MetaValueItem的注册表
 	 */
-	protected TShortObjectMap<MetaValueItem> metaItem;
+	protected final TShortObjectMap<MetaValueItem> metaItem;
 
 	/**
 	 * 用于存储MetaValueItem模型的注册表
 	 */
-	protected TShortObjectMap<List<ModelResourceLocation>> itemModel;
+	protected final TShortObjectMap<List<ModelResourceLocation>> itemModel;
 
 	public MetaItem(String modid, String name) {
 		this.setHasSubtypes(true);
@@ -69,9 +57,9 @@ public class MetaItem extends Item {
 		this.setNoRepair();
 		this.setRegistryName(modid, name);
 		this.modid = modid;
-		this.metaItem = new TShortObjectHashMap<MetaValueItem>();
-		this.itemModel = new TShortObjectHashMap<List<ModelResourceLocation>>();
-
+		this.metaItem = new TShortObjectHashMap<>();
+		this.itemModel = new TShortObjectHashMap<>();
+		META_ITEMS.add(this);
 	}
 
 	public MetaItem(ResourceLocation registryName) {
@@ -84,7 +72,7 @@ public class MetaItem extends Item {
 
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent event) {
-		META_ITEMS.forEach((item) -> item.registerItemModel());
+		META_ITEMS.forEach(MetaItem::registerItemModel);
 	}
 
 	@SubscribeEvent
@@ -93,7 +81,7 @@ public class MetaItem extends Item {
 	}
 
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+	public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
 		if (this.isInCreativeTab(tab)) {
 			this.metaItem.forEachValue((metaValueItem) -> {
 				items.add(metaValueItem.getItemStack());
@@ -111,7 +99,7 @@ public class MetaItem extends Item {
 				ModelBakery.registerItemVariants(this, location);
 				this.itemModel.put(id, Arrays.asList(new ModelResourceLocation(location, "inventory")));
 			} else if (modelCount > 1) {
-				List<ModelResourceLocation> models = new ArrayList<ModelResourceLocation>();
+				List<ModelResourceLocation> models = new ArrayList<>();
 				for (int i = 0; i < modelCount; i++) {
 					ResourceLocation location = this.getItemModel(metaValueItem, i);
 					ModelBakery.registerItemVariants(this, location);
@@ -176,18 +164,20 @@ public class MetaItem extends Item {
 		return this.getMetaValueItem((short) stack.getMetadata());
 	}
 
+	@Nonnull
 	@Override
-	public String getUnlocalizedName(ItemStack stack) {
+	public String getUnlocalizedName(@Nonnull ItemStack stack) {
 		return "metaitem." + this.modid + "." + this.getMetaValueItem(stack).getUnlocalizedName();
 	}
 
 	@Override
-	public int getItemStackLimit(ItemStack stack) {
+	public int getItemStackLimit(@Nonnull ItemStack stack) {
 		return this.getMetaValueItem(stack).getItemStackLimit();
 	}
 
+	@Nonnull
 	@Override
-	public String getItemStackDisplayName(ItemStack stack) {
+	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemNameProvider provider = metaValueItem.nameProvider;
@@ -200,7 +190,7 @@ public class MetaItem extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+	public void addInformation(@Nonnull ItemStack stack, World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemTooltipProvider provider = metaValueItem.tooltipProvider;
@@ -217,8 +207,9 @@ public class MetaItem extends Item {
 	/**
 	 * @see net.minecraft.item.Item#getContainerItem
 	 */
+	@Nonnull
 	@Override
-	public ItemStack getContainerItem(ItemStack stack) {
+	public ItemStack getContainerItem(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IContainerItemProvider provider = metaValueItem.containerModule;
@@ -269,7 +260,7 @@ public class MetaItem extends Item {
 	 * @see net.minecraft.item.Item#showDurabilityBar
 	 */
 	@Override
-	public boolean showDurabilityBar(ItemStack stack) {
+	public boolean showDurabilityBar(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IDurabilityBarProvider provider = metaValueItem.durabilityBarProvider;
@@ -284,7 +275,7 @@ public class MetaItem extends Item {
 	 * @see net.minecraft.item.Item#getDurabilityForDisplay
 	 */
 	@Override
-	public double getDurabilityForDisplay(ItemStack stack) {
+	public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IDurabilityBarProvider provider = metaValueItem.durabilityBarProvider;
@@ -299,7 +290,7 @@ public class MetaItem extends Item {
 	 * @see net.minecraft.item.Item#getRGBDurabilityForDisplay
 	 */
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack) {
+	public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IDurabilityBarProvider provider = metaValueItem.durabilityBarProvider;
@@ -316,8 +307,8 @@ public class MetaItem extends Item {
 	 * @see net.minecraft.item.Item#itemInteractionForEntity
 	 */
 	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target,
-			EnumHand hand) {
+	public boolean itemInteractionForEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer playerIn, @Nonnull EntityLivingBase target,
+											@Nonnull EnumHand hand) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemInteraction itemInteraction = metaValueItem.itemInteraction;
@@ -331,8 +322,9 @@ public class MetaItem extends Item {
 	/**
 	 * @see net.minecraft.item.Item#onItemRightClick
 	 */
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
 		if (metaValueItem != null) {
 			IItemInteraction itemInteraction = metaValueItem.itemInteraction;
@@ -344,7 +336,7 @@ public class MetaItem extends Item {
 	}
 
 	@Override
-	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+	public boolean onLeftClickEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull Entity entity) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemInteraction itemInteraction = metaValueItem.itemInteraction;
@@ -357,8 +349,9 @@ public class MetaItem extends Item {
 
 	/* ---------- ItemUseModule ---------- */
 
+	@Nonnull
 	@Override
-	public EnumAction getItemUseAction(ItemStack stack) {
+	public EnumAction getItemUseAction(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemUse itemUse = metaValueItem.itemUse;
@@ -370,7 +363,7 @@ public class MetaItem extends Item {
 	}
 
 	@Override
-	public int getMaxItemUseDuration(ItemStack stack) {
+	public int getMaxItemUseDuration(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemUse itemUse = metaValueItem.itemUse;
@@ -381,9 +374,10 @@ public class MetaItem extends Item {
 		return super.getMaxItemUseDuration(stack);
 	}
 
+	@Nonnull
 	@Override
-	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
-			float hitY, float hitZ, EnumHand hand) {
+	public EnumActionResult onItemUseFirst(EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX,
+										   float hitY, float hitZ, @Nonnull EnumHand hand) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
 		if (metaValueItem != null) {
 			IItemUse itemUse = metaValueItem.itemUse;
@@ -394,9 +388,10 @@ public class MetaItem extends Item {
 		return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
 	}
 
+	@Nonnull
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
-			float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing,
+									  float hitX, float hitY, float hitZ) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
 		if (metaValueItem != null) {
 			IItemUse itemUse = metaValueItem.itemUse;
@@ -408,7 +403,7 @@ public class MetaItem extends Item {
 	}
 
 	@Override
-	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+	public void onUsingTick(@Nonnull ItemStack stack, @Nonnull EntityLivingBase player, int count) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemUse itemUse = metaValueItem.itemUse;
@@ -421,7 +416,7 @@ public class MetaItem extends Item {
 	}
 
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase player, int timeLeft) {
+	public void onPlayerStoppedUsing(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player, int timeLeft) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemUse itemUse = metaValueItem.itemUse;
@@ -433,8 +428,9 @@ public class MetaItem extends Item {
 		super.onPlayerStoppedUsing(stack, world, player, timeLeft);
 	}
 
+	@Nonnull
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase player) {
+	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null) {
 			IItemUse itemUse = metaValueItem.itemUse;
@@ -448,7 +444,7 @@ public class MetaItem extends Item {
 	/* ---------- ItemFuelModule ---------- */
 
 	@Override
-	public int getItemBurnTime(ItemStack stack) {
+	public int getItemBurnTime(@Nonnull ItemStack stack) {
 		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
 		if (metaValueItem != null && metaValueItem.containsModule("itemFuel")) {
 			return metaValueItem.itemFuel.getItemBurnTime(stack);
