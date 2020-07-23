@@ -2,10 +2,12 @@ package com.github.zi_jing.cuckoolib.metaitem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
+import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.metaitem.module.IContainerItemProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IDurabilityBarProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemInteraction;
@@ -35,12 +37,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent.Register;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@EventBusSubscriber(modid = CuckooLib.MODID)
 public class MetaItem extends Item {
 	protected static final ModelResourceLocation EMPTY_MODEL = new ModelResourceLocation("builtin/missing",
 			"inventory");
+
+	protected static final List<MetaItem> META_ITEMS = new ArrayList<MetaItem>();
 
 	protected String modid;
 
@@ -62,11 +70,20 @@ public class MetaItem extends Item {
 		this.modid = modid;
 		this.metaItem = new TShortObjectHashMap<MetaValueItem>();
 		this.itemModel = new TShortObjectHashMap<List<ModelResourceLocation>>();
-
+		META_ITEMS.add(this);
 	}
 
 	public MetaItem(ResourceLocation registryName) {
 		this(registryName.getResourceDomain(), registryName.getResourcePath());
+	}
+
+	public static List<MetaItem> getMetaItems() {
+		return Collections.unmodifiableList(META_ITEMS);
+	}
+
+	@SubscribeEvent
+	public static void registerMetaItems(Register<Item> e) {
+		e.getRegistry().registerAll(META_ITEMS.toArray(new MetaItem[0]));
 	}
 
 	@Override
