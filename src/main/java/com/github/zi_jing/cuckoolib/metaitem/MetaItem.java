@@ -167,12 +167,14 @@ public class MetaItem extends Item {
 	@Nonnull
 	@Override
 	public String getUnlocalizedName(@Nonnull ItemStack stack) {
-		return "metaitem." + this.modid + "." + this.getMetaValueItem(stack).getUnlocalizedName();
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		return metaValueItem != null ? "metaitem." + this.modid + "." + metaValueItem.getUnlocalizedName() : "metaitem.error";
 	}
 
 	@Override
 	public int getItemStackLimit(@Nonnull ItemStack stack) {
-		return this.getMetaValueItem(stack).getItemStackLimit();
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		return metaValueItem != null ? metaValueItem.getItemStackLimit() : 64;
 	}
 
 	@Nonnull
