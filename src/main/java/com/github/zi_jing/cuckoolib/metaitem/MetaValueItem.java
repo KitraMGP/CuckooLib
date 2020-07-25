@@ -101,6 +101,10 @@ public class MetaValueItem {
 		return this.stackLimit;
 	}
 
+	public boolean isItemEqual(ItemStack stack) {
+		return stack.getItem() == this.metaItem && stack.getMetadata() == this.id;
+	}
+
 	public ItemStack getItemStack() {
 		return this.getItemStack(1);
 	}

@@ -112,6 +112,9 @@ public class MetaItem extends Item {
         ModelLoader.setCustomMeshDefinition(this, (stack) -> {
             short metadate = (short) stack.getMetadata();
             MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+            if(metaValueItem == null) {
+            	return EMPTY_MODEL;
+            }
             int modelCount = metaValueItem.modelCount;
             List<ModelResourceLocation> models = this.itemModel.get(metadate);
             if (modelCount == 1 && !models.isEmpty()) {
