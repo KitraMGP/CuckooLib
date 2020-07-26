@@ -1,38 +1,52 @@
 package com.github.zi_jing.cuckoolib;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = CuckooLib.MODID, name = CuckooLib.NAME, version = CuckooLib.VERSION, useMetadata = true)
+@Mod("cuckoolib")
 public class CuckooLib {
-    public static final String MODID = "cuckoolib";
-    public static final String NAME = "CuckooLib";
-    public static final String VERSION = "@CUCKOO_LIB_VERSION@";
+    // Directly reference a log4j logger.
+    private static final Logger LOGGER = LogManager.getLogger("CuckooLib");
 
-    @Mod.Instance
-    public static CuckooLib instance;
-
-    private static Logger logger;
+    public CuckooLib() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
     public static Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
-    }
-
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
+    // 在注册事件之后被调用
+    @SubscribeEvent
+    public void init(final FMLCommonSetupEvent event) {
 
     }
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
+    @SubscribeEvent
+    public void clientInit(final FMLClientSetupEvent event) {
+        // do something that can only be done on the client
+    }
 
+    @SubscribeEvent
+    public void enqueueIMC(final InterModEnqueueEvent event) {
+
+    }
+
+    @SubscribeEvent
+    public void processIMC(final InterModProcessEvent event) {
+
+    }
+
+    @SubscribeEvent
+    public void onServerStarting(final FMLServerStartingEvent event) {
+        // do something when the server starts
     }
 }
