@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod("cuckoolib")
 public class CuckooLib {
-    // Directly reference a log4j logger.
+
     private static final Logger LOGGER = LogManager.getLogger("CuckooLib");
 
     public CuckooLib() {

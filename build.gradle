@@ -1,3 +1,8 @@
+/*
+注意：如要更改版本请修改version.properties
+ */
+
+
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -19,7 +24,10 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
-version = '3.0.0.0'
+Properties versionProperties = new Properties();
+versionProperties.load(new StringReader(project.file('version.properties').getText('UTF-8')))
+
+version = versionProperties.getOrDefault('modVersion', 'unknown')
 group = 'com.github.zi_jing.cuckoolib' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 description = 'The Cuckoo commons library.'
 archivesBaseName = 'CuckooLib'
@@ -47,6 +55,13 @@ repositories {
         // TOP mirror
         name = 'ModMaven'
         url = 'https://modmaven.k-4u.nl'
+    }
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'version': project.version
     }
 }
 
@@ -165,20 +180,25 @@ artifacts {
     archives sourceJar
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-            artifact sourceJar
-        }
+publishing.publications {
+    mavenJava(MavenPublication) {
+        artifact jar
+        artifact sourceJar
     }
-    repositories {
-        maven {
-            url 'file:///${project.projectDir}/mcmodsrepo'
-        }
+}
+
+publishing.repositories {
+    maven {
+        url 'file:///${project.projectDir}/mcmodsrepo'
     }
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
 }
