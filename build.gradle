@@ -41,6 +41,12 @@ CuckooGradle {
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 repositories {
+    if (project.hasProperty('useLocalBuildMaven') && project.property('useLocalBuildMaven') == 'true') {
+        maven {
+            name = 'LocalBuildMaven'
+            url = 'file:///' + project.projectDir.absolutePath + '/LocalBuildMaven'
+        }
+    }
 	maven {
 		name = 'AliyunMaven'
 		url = 'http://maven.aliyun.com/nexus/content/groups/public'
@@ -188,8 +194,24 @@ publishing.publications {
 }
 
 publishing.repositories {
+    if (project.hasProperty('useLocalBuildMaven') && project.property('useLocalBuildMaven') == 'true') {
+        maven {
+            name = 'LocalBuildMaven'
+            url = 'file:///' + project.projectDir.absolutePath + '/LocalBuildMaven'
+        }
+    }
     maven {
-        url 'file:///${project.projectDir}/mcmodsrepo'
+        name = 'RepsyMavenForCuckooDevTeam'
+        url = 'https://repo.repsy.io/mvn/zijing_233/modpublish/'
+        credentials {
+            if (project.hasProperty('MavenUserName') && project.hasProperty('MavenPassword')) {
+                username = project.property('MavenUserName')
+                password = project.property('MavenPassword')
+            } else {
+                println 'WARNING: There isn\'t the property "MavenUserName" or property "MavenPassword"'
+                println 'Publishing to the Repsy Maven for CuckooDevTeam will be unusable.'
+            }
+        }
     }
 }
 

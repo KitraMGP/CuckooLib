@@ -26,3 +26,5 @@ forge*changelog.txt
 
 .gitattributes
 gradle.properties
+
+LocalBuildMaven
