@@ -28,3 +28,6 @@ forge*changelog.txt
 gradle.properties
 
 LocalBuildMaven
+
+#junit
+logs
