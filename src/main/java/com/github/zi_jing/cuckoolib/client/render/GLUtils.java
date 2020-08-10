@@ -26,7 +26,7 @@ public class GLUtils {
 
     private static int tmpR;
     private static int tmpG;
-    private static volatile int tmpB;
+    private static int tmpB;
 
     public static int rgbToHex(int r, int g, int b) {
         r <<= 16;
