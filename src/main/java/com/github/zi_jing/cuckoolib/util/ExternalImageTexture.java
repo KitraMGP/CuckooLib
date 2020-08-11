@@ -13,19 +13,18 @@ import java.io.IOException;
 @Deprecated
 public class ExternalImageTexture extends AbstractTexture {
 
-    private final BufferedImage image;
+  private final BufferedImage image;
 
-    public ExternalImageTexture(File file) throws IOException {
-        this.image = TextureUtil.readBufferedImage(new FileInputStream(file));
-    }
+  public ExternalImageTexture(File file) throws IOException {
+    this.image = TextureUtil.readBufferedImage(new FileInputStream(file));
+  }
 
-    public ExternalImageTexture(BufferedImage image) {
-        this.image = image;
-    }
+  public ExternalImageTexture(BufferedImage image) {
+    this.image = image;
+  }
 
-    @Override
-    public void loadTexture(@Nonnull IResourceManager resourceManager) {
-        // TextureUtil.uploadTextureImageAllocate(GLUtils.tmpGlTextureId, image, false, false);
-    }
-
+  @Override
+  public void loadTexture(@Nonnull IResourceManager resourceManager) {
+    // TextureUtil.uploadTextureImageAllocate(GLUtils.tmpGlTextureId, image, false, false);
+  }
 }

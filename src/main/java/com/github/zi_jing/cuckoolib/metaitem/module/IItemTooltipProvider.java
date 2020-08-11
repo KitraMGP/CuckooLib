@@ -8,5 +8,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface IItemTooltipProvider extends IItemModule {
-    void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag);
+  void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag);
 }
