@@ -47,10 +47,14 @@ repositories {
             url = 'file:///' + project.projectDir.absolutePath + '/LocalBuildMaven'
         }
     }
-	maven {
-		name = 'AliyunMaven'
-		url = 'http://maven.aliyun.com/nexus/content/groups/public'
-	}
+    if (!System.getenv().containsKey("GITHUB_ACTIONS")) {
+        println 'Detected Github Actions environment, Aliyun Maveb will be disabled'
+        maven {
+            name = 'AliyunMaven'
+            url = 'http://maven.aliyun.com/nexus/content/groups/public'
+        }
+    }
+
     maven {
         // location of the maven that hosts JEI files
         name = 'Progwml6 maven'
