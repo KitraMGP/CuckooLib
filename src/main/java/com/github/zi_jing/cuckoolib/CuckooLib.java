@@ -14,39 +14,33 @@ import org.apache.logging.log4j.Logger;
 @Mod("cuckoolib")
 public class CuckooLib {
 
-    private static final Logger LOGGER = LogManager.getLogger("CuckooLib");
+  private static final Logger LOGGER = LogManager.getLogger("CuckooLib");
 
-    public CuckooLib() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+  public CuckooLib() {
+    MinecraftForge.EVENT_BUS.register(this);
+  }
 
-    public static Logger getLogger() {
-        return LOGGER;
-    }
+  public static Logger getLogger() {
+    return LOGGER;
+  }
 
-    // 在注册事件之后被调用
-    @SubscribeEvent
-    public void init(final FMLCommonSetupEvent event) {
+  // 在注册事件之后被调用
+  @SubscribeEvent
+  public void init(final FMLCommonSetupEvent event) {}
 
-    }
+  @SubscribeEvent
+  public void clientInit(final FMLClientSetupEvent event) {
+    // do something that can only be done on the client
+  }
 
-    @SubscribeEvent
-    public void clientInit(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-    }
+  @SubscribeEvent
+  public void enqueueIMC(final InterModEnqueueEvent event) {}
 
-    @SubscribeEvent
-    public void enqueueIMC(final InterModEnqueueEvent event) {
+  @SubscribeEvent
+  public void processIMC(final InterModProcessEvent event) {}
 
-    }
-
-    @SubscribeEvent
-    public void processIMC(final InterModProcessEvent event) {
-
-    }
-
-    @SubscribeEvent
-    public void onServerStarting(final FMLServerStartingEvent event) {
-        // do something when the server starts
-    }
+  @SubscribeEvent
+  public void onServerStarting(final FMLServerStartingEvent event) {
+    // do something when the server starts
+  }
 }
