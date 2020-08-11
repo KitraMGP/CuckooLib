@@ -5,9 +5,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ '1.12' ]
+    branches: [ '1.12', '1.16' ]
   pull_request:
-    branches: [ '1.12' ]
+    branches: [ '1.12', '1.16']
   workflow_dispatch:
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
         # If you have multiple jobs, use distinct job-id in in case you want to split caches
         # For instance, jobs with different JDK versions can't share caches
         # RUNNER_OS is added to job-id automatically
-        job-id: mc1_12
+        job-id: cl
     - uses: axel-op/googlejavaformat-action@v3
       with:
         args: "--skip-sorting-imports --replace"
