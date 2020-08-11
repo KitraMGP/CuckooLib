@@ -48,7 +48,7 @@ repositories {
         }
     }
     if (!System.getenv().containsKey("GITHUB_ACTIONS")) {
-        println 'Detected Github Actions environment, Aliyun Maveb will be disabled'
+        println 'Detected Github Actions environment, Aliyun Maven will be disabled'
         maven {
             name = 'AliyunMaven'
             url = 'http://maven.aliyun.com/nexus/content/groups/public'
