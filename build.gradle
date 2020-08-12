@@ -47,7 +47,7 @@ repositories {
             url = 'file:///' + project.projectDir.absolutePath + '/LocalBuildMaven'
         }
     }
-    if (!System.getenv().containsKey("GITHUB_ACTIONS")) {
+    if (System.getenv().containsKey("GITHUB_ACTIONS")) {
         println 'Detected Github Actions environment, Aliyun Maven will be disabled'
         maven {
             name = 'AliyunMaven'
