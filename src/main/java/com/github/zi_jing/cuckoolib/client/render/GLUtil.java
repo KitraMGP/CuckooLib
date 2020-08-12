@@ -51,7 +51,7 @@ public class GLUtil {
     } catch (NullPointerException e) {
       System.out.println("CuckooLib: Warning: Can't find the Minecraft instance.");
       System.out.println(
-          "CuckooLib: Warning: If you are running JUnit tests, you can ignore this warning.");
+              "CuckooLib: Warning: If you are running JUnit tests, you can ignore this warning.");
     }
   }
 
@@ -99,11 +99,11 @@ public class GLUtil {
    * 将十六进制颜色字符串转为24位RGB整数颜色。
    *
    * @param hex 像"3FFF3F"、"3fff3f"、"3FfF3f"这样的字符串。它也支持以'#'开头的字符串<br>
-   *     <br>
-   *     Strings like "3FFF3F", "3fff3f" or "3FfF3f". It also supports strings what starts with '#'
+   *            <br>
+   *            Strings like "3FFF3F", "3fff3f" or "3FfF3f". It also supports strings what starts with '#'
    * @see #hexStringToRGB(String)
    */
-  public static int hexStringToRGB24(String hex) { // TODO 单元测试
+  public static int hexStringToRGB24(String hex) {
     hex = hex.toUpperCase();
     int color = 0;
     for (char c : hex.toCharArray()) {
@@ -169,8 +169,8 @@ public class GLUtil {
    * 将十六进制颜色字符串转为RGB颜色。
    *
    * @param hex 像"3FFF3F"、"3fff3f"、"3FfF3f"这样的字符串。它也支持以'#'开头的字符串<br>
-   *     <br>
-   *     Strings like "3FFF3F", "3fff3f" or "3FfF3f". It also supports strings what starts with '#'
+   *            <br>
+   *            Strings like "3FFF3F", "3fff3f" or "3FfF3f". It also supports strings what starts with '#'
    * @see #hexStringToRGB24(String)
    */
   public static ColorRGBA hexStringToRGB(String hex) { // TODO 单元测试
@@ -235,7 +235,7 @@ public class GLUtil {
    * @see #drawString(MatrixStack, String, float, float, int)
    */
   public static void drawScaledString(
-      MatrixStack matrixStack, String str, float x, float y, int color, int height) {
+          MatrixStack matrixStack, String str, float x, float y, int color, int height) {
     // TODO
   }
 
@@ -245,7 +245,7 @@ public class GLUtil {
    * @see #drawString(MatrixStack, String, float, float, int)
    */
   public static void drawStringWithShadow(
-      MatrixStack matrixStack, String str, float x, float y, int color) {
+          MatrixStack matrixStack, String str, float x, float y, int color) {
     fontRenderer.drawStringWithShadow(matrixStack, str, x, y, color);
   }
 
@@ -255,7 +255,7 @@ public class GLUtil {
    * @see #drawString(MatrixStack, String, float, float, int)
    */
   public static void drawScaledStringWithShadow(
-      MatrixStack matrixStack, String str, float x, float y, int color, int height) {
+          MatrixStack matrixStack, String str, float x, float y, int color, int height) {
     // TODO
   }
 
@@ -265,7 +265,7 @@ public class GLUtil {
    * @see #drawString(MatrixStack, String, float, float, int)
    */
   public static void drawCenteredString(
-      MatrixStack matrixStack, String str, float x, float y, int color) {
+          MatrixStack matrixStack, String str, float x, float y, int color) {
     float width = getStringWidth(str);
     drawString(matrixStack, str, x - width / 2, y, color);
   }
@@ -276,7 +276,7 @@ public class GLUtil {
    * @see #drawString(MatrixStack, String, float, float, int)
    */
   public static void drawScaledCenteredString(
-      MatrixStack matrixStack, String str, float x, float y, int color, int height) {
+          MatrixStack matrixStack, String str, float x, float y, int color, int height) {
     // TODO
   }
 
@@ -286,7 +286,7 @@ public class GLUtil {
    * @see #drawString(MatrixStack, String, float, float, int)
    */
   public static void drawCenteredStringWithShadow(
-      MatrixStack matrixStack, String str, float x, float y, int color) {
+          MatrixStack matrixStack, String str, float x, float y, int color) {
     float width = getStringWidth(str);
     drawStringWithShadow(matrixStack, str, x - width / 2, y, color);
   }
@@ -297,16 +297,20 @@ public class GLUtil {
    * @see #drawString(MatrixStack, String, float, float, int)
    */
   public static void drawScaledCenteredStringWithShadow(
-      MatrixStack matrixStack, String str, float x, float y, int color, int height) {
+          MatrixStack matrixStack, String str, float x, float y, int color, int height) {
     // TODO
   }
 
-  /** 设置绘图时直线的粗细(像素)。 */
+  /**
+   * 设置绘图时直线的粗细(像素)。
+   */
   public static void glLineWidth(float width) {
     GlStateManager.lineWidth(width);
   }
 
-  /** 设置绘图时点的直径(像素)。 */
+  /**
+   * 设置绘图时点的直径(像素)。
+   */
   public static void glPointSize(float size) {
     GL11.glPointSize(size);
   }
@@ -396,7 +400,9 @@ public class GLUtil {
     GlStateManager.enableTexture();
   }
 
-  /** 禁用2D纹理, <strong>完成绘图操作后必须调用{@link #enableTexture()}启用2D纹理, 否则会引发严重后果!</strong> */
+  /**
+   * 禁用2D纹理, <strong>完成绘图操作后必须调用{@link #enableTexture()}启用2D纹理, 否则会引发严重后果!</strong>
+   */
   public static void disableTexture() {
     GlStateManager.disableTexture();
   }
@@ -447,7 +453,9 @@ public class GLUtil {
     disableTexture();
   }
 
-  /** 必须与{@link #preRenderNoTexture(int)}成对使用, 否则将引发OpenGL错误。 */
+  /**
+   * 必须与{@link #preRenderNoTexture(int)}成对使用, 否则将引发OpenGL错误。
+   */
   public static void postRenderNoTexture() {
     disableBlend();
     enableTexture();
@@ -494,7 +502,9 @@ public class GLUtil {
     color4i(r, g, b, a);
   }
 
-  /** 需要与{@link #preRenderTexture()}成对使用。 */
+  /**
+   * 需要与{@link #preRenderTexture()}成对使用。
+   */
   public static void postRenderTexture() {
     disableBlend();
     enableTexture();
@@ -519,27 +529,29 @@ public class GLUtil {
     screen.renderDirtBackground(0);
   }
 
-  /** 绘制纯色矩形, 颜色格式为RGBA整数颜色。 */
+  /**
+   * 绘制纯色矩形, 颜色格式为RGBA整数颜色。
+   */
   public static void fill(MatrixStack matrixStack, int x, int y, int width, int height, int color) {
     preRenderNoTexture(color);
     bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
     Matrix4f matrix4f = matrixStack.getLast().getMatrix();
     bufferBuilder
-        .pos(matrix4f, x, y + height, 0)
-        .color(renderStateR, renderStateG, renderStateB, renderStateA)
-        .endVertex();
+            .pos(matrix4f, x, y + height, 0)
+            .color(renderStateR, renderStateG, renderStateB, renderStateA)
+            .endVertex();
     bufferBuilder
-        .pos(matrix4f, x + width, y + height, 0)
-        .color(renderStateR, renderStateG, renderStateB, renderStateA)
-        .endVertex();
+            .pos(matrix4f, x + width, y + height, 0)
+            .color(renderStateR, renderStateG, renderStateB, renderStateA)
+            .endVertex();
     bufferBuilder
-        .pos(matrix4f, x + width, y, 0)
-        .color(renderStateR, renderStateG, renderStateB, renderStateA)
-        .endVertex();
+            .pos(matrix4f, x + width, y, 0)
+            .color(renderStateR, renderStateG, renderStateB, renderStateA)
+            .endVertex();
     bufferBuilder
-        .pos(matrix4f, x, y, 0)
-        .color(renderStateR, renderStateG, renderStateB, renderStateA)
-        .endVertex();
+            .pos(matrix4f, x, y, 0)
+            .color(renderStateR, renderStateG, renderStateB, renderStateA)
+            .endVertex();
     tessellator.draw();
     postRenderNoTexture();
   }
@@ -551,32 +563,32 @@ public class GLUtil {
    * @see #drawTexturedRectWithDefaultUV(MatrixStack, int, int, int, int)
    * @see #drawTexturedRectWithDefaultUV(MatrixStack, int, int, int, int, ResourceLocation)
    * @see #drawTexturedRectWithCustomSizedTexture(MatrixStack, int, int, int, int, int, int, int,
-   *     int, int, int)
+   * int, int, int)
    * @see #drawTexturedRectWithCustomSizedTexture(MatrixStack, int, int, int, int, int, int, int,
-   *     int, int, int, ResourceLocation)
+   * int, int, int, ResourceLocation)
    * @see #drawTexturedRectWithCustomSizedTextureWithDefaultUV(MatrixStack, int, int, int, int, int,
-   *     int, int, int)
+   * int, int, int)
    * @see #drawTexturedRectWithCustomSizedTextureWithDefaultUV(MatrixStack, int, int, int, int, int,
-   *     int, int, int, ResourceLocation)
+   * int, int, int, ResourceLocation)
    */
   public static void drawTexturedRect(
-      MatrixStack matrixStack, int x, int y, int u, int v, int width, int height) {
+          MatrixStack matrixStack, int x, int y, int u, int v, int width, int height) {
     preRenderTexture();
     double m = 1D / 256D;
     bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
     Matrix4f matrix4f = matrixStack.getLast().getMatrix();
     bufferBuilder
-        .pos(matrix4f, x, y + height, 0)
-        .tex((float) (m * u), (float) (m * (v + height)))
-        .endVertex();
+            .pos(matrix4f, x, y + height, 0)
+            .tex((float) (m * u), (float) (m * (v + height)))
+            .endVertex();
     bufferBuilder
-        .pos(matrix4f, x + width, y + height, 0)
-        .tex((float) (m * (u + width)), (float) (m * (v + height)))
-        .endVertex();
+            .pos(matrix4f, x + width, y + height, 0)
+            .tex((float) (m * (u + width)), (float) (m * (v + height)))
+            .endVertex();
     bufferBuilder
-        .pos(matrix4f, x + width, y, 0)
-        .tex((float) (m * (u + width)), (float) (m * v))
-        .endVertex();
+            .pos(matrix4f, x + width, y, 0)
+            .tex((float) (m * (u + width)), (float) (m * v))
+            .endVertex();
     bufferBuilder.pos(matrix4f, x, y, 0).tex((float) (m * u), (float) (m * v)).endVertex();
     tessellator.draw();
     postRenderTexture();
@@ -589,14 +601,14 @@ public class GLUtil {
    * @see #drawTexturedRect(MatrixStack, int, int, int, int, int, int)
    */
   public static void drawTexturedRect(
-      MatrixStack matrixStack,
-      int x,
-      int y,
-      int u,
-      int v,
-      int width,
-      int height,
-      ResourceLocation textureLocation) {
+          MatrixStack matrixStack,
+          int x,
+          int y,
+          int u,
+          int v,
+          int width,
+          int height,
+          ResourceLocation textureLocation) {
     bindTexture(textureLocation);
     drawTexturedRect(matrixStack, x, y, u, v, width, height);
   }
@@ -608,7 +620,7 @@ public class GLUtil {
    * @see #drawTexturedRect(MatrixStack, int, int, int, int, int, int)
    */
   public static void drawTexturedRectWithDefaultUV(
-      MatrixStack matrixStack, int x, int y, int width, int height) {
+          MatrixStack matrixStack, int x, int y, int width, int height) {
     drawTexturedRect(matrixStack, x, y, 0, 0, width, height);
   }
 
@@ -620,12 +632,12 @@ public class GLUtil {
    * @see #drawTexturedRect(MatrixStack, int, int, int, int, int, int)
    */
   public static void drawTexturedRectWithDefaultUV(
-      MatrixStack matrixStack,
-      int x,
-      int y,
-      int width,
-      int height,
-      ResourceLocation textureLocation) {
+          MatrixStack matrixStack,
+          int x,
+          int y,
+          int width,
+          int height,
+          ResourceLocation textureLocation) {
     bindTexture(textureLocation);
     drawTexturedRect(matrixStack, x, y, 0, 0, width, height);
   }
@@ -635,63 +647,65 @@ public class GLUtil {
    *
    * @see #drawTexturedRect(MatrixStack, int, int, int, int, int, int)
    * @see #drawTexturedRectWithCustomSizedTexture(MatrixStack, int, int, int, int, int, int, int,
-   *     int, int, int, ResourceLocation)
+   * int, int, int, ResourceLocation)
    * @see #drawTexturedRectWithCustomSizedTextureWithDefaultUV(MatrixStack, int, int, int, int, int,
-   *     int, int, int)
+   * int, int, int)
    * @see #drawTexturedRectWithCustomSizedTextureWithDefaultUV(MatrixStack, int, int, int, int, int,
-   *     int, int, int, ResourceLocation)
+   * int, int, int, ResourceLocation)
    */
   public static void drawTexturedRectWithCustomSizedTexture(
-      MatrixStack matrixStack,
-      int x,
-      int y,
-      int u,
-      int v,
-      int width,
-      int height,
-      int drawWidth,
-      int drawHeight,
-      int textureWidth,
-      int textureHeight) {
+          MatrixStack matrixStack,
+          int x,
+          int y,
+          int u,
+          int v,
+          int width,
+          int height,
+          int drawWidth,
+          int drawHeight,
+          int textureWidth,
+          int textureHeight) {
     preRenderTexture();
     double mw = 1D / (double) textureWidth;
     double mh = 1D / (double) textureHeight;
     bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
     Matrix4f matrix4f = matrixStack.getLast().getMatrix();
     bufferBuilder
-        .pos(matrix4f, x, y + height, 0)
-        .tex((float) (mw * u), (float) (mh * (v + height)))
-        .endVertex();
+            .pos(matrix4f, x, y + height, 0)
+            .tex((float) (mw * u), (float) (mh * (v + height)))
+            .endVertex();
     bufferBuilder
-        .pos(matrix4f, x + width, y + height, 0)
-        .tex((float) (mw * (u + width)), (float) (mh * (v + height)))
-        .endVertex();
+            .pos(matrix4f, x + width, y + height, 0)
+            .tex((float) (mw * (u + width)), (float) (mh * (v + height)))
+            .endVertex();
     bufferBuilder
-        .pos(matrix4f, x + width, y, 0)
-        .tex((float) (mw * (u + width)), (float) (mh * v))
-        .endVertex();
+            .pos(matrix4f, x + width, y, 0)
+            .tex((float) (mw * (u + width)), (float) (mh * v))
+            .endVertex();
     bufferBuilder.pos(matrix4f, x, y, 0).tex((float) (mw * u), (float) (mh * v)).endVertex();
     tessellator.draw();
     postRenderTexture();
   }
 
-  /** 绘制矩形贴图, 可缩放纹理, 可自行指定贴图大小, 可指定{@link ResourceLocation} */
+  /**
+   * 绘制矩形贴图, 可缩放纹理, 可自行指定贴图大小, 可指定{@link ResourceLocation}
+   */
   public static void drawTexturedRectWithCustomSizedTexture(
-      MatrixStack matrixStack,
-      int x,
-      int y,
-      int u,
-      int v,
-      int width,
-      int height,
-      int drawWidth,
-      int drawHeight,
-      int textureWidth,
-      int textureHeight,
-      ResourceLocation textureLocation) {
+          MatrixStack matrixStack,
+          int x,
+          int y,
+          int u,
+          int v,
+          int width,
+          int height,
+          int drawWidth,
+          int drawHeight,
+          int textureWidth,
+          int textureHeight,
+          ResourceLocation textureLocation) {
     bindTexture(textureLocation);
     drawTexturedRectWithCustomSizedTexture(
-        matrixStack, x, y, u, v, width, height, drawWidth, drawHeight, textureWidth, textureHeight);
+            matrixStack, x, y, u, v, width, height, drawWidth, drawHeight, textureWidth, textureHeight);
   }
 
   /**
@@ -699,17 +713,17 @@ public class GLUtil {
    * UV为0, 即总是从贴图左上角开始绘制。
    */
   public static void drawTexturedRectWithCustomSizedTextureWithDefaultUV(
-      MatrixStack matrixStack,
-      int x,
-      int y,
-      int width,
-      int height,
-      int drawWidth,
-      int drawHeight,
-      int textureWidth,
-      int textureHeight) {
+          MatrixStack matrixStack,
+          int x,
+          int y,
+          int width,
+          int height,
+          int drawWidth,
+          int drawHeight,
+          int textureWidth,
+          int textureHeight) {
     drawTexturedRectWithCustomSizedTexture(
-        matrixStack, x, y, 0, 0, width, height, drawWidth, drawHeight, textureWidth, textureHeight);
+            matrixStack, x, y, 0, 0, width, height, drawWidth, drawHeight, textureWidth, textureHeight);
   }
 
   /**
@@ -717,19 +731,19 @@ public class GLUtil {
    * UV为0, 即总是从贴图左上角开始绘制。
    */
   public static void drawTexturedRectWithCustomSizedTextureWithDefaultUV(
-      MatrixStack matrixStack,
-      int x,
-      int y,
-      int width,
-      int height,
-      int drawWidth,
-      int drawHeight,
-      int textureWidth,
-      int textureHeight,
-      ResourceLocation textureLocation) {
+          MatrixStack matrixStack,
+          int x,
+          int y,
+          int width,
+          int height,
+          int drawWidth,
+          int drawHeight,
+          int textureWidth,
+          int textureHeight,
+          ResourceLocation textureLocation) {
     bindTexture(textureLocation);
     drawTexturedRectWithCustomSizedTexture(
-        matrixStack, x, y, 0, 0, width, height, drawWidth, drawHeight, textureWidth, textureHeight);
+            matrixStack, x, y, 0, 0, width, height, drawWidth, drawHeight, textureWidth, textureHeight);
   }
 
   private static final class EmptyScreen extends Screen {

@@ -55,6 +55,8 @@ repositories {
         }
     }
 
+    jcenter()
+
     maven {
         // location of the maven that hosts JEI files
         name = 'Progwml6 maven'
