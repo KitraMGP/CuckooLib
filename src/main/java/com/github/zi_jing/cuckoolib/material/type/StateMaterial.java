@@ -4,8 +4,8 @@ import com.github.zi_jing.cuckoolib.material.MatterState;
 
 public class StateMaterial extends Material {
   /**
-   * meltingPoint &lt; boilingPoint &lt; plasmaPoint, 均使用热力学温度, 负数代表不存在该形态(如meltingPoint = -1代表不存在液态),
-   * 若首个非负数据为0则不存在固态
+   * meltingPoint &lt; boilingPoint &lt; plasmaPoint, 均使用热力学温度, 负数代表不存在该形态(如meltingPoint =
+   * -1代表不存在液态), 若首个非负数据为0则不存在固态
    */
   public float meltingPoint = -1, boilingPoint = -1, plasmaPoint = -1;
 
