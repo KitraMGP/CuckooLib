@@ -10,7 +10,11 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = CuckooLib.MODID, name = CuckooLib.NAME, version = CuckooLib.VERSION, useMetadata = true)
+@Mod(
+    modid = CuckooLib.MODID,
+    name = CuckooLib.NAME,
+    version = CuckooLib.VERSION,
+    useMetadata = true)
 public class CuckooLib {
 	public static final String MODID = "cuckoolib";
 	public static final String NAME = "CuckooLib";

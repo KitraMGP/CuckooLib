@@ -120,28 +120,28 @@ public enum Element {
 	Ts("Tennessine"   , 117, 177),
 	Og("Oganesson"    , 118, 176);
 
-	private String name;
-	private int proton, neutron;
+  private String name;
+  private int proton, neutron;
 
-	Element(String name, int proton, int neutron) {
-		this.name = name;
-		this.proton = proton;
-		this.neutron = neutron;
-	}
+  Element(String name, int proton, int neutron) {
+    this.name = name;
+    this.proton = proton;
+    this.neutron = neutron;
+  }
 
-	public String getName() {
-		return this.name;
-	}
+  public String getName() {
+    return this.name;
+  }
 
-	public int getProton() {
-		return this.proton;
-	}
+  public int getProton() {
+    return this.proton;
+  }
 
-	public int getNeutron() {
-		return this.neutron;
-	}
+  public int getNeutron() {
+    return this.neutron;
+  }
 
-	public int getRelativeMass() {
-		return this.proton + this.neutron;
-	}
+  public int getRelativeMass() {
+    return this.proton + this.neutron;
+  }
 }
