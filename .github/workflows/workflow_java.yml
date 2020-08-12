@@ -32,9 +32,9 @@ jobs:
         # For instance, jobs with different JDK versions can't share caches
         # RUNNER_OS is added to job-id automatically
         job-id: cl
-    - uses: axel-op/googlejavaformat-action@v3
-      with:
-        args: "--skip-sorting-imports --replace"
+    #- uses: axel-op/googlejavaformat-action@v3
+    #  with:
+    #    args: "--skip-sorting-imports --replace"
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
