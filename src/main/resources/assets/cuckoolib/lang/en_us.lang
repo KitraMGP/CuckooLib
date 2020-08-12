@@ -1,0 +1,21 @@
+
+cuckoolib.shape.dust.name=%s Dust
+
+cuckoolib.material.hydrogen.name=Hydrogen
+cuckoolib.material.helium.name=Helium
+cuckoolib.material.lithium.name=Lithium
+cuckoolib.material.beryllium.name=Beryllium
+cuckoolib.material.boron.name=Boron
+cuckoolib.material.carbon.name=Carbon
+cuckoolib.material.nitrogen.name=Nitrogen
+cuckoolib.material.oxygen.name=Oxygen
+cuckoolib.material.fluorine.name=Fluorine
+cuckoolib.material.neon.name=Neon
+cuckoolib.material.sodium.name=Sodium
+cuckoolib.material.magnesium.name=Magnesium
+cuckoolib.material.aluminium.name=Aluminium
+cuckoolib.material.silicon.name=Silicon
+cuckoolib.material.phosphor.name=Phosphor
+cuckoolib.material.sulfur.name=Sulfur
+cuckoolib.material.chlorine.name=Chlorine
+cuckoolib.material.argon.name=Argon
