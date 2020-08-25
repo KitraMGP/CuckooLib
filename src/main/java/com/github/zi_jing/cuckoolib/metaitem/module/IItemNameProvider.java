@@ -4,5 +4,10 @@ import net.minecraft.item.ItemStack;
 
 @FunctionalInterface
 public interface IItemNameProvider extends IItemModule {
-  String getItemStackDisplayName(ItemStack stack);
+	@Override
+	default Class<? extends IItemModule> getRegistryID() {
+		return IItemNameProvider.class;
+	}
+
+	String getItemStackDisplayName(ItemStack stack);
 }

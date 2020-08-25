@@ -3,9 +3,14 @@ package com.github.zi_jing.cuckoolib.metaitem.module;
 import net.minecraft.item.ItemStack;
 
 public interface IToolDamage extends IItemModule {
-  void damageItem(ItemStack stack, int damage);
+	@Override
+	default Class<? extends IItemModule> getRegistryID() {
+		return IToolDamage.class;
+	}
 
-  int getItemDamage(ItemStack stack);
+	void damageItem(ItemStack stack, int damage);
 
-  int getItemMaxDamage(ItemStack stack);
+	int getItemDamage(ItemStack stack);
+
+	int getItemMaxDamage(ItemStack stack);
 }

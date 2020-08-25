@@ -11,40 +11,34 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public interface IItemUse extends IItemModule {
-  EnumAction getItemUseAction(ItemStack stack);
+	@Override
+	default Class<? extends IItemModule> getRegistryID() {
+		return IItemUse.class;
+	}
 
-  int getMaxItemUseDuration(ItemStack stack);
+	EnumAction getItemUseAction(ItemStack stack);
 
-  default EnumActionResult onItemUseFirst(
-      EntityPlayer player,
-      World world,
-      BlockPos pos,
-      EnumFacing side,
-      float hitX,
-      float hitY,
-      float hitZ,
-      EnumHand hand) {
-    return EnumActionResult.PASS;
-  }
+	int getMaxItemUseDuration(ItemStack stack);
 
-  default EnumActionResult onItemUse(
-      EntityPlayer player,
-      World world,
-      BlockPos pos,
-      EnumHand hand,
-      EnumFacing facing,
-      float hitX,
-      float hitY,
-      float hitZ) {
-    return EnumActionResult.PASS;
-  }
+	default EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
+			float hitY, float hitZ, EnumHand hand) {
+		return EnumActionResult.PASS;
+	}
 
-  default void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {}
+	default EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
+			float hitX, float hitY, float hitZ) {
+		return EnumActionResult.PASS;
+	}
 
-  default void onPlayerStoppedUsing(
-      ItemStack stack, World world, EntityLivingBase player, int timeLeft) {}
+	default void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 
-  default ItemStack onItemUseFinish(ItemStack stack, EntityLivingBase player) {
-    return stack;
-  }
+	}
+
+	default void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase player, int timeLeft) {
+
+	}
+
+	default ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase player) {
+		return stack;
+	}
 }

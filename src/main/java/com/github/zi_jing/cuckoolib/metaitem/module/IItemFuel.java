@@ -4,5 +4,10 @@ import net.minecraft.item.ItemStack;
 
 @FunctionalInterface
 public interface IItemFuel extends IItemModule {
-  int getItemBurnTime(ItemStack stack);
+	@Override
+	default Class<? extends IItemModule> getRegistryID() {
+		return IItemFuel.class;
+	}
+
+	int getItemBurnTime(ItemStack stack);
 }

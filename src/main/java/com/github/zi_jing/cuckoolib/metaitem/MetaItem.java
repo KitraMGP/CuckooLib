@@ -12,11 +12,14 @@ import org.apache.commons.lang3.Validate;
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.metaitem.module.IContainerItemProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IDurabilityBarProvider;
+import com.github.zi_jing.cuckoolib.metaitem.module.IItemFuel;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemInteraction;
+import com.github.zi_jing.cuckoolib.metaitem.module.IItemModelProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemNameProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemTooltipProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemUse;
 import com.github.zi_jing.cuckoolib.metaitem.module.IToolDamage;
+import com.github.zi_jing.cuckoolib.util.IRegistrable;
 
 import gnu.trove.map.TShortObjectMap;
 import gnu.trove.map.hash.TShortObjectHashMap;
@@ -48,464 +51,380 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = CuckooLib.MODID)
-public class MetaItem extends Item {
-  protected static final List<MetaItem> META_ITEMS = new ArrayList<>();
+public class MetaItem extends Item implements IRegistrable {
+	protected static final List<MetaItem> META_ITEMS = new ArrayList<>();
 
-  protected final String modid;
+	protected final String modid;
 
-  /** 用于存储MetaValueItem的注册表 */
-  protected final TShortObjectMap<MetaValueItem> metaItem;
+	/** 用于存储MetaValueItem的注册表 */
+	protected final TShortObjectMap<MetaValueItem> metaItem;
 
-  /** 用于存储MetaValueItem模型的注册表 */
-  protected final TShortObjectMap<List<ModelResourceLocation>> itemModel;
+	/** 用于存储MetaValueItem模型的注册表 */
+	protected final TShortObjectMap<List<ModelResourceLocation>> itemModel;
 
-  public MetaItem(String modid, String name) {
-    this.setHasSubtypes(true);
-    this.setMaxDamage(0);
-    this.setNoRepair();
-    this.setRegistryName(modid, name);
-    this.modid = modid;
-    this.metaItem = new TShortObjectHashMap<>();
-    this.itemModel = new TShortObjectHashMap<>();
-    META_ITEMS.add(this);
-  }
+	public MetaItem(String modid, String name) {
+		this.setHasSubtypes(true);
+		this.setMaxDamage(0);
+		this.setNoRepair();
+		this.setRegistryName(modid, name);
+		this.modid = modid;
+		this.metaItem = new TShortObjectHashMap<>();
+		this.itemModel = new TShortObjectHashMap<>();
+		META_ITEMS.add(this);
+	}
 
-  public MetaItem(ResourceLocation registryName) {
-    this(registryName.getResourceDomain(), registryName.getResourcePath());
-  }
+	public MetaItem(ResourceLocation registryName) {
+		this(registryName.getResourceDomain(), registryName.getResourcePath());
+	}
 
-  public static List<MetaItem> getMetaItems() {
-    return Collections.unmodifiableList(META_ITEMS);
-  }
+	@Override
+	public void register() {
+		META_ITEMS.add(this);
+	}
 
-  @SubscribeEvent
-  public static void registerModels(ModelRegistryEvent event) {
-    META_ITEMS.forEach(MetaItem::registerItemModel);
-  }
+	public static List<MetaItem> getMetaItems() {
+		return Collections.unmodifiableList(META_ITEMS);
+	}
 
-  @SubscribeEvent
-  public static void registerMetaItems(Register<Item> e) {
-    e.getRegistry().registerAll(META_ITEMS.toArray(new MetaItem[0]));
-  }
+	@SubscribeEvent
+	public static void registerModels(ModelRegistryEvent event) {
+		META_ITEMS.forEach(MetaItem::registerItemModel);
+	}
 
-  public static void registerItemColor() {
-    META_ITEMS.forEach(
-        (item) ->
-            Minecraft.getMinecraft()
-                .getItemColors()
-                .registerItemColorHandler(item::getItemColor, item));
-  }
+	@SubscribeEvent
+	public static void registerMetaItems(Register<Item> e) {
+		e.getRegistry().registerAll(META_ITEMS.toArray(new MetaItem[0]));
+	}
 
-  @Override
-  public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
-    if (this.isInCreativeTab(tab)) {
-      this.metaItem.forEachValue(
-          (metaValueItem) -> {
-            items.add(metaValueItem.getItemStack());
-            return true;
-          });
-    }
-  }
+	public static void registerItemColor() {
+		META_ITEMS.forEach(
+				(item) -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(item::getItemColor, item));
+	}
 
-  @SideOnly(Side.CLIENT)
-  protected int getItemColor(ItemStack stack, int tintIndex) {
-    return 0xffffff;
-  }
+	@Override
+	public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
+		if (this.isInCreativeTab(tab)) {
+			this.metaItem.forEachValue((metaValueItem) -> {
+				items.add(metaValueItem.getItemStack());
+				return true;
+			});
+		}
+	}
 
-  @SideOnly(Side.CLIENT)
-  public void registerItemModel() {
-    this.metaItem.forEachEntry(
-        (id, metaValueItem) -> {
-          int modelCount = metaValueItem.modelCount;
-          if (modelCount == 1) {
-            ResourceLocation location = this.getItemModel(metaValueItem);
-            ModelBakery.registerItemVariants(this, location);
-            this.itemModel.put(id, Arrays.asList(new ModelResourceLocation(location, "inventory")));
-          } else if (modelCount > 1) {
-            List<ModelResourceLocation> models = new ArrayList<>();
-            for (int i = 0; i < modelCount; i++) {
-              ResourceLocation location = this.getItemModel(metaValueItem, i);
-              ModelBakery.registerItemVariants(this, location);
-              models.add(new ModelResourceLocation(location, "inventory"));
-            }
-            this.itemModel.put(id, models);
-          }
-          return true;
-        });
-    ModelLoader.setCustomMeshDefinition(
-        this,
-        (stack) -> {
-          short metadata = (short) stack.getMetadata();
-          MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-          if (metaValueItem == null) {
-            return ModelBakery.MODEL_MISSING;
-          }
-          int modelCount = metaValueItem.modelCount;
-          List<ModelResourceLocation> models = this.itemModel.get(metadata);
-          if (modelCount == 1 && !models.isEmpty()) {
-            return models.get(0);
-          } else if (modelCount > 1 && !models.isEmpty()) {
-            if (metaValueItem.containsModule("modelProvider")) {
-              return models.get(metaValueItem.modelProvider.getModelIndex(stack));
-            }
-            return models.get(0);
-          }
-          return ModelBakery.MODEL_MISSING;
-        });
-  }
+	@SideOnly(Side.CLIENT)
+	protected int getItemColor(ItemStack stack, int tintIndex) {
+		return 0xffffff;
+	}
 
-  public ResourceLocation getItemModel(MetaValueItem metaValueItem, int id) {
-    return new ResourceLocation(this.modid, "metaitem/" + metaValueItem.unlocalizedName + "." + id);
-  }
+	@SideOnly(Side.CLIENT)
+	public void registerItemModel() {
+		this.metaItem.forEachEntry((id, metaValueItem) -> {
+			int modelCount = metaValueItem.modelCount;
+			if (modelCount == 1) {
+				ResourceLocation location = this.getItemModel(metaValueItem);
+				ModelBakery.registerItemVariants(this, location);
+				this.itemModel.put(id, Arrays.asList(new ModelResourceLocation(location, "inventory")));
+			} else if (modelCount > 1) {
+				List<ModelResourceLocation> models = new ArrayList<>();
+				for (int i = 0; i < modelCount; i++) {
+					ResourceLocation location = this.getItemModel(metaValueItem, i);
+					ModelBakery.registerItemVariants(this, location);
+					models.add(new ModelResourceLocation(location, "inventory"));
+				}
+				this.itemModel.put(id, models);
+			}
+			return true;
+		});
+		ModelLoader.setCustomMeshDefinition(this, (stack) -> {
+			short metadata = (short) stack.getMetadata();
+			MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+			if (metaValueItem == null) {
+				return ModelBakery.MODEL_MISSING;
+			}
+			int modelCount = metaValueItem.modelCount;
+			List<ModelResourceLocation> models = this.itemModel.get(metadata);
+			if (modelCount == 1 && !models.isEmpty()) {
+				return models.get(0);
+			} else if (modelCount > 1 && !models.isEmpty()) {
+				if (metaValueItem.containsModule(IItemModelProvider.class)) {
+					return models.get(metaValueItem.getModule(IItemModelProvider.class).getModelIndex(stack));
+				}
+				return models.get(0);
+			}
+			return ModelBakery.MODEL_MISSING;
+		});
+	}
 
-  public ResourceLocation getItemModel(MetaValueItem metaValueItem) {
-    return new ResourceLocation(this.modid, "metaitem/" + metaValueItem.unlocalizedName);
-  }
+	public ResourceLocation getItemModel(MetaValueItem metaValueItem, int id) {
+		return new ResourceLocation(this.modid, "metaitem/" + metaValueItem.unlocalizedName + "." + id);
+	}
 
-  protected MetaValueItem createMetaValueItem(short id, String unlocalizedName) {
-    return new MetaValueItem(this, id, unlocalizedName);
-  }
+	public ResourceLocation getItemModel(MetaValueItem metaValueItem) {
+		return new ResourceLocation(this.modid, "metaitem/" + metaValueItem.unlocalizedName);
+	}
 
-  /**
-   * 给这个MetaItem添加子物品
-   *
-   * @param id 物品所对应的metadata值，范围为[0, {@code Short.MAX_VALUE} - 1]。 该值在同一个{@link
-   *     MetaItem}中必须是唯一且不变的，它不应该随着版本更新而改变。
-   * @param unlocalizedName 物品的本地化键(无需添加modid，modid会自动添加)。 例子：当该参数为{@code "eok_symbol"}时且{@code
-   *     modid}为{@code "eok"}时， 物品名字的本地化键将为{@code "metaitem.eok.eok_symbol.name"}
-   * @return 方法创建的{@link MetaValueItem}实例。你可以保留它，也可以使用 {@link #getMetaValueItem(short)}获取它。
-   */
-  public MetaValueItem addItem(int id, String unlocalizedName) {
-    Validate.inclusiveBetween(
-        0,
-        Short.MAX_VALUE - 1,
-        id,
-        "MetaValueItem ID [ " + id + " ] of item [ " + unlocalizedName + " ] is invalid");
-    if (this.metaItem.containsKey((short) id)) {
-      throw new IllegalArgumentException(
-          "MetaValueItem ID [ " + id + " ] of item [ " + unlocalizedName + " ] is registered");
-    }
-    MetaValueItem metaValueItem = this.createMetaValueItem((short) id, unlocalizedName);
-    this.metaItem.put((short) id, metaValueItem);
-    return metaValueItem;
-  }
+	protected MetaValueItem createMetaValueItem(short id, String unlocalizedName) {
+		return new MetaValueItem(this, id, unlocalizedName);
+	}
 
-  public MetaValueItem getMetaValueItem(short id) {
-    if (this.metaItem.containsKey(id)) {
-      return this.metaItem.get(id);
-    }
-    return null;
-  }
+	/**
+	 * 给这个MetaItem添加子物品
+	 *
+	 * @param id              物品所对应的metadata值，范围为[0, {@code Short.MAX_VALUE} - 1]。
+	 *                        该值在同一个{@link MetaItem}中必须是唯一且不变的，它不应该随着版本更新而改变。
+	 * @param unlocalizedName 物品的本地化键(无需添加modid，modid会自动添加)。
+	 *                        例子：当该参数为{@code "eok_symbol"}时且{@code
+	 *     modid}          为{@code "eok"}时，
+	 *                        物品名字的本地化键将为{@code "metaitem.eok.eok_symbol.name"}
+	 * @return 方法创建的{@link MetaValueItem}实例。你可以保留它，也可以使用
+	 *         {@link #getMetaValueItem(short)}获取它。
+	 */
+	public MetaValueItem addItem(int id, String unlocalizedName) {
+		Validate.inclusiveBetween(0, Short.MAX_VALUE - 1, id,
+				"MetaValueItem ID [ " + id + " ] of item [ " + unlocalizedName + " ] is invalid");
+		if (this.metaItem.containsKey((short) id)) {
+			throw new IllegalArgumentException(
+					"MetaValueItem ID [ " + id + " ] of item [ " + unlocalizedName + " ] is registered");
+		}
+		MetaValueItem metaValueItem = this.createMetaValueItem((short) id, unlocalizedName);
+		this.metaItem.put((short) id, metaValueItem);
+		return metaValueItem;
+	}
 
-  public MetaValueItem getMetaValueItem(ItemStack stack) {
-    return this.getMetaValueItem((short) stack.getMetadata());
-  }
+	public MetaValueItem getMetaValueItem(short id) {
+		if (this.metaItem.containsKey(id)) {
+			return this.metaItem.get(id);
+		}
+		return null;
+	}
 
-  @Nonnull
-  @Override
-  public String getUnlocalizedName(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    return metaValueItem != null
-        ? "metaitem." + this.modid + "." + metaValueItem.getUnlocalizedName()
-        : "metaitem.error";
-  }
+	public MetaValueItem getMetaValueItem(ItemStack stack) {
+		return this.getMetaValueItem((short) stack.getMetadata());
+	}
 
-  @Override
-  public int getItemStackLimit(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    return metaValueItem != null ? metaValueItem.getItemStackLimit() : 64;
-  }
+	@Nonnull
+	@Override
+	public String getUnlocalizedName(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		return metaValueItem != null ? "metaitem." + this.modid + "." + metaValueItem.getUnlocalizedName()
+				: "metaitem.error";
+	}
 
-  @Nonnull
-  @Override
-  public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemNameProvider provider = metaValueItem.nameProvider;
-      if (provider != null) {
-        return provider.getItemStackDisplayName(stack);
-      }
-    }
-    return super.getItemStackDisplayName(stack);
-  }
+	@Override
+	public int getItemStackLimit(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		return metaValueItem != null ? metaValueItem.getItemStackLimit() : 64;
+	}
 
-  @Override
-  @SideOnly(Side.CLIENT)
-  public void addInformation(
-      @Nonnull ItemStack stack,
-      World world,
-      @Nonnull List<String> tooltip,
-      @Nonnull ITooltipFlag flag) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemTooltipProvider provider = metaValueItem.tooltipProvider;
-      if (provider != null) {
-        provider.addInformation(stack, world, tooltip, flag);
-        return;
-      }
-    }
-    super.getItemStackDisplayName(stack);
-  }
+	@Nonnull
+	@Override
+	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemNameProvider.class)) {
+			return metaValueItem.getModule(IItemNameProvider.class).getItemStackDisplayName(stack);
+		}
+		return super.getItemStackDisplayName(stack);
+	}
 
-  /* ---------- ItemContainerModule ---------- */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(@Nonnull ItemStack stack, World world, @Nonnull List<String> tooltip,
+			@Nonnull ITooltipFlag flag) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemTooltipProvider.class)) {
+			metaValueItem.getModule(IItemTooltipProvider.class).addInformation(stack, world, tooltip, flag);
+			return;
+		}
+		super.getItemStackDisplayName(stack);
+	}
 
-  /** @see net.minecraft.item.Item#getContainerItem */
-  @Nonnull
-  @Override
-  public ItemStack getContainerItem(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IContainerItemProvider provider = metaValueItem.containerModule;
-      if (provider != null) {
-        return provider.getContainerItem(stack);
-      }
-    }
-    return super.getContainerItem(stack);
-  }
+	/* ---------- ItemContainerModule ---------- */
 
-  /* ---------- ItemToolDamageModule ---------- */
+	/** @see net.minecraft.item.Item#getContainerItem */
+	@Nonnull
+	@Override
+	public ItemStack getContainerItem(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IContainerItemProvider.class)) {
+			return metaValueItem.getModule(IContainerItemProvider.class).getContainerItem(stack);
+		}
+		return super.getContainerItem(stack);
+	}
 
-  public void damageItem(ItemStack stack, int damage) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IToolDamage toolDamage = metaValueItem.toolDamage;
-      if (toolDamage != null) {
-        toolDamage.damageItem(stack, damage);
-      }
-    }
-  }
+	/* ---------- ItemToolDamageModule ---------- */
 
-  public int getItemDamage(ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IToolDamage toolDamage = metaValueItem.toolDamage;
-      if (toolDamage != null) {
-        return toolDamage.getItemDamage(stack);
-      }
-    }
-    return 0;
-  }
+	public void damageItem(ItemStack stack, int damage) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IToolDamage.class)) {
+			metaValueItem.getModule(IToolDamage.class).damageItem(stack, damage);
+		}
+	}
 
-  public int getItemMaxDamage(ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IToolDamage toolDamage = metaValueItem.toolDamage;
-      if (toolDamage != null) {
-        return toolDamage.getItemMaxDamage(stack);
-      }
-    }
-    return 0;
-  }
+	public int getItemDamage(ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IToolDamage.class)) {
+			return metaValueItem.getModule(IToolDamage.class).getItemDamage(stack);
+		}
+		return 0;
+	}
 
-  /* ---------- ItemDurabilityBarModule ---------- */
+	public int getItemMaxDamage(ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IToolDamage.class)) {
+			return metaValueItem.getModule(IToolDamage.class).getItemMaxDamage(stack);
+		}
+		return 0;
+	}
 
-  /** @see net.minecraft.item.Item#showDurabilityBar */
-  @Override
-  public boolean showDurabilityBar(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IDurabilityBarProvider provider = metaValueItem.durabilityBarProvider;
-      if (provider != null) {
-        return provider.showDurabilityBar(stack);
-      }
-    }
-    return super.showDurabilityBar(stack);
-  }
+	/* ---------- ItemDurabilityBarModule ---------- */
 
-  /** @see net.minecraft.item.Item#getDurabilityForDisplay */
-  @Override
-  public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IDurabilityBarProvider provider = metaValueItem.durabilityBarProvider;
-      if (provider != null) {
-        return provider.getDurabilityForDisplay(stack);
-      }
-    }
-    return super.getDurabilityForDisplay(stack);
-  }
+	/** @see net.minecraft.item.Item#showDurabilityBar */
+	@Override
+	public boolean showDurabilityBar(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IDurabilityBarProvider.class)) {
+			return metaValueItem.getModule(IDurabilityBarProvider.class).showDurabilityBar(stack);
+		}
+		return super.showDurabilityBar(stack);
+	}
 
-  /** @see net.minecraft.item.Item#getRGBDurabilityForDisplay */
-  @Override
-  public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IDurabilityBarProvider provider = metaValueItem.durabilityBarProvider;
-      if (provider != null) {
-        return provider.getRGBDurabilityForDisplay(stack);
-      }
-    }
-    return super.getRGBDurabilityForDisplay(stack);
-  }
+	/** @see net.minecraft.item.Item#getDurabilityForDisplay */
+	@Override
+	public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IDurabilityBarProvider.class)) {
+			return metaValueItem.getModule(IDurabilityBarProvider.class).getDurabilityForDisplay(stack);
+		}
+		return super.getDurabilityForDisplay(stack);
+	}
 
-  /* ---------- ItemInteractionModule ---------- */
+	/** @see net.minecraft.item.Item#getRGBDurabilityForDisplay */
+	@Override
+	public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IDurabilityBarProvider.class)) {
+			return metaValueItem.getModule(IDurabilityBarProvider.class).getRGBDurabilityForDisplay(stack);
+		}
+		return super.getRGBDurabilityForDisplay(stack);
+	}
 
-  /** @see net.minecraft.item.Item#itemInteractionForEntity */
-  @Override
-  public boolean itemInteractionForEntity(
-      @Nonnull ItemStack stack,
-      @Nonnull EntityPlayer playerIn,
-      @Nonnull EntityLivingBase target,
-      @Nonnull EnumHand hand) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemInteraction itemInteraction = metaValueItem.itemInteraction;
-      if (itemInteraction != null) {
-        return itemInteraction.itemInteractionForEntity(stack, playerIn, target, hand);
-      }
-    }
-    return super.itemInteractionForEntity(stack, playerIn, target, hand);
-  }
+	/* ---------- ItemInteractionModule ---------- */
 
-  /** @see net.minecraft.item.Item#onItemRightClick */
-  @Nonnull
-  @Override
-  public ActionResult<ItemStack> onItemRightClick(
-      @Nonnull World world, EntityPlayer player, @Nonnull EnumHand hand) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
-    if (metaValueItem != null) {
-      IItemInteraction itemInteraction = metaValueItem.itemInteraction;
-      if (itemInteraction != null) {
-        return itemInteraction.onItemRightClick(world, player, hand);
-      }
-    }
-    return super.onItemRightClick(world, player, hand);
-  }
+	/** @see net.minecraft.item.Item#itemInteractionForEntity */
+	@Override
+	public boolean itemInteractionForEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer playerIn,
+			@Nonnull EntityLivingBase target, @Nonnull EnumHand hand) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemInteraction.class)) {
+			return metaValueItem.getModule(IItemInteraction.class).itemInteractionForEntity(stack, playerIn, target,
+					hand);
+		}
+		return super.itemInteractionForEntity(stack, playerIn, target, hand);
+	}
 
-  @Override
-  public boolean onLeftClickEntity(
-      @Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull Entity entity) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemInteraction itemInteraction = metaValueItem.itemInteraction;
-      if (itemInteraction != null) {
-        return itemInteraction.onLeftClickEntity(stack, player, entity);
-      }
-    }
-    return super.onLeftClickEntity(stack, player, entity);
-  }
+	/** @see net.minecraft.item.Item#onItemRightClick */
+	@Nonnull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
+		if (metaValueItem != null && metaValueItem.containsModule(IItemInteraction.class)) {
+			return metaValueItem.getModule(IItemInteraction.class).onItemRightClick(world, player, hand);
+		}
+		return super.onItemRightClick(world, player, hand);
+	}
 
-  /* ---------- ItemUseModule ---------- */
+	@Override
+	public boolean onLeftClickEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull Entity entity) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemInteraction.class)) {
+			return metaValueItem.getModule(IItemInteraction.class).onLeftClickEntity(stack, player, entity);
+		}
+		return super.onLeftClickEntity(stack, player, entity);
+	}
 
-  @Nonnull
-  @Override
-  public EnumAction getItemUseAction(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemUse itemUse = metaValueItem.itemUse;
-      if (itemUse != null) {
-        return itemUse.getItemUseAction(stack);
-      }
-    }
-    return super.getItemUseAction(stack);
-  }
+	/* ---------- ItemUseModule ---------- */
 
-  @Override
-  public int getMaxItemUseDuration(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemUse itemUse = metaValueItem.itemUse;
-      if (itemUse != null) {
-        return itemUse.getMaxItemUseDuration(stack);
-      }
-    }
-    return super.getMaxItemUseDuration(stack);
-  }
+	@Nonnull
+	@Override
+	public EnumAction getItemUseAction(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemUse.class)) {
+			return metaValueItem.getModule(IItemUse.class).getItemUseAction(stack);
+		}
+		return super.getItemUseAction(stack);
+	}
 
-  @Nonnull
-  @Override
-  public EnumActionResult onItemUseFirst(
-      EntityPlayer player,
-      @Nonnull World world,
-      @Nonnull BlockPos pos,
-      @Nonnull EnumFacing side,
-      float hitX,
-      float hitY,
-      float hitZ,
-      @Nonnull EnumHand hand) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
-    if (metaValueItem != null) {
-      IItemUse itemUse = metaValueItem.itemUse;
-      if (itemUse != null) {
-        return itemUse.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-      }
-    }
-    return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-  }
+	@Override
+	public int getMaxItemUseDuration(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemUse.class)) {
+			return metaValueItem.getModule(IItemUse.class).getMaxItemUseDuration(stack);
+		}
+		return super.getMaxItemUseDuration(stack);
+	}
 
-  @Nonnull
-  @Override
-  public EnumActionResult onItemUse(
-      EntityPlayer player,
-      @Nonnull World world,
-      @Nonnull BlockPos pos,
-      @Nonnull EnumHand hand,
-      @Nonnull EnumFacing facing,
-      float hitX,
-      float hitY,
-      float hitZ) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
-    if (metaValueItem != null) {
-      IItemUse itemUse = metaValueItem.itemUse;
-      if (itemUse != null) {
-        return itemUse.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-      }
-    }
-    return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-  }
+	@Nonnull
+	@Override
+	public EnumActionResult onItemUseFirst(EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+			@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
+		if (metaValueItem != null && metaValueItem.containsModule(IItemUse.class)) {
+			return metaValueItem.getModule(IItemUse.class).onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ,
+					hand);
+		}
+		return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
+	}
 
-  @Override
-  public void onUsingTick(@Nonnull ItemStack stack, @Nonnull EntityLivingBase player, int count) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemUse itemUse = metaValueItem.itemUse;
-      if (itemUse != null) {
-        itemUse.onUsingTick(stack, player, count);
-        return;
-      }
-    }
-    super.onUsingTick(stack, player, count);
-  }
+	@Nonnull
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos,
+			@Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(player.getHeldItem(hand));
+		if (metaValueItem != null && metaValueItem.containsModule(IItemUse.class)) {
+			return metaValueItem.getModule(IItemUse.class).onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
+		}
+		return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
+	}
 
-  @Override
-  public void onPlayerStoppedUsing(
-      @Nonnull ItemStack stack,
-      @Nonnull World world,
-      @Nonnull EntityLivingBase player,
-      int timeLeft) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemUse itemUse = metaValueItem.itemUse;
-      if (itemUse != null) {
-        itemUse.onPlayerStoppedUsing(stack, world, player, timeLeft);
-        return;
-      }
-    }
-    super.onPlayerStoppedUsing(stack, world, player, timeLeft);
-  }
+	@Override
+	public void onUsingTick(@Nonnull ItemStack stack, @Nonnull EntityLivingBase player, int count) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemUse.class)) {
+			metaValueItem.getModule(IItemUse.class).onUsingTick(stack, player, count);
+			return;
+		}
+		super.onUsingTick(stack, player, count);
+	}
 
-  @Nonnull
-  @Override
-  public ItemStack onItemUseFinish(
-      @Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null) {
-      IItemUse itemUse = metaValueItem.itemUse;
-      if (itemUse != null) {
-        return itemUse.onItemUseFinish(stack, player);
-      }
-    }
-    return super.onItemUseFinish(stack, world, player);
-  }
+	@Override
+	public void onPlayerStoppedUsing(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player,
+			int timeLeft) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemUse.class)) {
+			metaValueItem.getModule(IItemUse.class).onPlayerStoppedUsing(stack, world, player, timeLeft);
+			return;
+		}
+		super.onPlayerStoppedUsing(stack, world, player, timeLeft);
+	}
 
-  /* ---------- ItemFuelModule ---------- */
+	@Nonnull
+	@Override
+	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, @Nonnull World world, @Nonnull EntityLivingBase player) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemUse.class)) {
+			return metaValueItem.getModule(IItemUse.class).onItemUseFinish(stack, world, player);
+		}
+		return super.onItemUseFinish(stack, world, player);
+	}
 
-  @Override
-  public int getItemBurnTime(@Nonnull ItemStack stack) {
-    MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-    if (metaValueItem != null && metaValueItem.containsModule("itemFuel")) {
-      return metaValueItem.itemFuel.getItemBurnTime(stack);
-    }
-    return super.getItemBurnTime(stack);
-  }
+	/* ---------- ItemFuelModule ---------- */
+
+	@Override
+	public int getItemBurnTime(@Nonnull ItemStack stack) {
+		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
+		if (metaValueItem != null && metaValueItem.containsModule(IItemFuel.class)) {
+			return metaValueItem.getModule(IItemFuel.class).getItemBurnTime(stack);
+		}
+		return super.getItemBurnTime(stack);
+	}
 }

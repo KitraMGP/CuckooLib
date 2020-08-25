@@ -74,7 +74,7 @@ public enum Element {
   Lu("Lutetium", 71, 104),
   Hf("Hafnium", 72, 106),
   Ta("Tantalum", 73, 108),
-  W("Wolframium", 74, 110),
+  W("Tungsten", 74, 110),
   Re("Rhenium", 75, 111),
   Os("Osmium", 76, 114),
   Ir("Iridium", 77, 115),
