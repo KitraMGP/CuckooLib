@@ -25,13 +25,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - uses: burrunan/gradle-cache-action@v1
-      name: Cache .gradle
-      with:
+    #- uses: burrunan/gradle-cache-action@v1
+    #  name: Cache .gradle
+    #  with:
         # If you have multiple jobs, use distinct job-id in in case you want to split caches
         # For instance, jobs with different JDK versions can't share caches
         # RUNNER_OS is added to job-id automatically
-        job-id: cl
+    #    job-id: cl
     #- uses: axel-op/googlejavaformat-action@v3
     #  with:
     #    args: "--skip-sorting-imports --replace"
