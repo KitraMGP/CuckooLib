@@ -42,6 +42,7 @@ public class GLUtil {
     private static int renderStateA;
 
     static {
+        // 防止单元测试时出错
         mc = Minecraft.getInstance();
         try {
             fontRenderer = mc.fontRenderer;
@@ -173,7 +174,7 @@ public class GLUtil {
      *            Strings like "3FFF3F", "3fff3f" or "3FfF3f". It also supports strings what starts with '#'
      * @see #hexStringToRGB24(String)
      */
-    public static ColorRGBA hexStringToRGB(String hex) { // TODO 单元测试
+    public static ColorRGBA hexStringToRGB(String hex) {
         return hexRGBToRGB(hexStringToRGB24(hex));
     }
 
@@ -192,8 +193,7 @@ public class GLUtil {
      *
      * @see #getStringWidth(String)
      */
-    public static List<String> splitStringWithWidth(String str, int width) { // TODO 单元测试
-        // TODO
+    public static List<String> splitStringWithWidth(String str, int width) {
         List<String> lines = new ArrayList<>();
         int currWidth = 0;
         StringBuilder builder = new StringBuilder(str.length());
@@ -211,6 +211,8 @@ public class GLUtil {
                 str = str.substring(1);
             }
         }
+        if (!builder.toString().isEmpty())
+            lines.add(builder.toString());
         return lines;
     }
 
@@ -235,6 +237,7 @@ public class GLUtil {
      * @see #drawString(MatrixStack, String, float, float, int)
      */
     public static void drawScaledString(MatrixStack matrixStack, String str, float x, float y, int color, int height) {
+        // matrixStack.scale();
         // TODO
     }
 
