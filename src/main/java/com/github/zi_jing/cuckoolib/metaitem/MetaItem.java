@@ -18,7 +18,6 @@ import com.github.zi_jing.cuckoolib.metaitem.module.IItemModelProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemNameProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemTooltipProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemUse;
-import com.github.zi_jing.cuckoolib.metaitem.module.IToolDamage;
 import com.github.zi_jing.cuckoolib.util.IRegistrable;
 
 import gnu.trove.map.TShortObjectMap;
@@ -51,13 +50,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber(modid = CuckooLib.MODID)
-public class MetaItem extends Item implements IRegistrable {
+public abstract class MetaItem<T extends MetaValueItem> extends Item implements IRegistrable {
 	protected static final List<MetaItem> META_ITEMS = new ArrayList<>();
 
 	protected final String modid;
 
 	/** 用于存储MetaValueItem的注册表 */
-	protected final TShortObjectMap<MetaValueItem> metaItem;
+	protected final TShortObjectMap<T> metaItem;
 
 	/** 用于存储MetaValueItem模型的注册表 */
 	protected final TShortObjectMap<List<ModelResourceLocation>> itemModel;
@@ -163,9 +162,7 @@ public class MetaItem extends Item implements IRegistrable {
 		return new ResourceLocation(this.modid, "metaitem/" + metaValueItem.unlocalizedName);
 	}
 
-	protected MetaValueItem createMetaValueItem(short id, String unlocalizedName) {
-		return new MetaValueItem(this, id, unlocalizedName);
-	}
+	protected abstract T createMetaValueItem(short id, String unlocalizedName);
 
 	/**
 	 * 给这个MetaItem添加子物品
@@ -179,26 +176,26 @@ public class MetaItem extends Item implements IRegistrable {
 	 * @return 方法创建的{@link MetaValueItem}实例。你可以保留它，也可以使用
 	 *         {@link #getMetaValueItem(short)}获取它。
 	 */
-	public MetaValueItem addItem(int id, String unlocalizedName) {
+	public T addItem(int id, String unlocalizedName) {
 		Validate.inclusiveBetween(0, Short.MAX_VALUE - 1, id,
 				"MetaValueItem ID [ " + id + " ] of item [ " + unlocalizedName + " ] is invalid");
 		if (this.metaItem.containsKey((short) id)) {
 			throw new IllegalArgumentException(
 					"MetaValueItem ID [ " + id + " ] of item [ " + unlocalizedName + " ] is registered");
 		}
-		MetaValueItem metaValueItem = this.createMetaValueItem((short) id, unlocalizedName);
+		T metaValueItem = this.createMetaValueItem((short) id, unlocalizedName);
 		this.metaItem.put((short) id, metaValueItem);
 		return metaValueItem;
 	}
 
-	public MetaValueItem getMetaValueItem(short id) {
+	public T getMetaValueItem(short id) {
 		if (this.metaItem.containsKey(id)) {
 			return this.metaItem.get(id);
 		}
 		return null;
 	}
 
-	public MetaValueItem getMetaValueItem(ItemStack stack) {
+	public T getMetaValueItem(ItemStack stack) {
 		return this.getMetaValueItem((short) stack.getMetadata());
 	}
 
@@ -249,31 +246,6 @@ public class MetaItem extends Item implements IRegistrable {
 			return metaValueItem.getModule(IContainerItemProvider.class).getContainerItem(stack);
 		}
 		return super.getContainerItem(stack);
-	}
-
-	/* ---------- ItemToolDamageModule ---------- */
-
-	public void damageItem(ItemStack stack, int damage) {
-		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-		if (metaValueItem != null && metaValueItem.containsModule(IToolDamage.class)) {
-			metaValueItem.getModule(IToolDamage.class).damageItem(stack, damage);
-		}
-	}
-
-	public int getItemDamage(ItemStack stack) {
-		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-		if (metaValueItem != null && metaValueItem.containsModule(IToolDamage.class)) {
-			return metaValueItem.getModule(IToolDamage.class).getItemDamage(stack);
-		}
-		return 0;
-	}
-
-	public int getItemMaxDamage(ItemStack stack) {
-		MetaValueItem metaValueItem = this.getMetaValueItem(stack);
-		if (metaValueItem != null && metaValueItem.containsModule(IToolDamage.class)) {
-			return metaValueItem.getModule(IToolDamage.class).getItemMaxDamage(stack);
-		}
-		return 0;
 	}
 
 	/* ---------- ItemDurabilityBarModule ---------- */
