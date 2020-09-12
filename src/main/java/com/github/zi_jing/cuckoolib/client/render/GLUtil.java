@@ -232,13 +232,17 @@ public class GLUtil {
     }
 
     /**
-     * 在指定位置绘制一个自定义字体大小的字符串。参数{@code height}为缩放后的字体高度(像素), 正常字体大小下字体高度为9像素。
+     * 在指定位置绘制一个自定义字体大小的字符串。参数{@code height}为缩放后的字体高度(像素),
+     * 正常字体大小下字体高度为9像素。
+     * <br><strong>注意: 除非必要, 否则你不应该将其他绘图语句使用的{@link MatrixStack}传入该方法,
+     * 这个方法会污染传入的{@link MatrixStack}。</strong>
      *
      * @see #drawString(MatrixStack, String, float, float, int)
      */
     public static void drawScaledString(MatrixStack matrixStack, String str, float x, float y, int color, int height) {
-        // matrixStack.scale();
-        // TODO
+        float f = ((float) height) / 9;
+        matrixStack.scale(f, f, 1f);
+        drawString(matrixStack, str, x / f, y / f, color);
     }
 
     /**
@@ -251,12 +255,17 @@ public class GLUtil {
     }
 
     /**
-     * 在指定位置绘制一个自定义字体大小的带阴影的字符串。参数{@code height}为缩放后的字体高度(像素), 正常字体大小下字体高度为9像素。
+     * 在指定位置绘制一个自定义字体大小的带阴影的字符串。参数{@code height}为缩放后的字体高度(像素),
+     * 正常字体大小下字体高度为9像素。
+     * <br><strong>注意: 除非必要, 否则你不应该将其他绘图语句使用的{@link MatrixStack}传入该方法,
+     * 这个方法会污染传入的{@link MatrixStack}。</strong>
      *
      * @see #drawString(MatrixStack, String, float, float, int)
      */
     public static void drawScaledStringWithShadow(MatrixStack matrixStack, String str, float x, float y, int color, int height) {
-        // TODO
+        float f = ((float) height) / 9;
+        matrixStack.scale(f, f, 1f);
+        drawStringWithShadow(matrixStack, str, x / f, y / f, color);
     }
 
     /**
@@ -270,12 +279,17 @@ public class GLUtil {
     }
 
     /**
-     * 在指定位置绘制一个自定义字体大小的居中的字符串。参数{@code height}为缩放后的字体高度(像素), 正常字体大小下字体高度为9像素。
+     * 在指定位置绘制一个自定义字体大小的居中的字符串。参数{@code height}为缩放后的字体高度(像素),
+     * 正常字体大小下字体高度为9像素。
+     * <br><strong>注意: 除非必要, 否则你不应该将其他绘图语句使用的{@link MatrixStack}传入该方法,
+     * 这个方法会污染传入的{@link MatrixStack}。</strong>
      *
      * @see #drawString(MatrixStack, String, float, float, int)
      */
     public static void drawScaledCenteredString(MatrixStack matrixStack, String str, float x, float y, int color, int height) {
-        // TODO
+        float f = ((float) height) / 9;
+        matrixStack.scale(f, f, 1f);
+        drawCenteredString(matrixStack, str, x / f, y / f, color);
     }
 
     /**
@@ -289,12 +303,17 @@ public class GLUtil {
     }
 
     /**
-     * 在指定位置绘制一个自定义字体大小的居中带阴影的字符串。参数{@code height}为缩放后的字体高度(像素), 正常字体大小下字体高度为9像素。
+     * 在指定位置绘制一个自定义字体大小的居中带阴影的字符串。参数{@code height}为缩放后的字体高度(像素),
+     * 正常字体大小下字体高度为9像素。
+     * <br><strong>注意: 除非必要, 否则你不应该将其他绘图语句使用的{@link MatrixStack}传入该方法,
+     * 这个方法会污染传入的{@link MatrixStack}。</strong>
      *
      * @see #drawString(MatrixStack, String, float, float, int)
      */
     public static void drawScaledCenteredStringWithShadow(MatrixStack matrixStack, String str, float x, float y, int color, int height) {
-        // TODO
+        float f = ((float) height) / 9;
+        matrixStack.scale(f, f, 1f);
+        drawCenteredStringWithShadow(matrixStack, str, x / f, y / f, color);
     }
 
     /**
