@@ -1,6 +1,7 @@
 package com.github.zi_jing.cuckoolib.material;
 
 import com.github.zi_jing.cuckoolib.material.type.DustMaterial;
+import com.github.zi_jing.cuckoolib.material.type.Material;
 import com.github.zi_jing.cuckoolib.material.type.PlasticityMaterial;
 import com.github.zi_jing.cuckoolib.material.type.StateMaterial;
 
@@ -97,6 +98,8 @@ public class Materials {
 	public static final DustMaterial ASTATINE = new DustMaterial(85, "astatine", 0x328c28);
 	public static final StateMaterial RADON = new StateMaterial(86, "radon", 0xf000f0);
 
+	public static final DustMaterial FLINT = new DustMaterial(800, "flint", 0x002040);
+
 	public static void register() {
 		HYDROGEN.setPoint(-1, 0, -1);
 		HELIUM.setPoint(-1, 0, -1);
@@ -111,5 +114,7 @@ public class Materials {
 		XENON.setPoint(-1, 0, -1);
 		MERCURY.setPoint(0, -1, -1);
 		RADON.setPoint(-1, 0, -1);
+
+		FLINT.addFlag(Material.GENERATE_TOOL);
 	}
 }

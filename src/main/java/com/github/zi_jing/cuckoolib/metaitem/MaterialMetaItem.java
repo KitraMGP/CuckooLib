@@ -19,7 +19,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MaterialMetaItem extends MetaItem {
+public class MaterialMetaItem extends MetaItem<MetaValueItem> {
 	private TIntObjectMap<SolidShape> solidShapeMap;
 	private boolean isMetadataGenerated;
 	private List<Short> validMetadata;
@@ -34,6 +34,11 @@ public class MaterialMetaItem extends MetaItem {
 		for (int i = 0; i < shape.length; i++) {
 			this.solidShapeMap.put(i, shape[i]);
 		}
+	}
+
+	@Override
+	protected MetaValueItem createMetaValueItem(short id, String unlocalizedName) {
+		throw new UnsupportedOperationException("Don't add MetaValueItem to MaterialMetaItem");
 	}
 
 	@Override
@@ -127,4 +132,5 @@ public class MaterialMetaItem extends MetaItem {
 		}
 		return "";
 	}
+
 }
