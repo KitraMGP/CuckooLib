@@ -85,6 +85,7 @@ public class EasyButton extends GuiButton {
         }
     }
 
+    /** Logic that should be done every tick **/
     public void updateButton(Minecraft mc, int mouseX, int mouseY){
 
     }

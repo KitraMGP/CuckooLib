@@ -1,5 +1,6 @@
 
 cuckoolib.shape.dust.name=%s Dust
+cuckoolib.shape.plate.name=%s Plate
 
 cuckoolib.material.hydrogen.name=Hydrogen
 cuckoolib.material.helium.name=Helium

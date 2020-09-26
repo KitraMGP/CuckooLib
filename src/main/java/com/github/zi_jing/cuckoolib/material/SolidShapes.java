@@ -8,12 +8,13 @@ import com.github.zi_jing.cuckoolib.util.ArraysUtil;
 
 public class SolidShapes {
 	public static final SolidShape DUST = new SolidShape("dust", 144, flag(Material.GENERATE_DUST));
+	public static final SolidShape PLATE = new SolidShape("plate", 144, flag(Material.GENERATE_PLATE));
 
 	public static Predicate<Material> flag(IMaterialFlag flag) {
 		return (material) -> material.hasFlag(flag);
 	}
 
 	public static void register() {
-		ArraysUtil.registerAll(DUST);
+		ArraysUtil.registerAll(DUST, PLATE);
 	}
 }
