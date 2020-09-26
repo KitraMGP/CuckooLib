@@ -87,3 +87,13 @@ cuckoolib.material.bismuth.name=Bismuth
 cuckoolib.material.polonium.name=Polonium
 cuckoolib.material.astatine.name=Astatine
 cuckoolib.material.radon.name=Radon
+
+cuckoolib.material.flint.name=Flint
+cuckoolib.material.stone.name=Stone
+
+metaitem.cuckoolib.tool.durability=Durability:
+metaitem.cuckoolib.tool.harvest_level=Harvest Level:
+
+cuckoolib.command.usage=/cuckoolib <debug>
+cuckoolib.command.usage.debug=/cuckoolib debug <tool>
+cuckoolib.command.usage.debug.tool=/cuckoolib debug tool [metaItem] [metaValueItem] [material]

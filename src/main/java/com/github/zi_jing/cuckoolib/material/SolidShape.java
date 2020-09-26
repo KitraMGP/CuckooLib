@@ -8,11 +8,12 @@ import java.util.function.Predicate;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.util.IRegistrable;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.registry.RegistrySimple;
 
-public class SolidShape {
+public class SolidShape implements IRegistrable {
 	public static final RegistrySimple<String, SolidShape> REGISTRY = new RegistrySimple<String, SolidShape>();
 
 	private String name;
@@ -31,7 +32,6 @@ public class SolidShape {
 		this.ignoredMaterials = new HashSet<Material>();
 		this.generatedMaterials = new HashSet<Material>();
 		this.recipeRegister = new ArrayList<IMaterialRecipeRegister>();
-		REGISTRY.putObject(name, this);
 	}
 
 	public static SolidShape getShapeByName(String name) {
@@ -81,5 +81,10 @@ public class SolidShape {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+
+	@Override
+	public void register() {
+		REGISTRY.putObject(this.name, this);
 	}
 }

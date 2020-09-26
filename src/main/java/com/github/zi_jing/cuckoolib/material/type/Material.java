@@ -4,12 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
+import com.github.zi_jing.cuckoolib.util.IRegistrable;
 import com.github.zi_jing.cuckoolib.util.registry.SizeLimitedRegistry;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.Fluid;
 
-public abstract class Material {
+public abstract class Material implements IRegistrable {
 	public static final SizeLimitedRegistry<String, Material> REGISTRY = new SizeLimitedRegistry<String, Material>(
 			1024);
 
@@ -30,14 +31,13 @@ public abstract class Material {
 	public static final IMaterialFlag GENERATE_TOOL = createFlag(16);
 
 	protected String name;
-	protected int id, color;
+	protected int id, color, durability, harvestLevel;
 	protected long flagValue;
 
 	public Material(int id, String name, int color) {
 		this.id = id;
 		this.name = name;
 		this.color = color;
-		REGISTRY.register(id, name, this);
 	}
 
 	public static Material getMaterialById(int id) {
@@ -114,6 +114,28 @@ public abstract class Material {
 		return null;
 	}
 
+	public void setDurability(int durability) {
+		if (durability < 0) {
+			throw new IllegalArgumentException("Material durability must be a nonnegative number");
+		}
+		this.durability = durability;
+	}
+
+	public void setHarvestLevel(int harvestLevel) {
+		if (harvestLevel < 0) {
+			throw new IllegalArgumentException("Material harvest level must be a nonnegative number");
+		}
+		this.harvestLevel = harvestLevel;
+	}
+
+	public int getDurability() {
+		return this.durability;
+	}
+
+	public int getHarvestLevel() {
+		return this.harvestLevel;
+	}
+
 	public String getUnlocalizedName() {
 		return CuckooLib.MODID + ".material." + this.name + ".name";
 	}
@@ -125,5 +147,10 @@ public abstract class Material {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+
+	@Override
+	public void register() {
+		REGISTRY.register(this.id, this.name, this);
 	}
 }

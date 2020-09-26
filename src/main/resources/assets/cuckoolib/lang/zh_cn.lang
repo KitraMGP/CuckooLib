@@ -87,3 +87,13 @@ cuckoolib.material.bismuth.name=铋
 cuckoolib.material.polonium.name=钋
 cuckoolib.material.astatine.name=砹
 cuckoolib.material.radon.name=氡气
+
+cuckoolib.material.flint.name=燧石
+cuckoolib.material.stone.name=石
+
+metaitem.cuckoolib.tool.durability=耐久:
+metaitem.cuckoolib.tool.harvest_level=采集等级:
+
+cuckoolib.command.usage=/cuckoolib <debug>
+cuckoolib.command.usage.debug=/cuckoolib debug <tool>
+cuckoolib.command.usage.debug.tool=/cuckoolib debug tool [metaItem] [metaValueItem] [material]

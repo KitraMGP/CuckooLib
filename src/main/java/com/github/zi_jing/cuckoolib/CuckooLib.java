@@ -2,11 +2,15 @@ package com.github.zi_jing.cuckoolib;
 
 import org.apache.logging.log4j.Logger;
 
+import com.github.zi_jing.cuckoolib.command.debug.CuckooLibCommand;
+
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 @Mod(modid = CuckooLib.MODID, name = CuckooLib.NAME, version = CuckooLib.VERSION, useMetadata = true)
 public class CuckooLib {
@@ -41,5 +45,10 @@ public class CuckooLib {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+	}
+
+	@EventHandler
+	public void onServerLoad(FMLServerStartingEvent event) {
+		event.registerServerCommand(new CuckooLibCommand());
 	}
 }

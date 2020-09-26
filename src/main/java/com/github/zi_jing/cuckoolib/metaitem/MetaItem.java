@@ -20,6 +20,7 @@ import com.github.zi_jing.cuckoolib.metaitem.module.IItemTooltipProvider;
 import com.github.zi_jing.cuckoolib.metaitem.module.IItemUse;
 import com.github.zi_jing.cuckoolib.util.IRegistrable;
 
+import gnu.trove.iterator.TShortObjectIterator;
 import gnu.trove.map.TShortObjectMap;
 import gnu.trove.map.hash.TShortObjectHashMap;
 import net.minecraft.client.Minecraft;
@@ -67,8 +68,8 @@ public abstract class MetaItem<T extends MetaValueItem> extends Item implements 
 		this.setNoRepair();
 		this.setRegistryName(modid, name);
 		this.modid = modid;
-		this.metaItem = new TShortObjectHashMap<>();
-		this.itemModel = new TShortObjectHashMap<>();
+		this.metaItem = new TShortObjectHashMap<T>();
+		this.itemModel = new TShortObjectHashMap<List<ModelResourceLocation>>();
 		META_ITEMS.add(this);
 	}
 
@@ -154,11 +155,11 @@ public abstract class MetaItem<T extends MetaValueItem> extends Item implements 
 		});
 	}
 
-	public ResourceLocation getItemModel(MetaValueItem metaValueItem, int id) {
+	public ResourceLocation getItemModel(T metaValueItem, int id) {
 		return new ResourceLocation(this.modid, "metaitem/" + metaValueItem.unlocalizedName + "." + id);
 	}
 
-	public ResourceLocation getItemModel(MetaValueItem metaValueItem) {
+	public ResourceLocation getItemModel(T metaValueItem) {
 		return new ResourceLocation(this.modid, "metaitem/" + metaValueItem.unlocalizedName);
 	}
 
@@ -197,6 +198,18 @@ public abstract class MetaItem<T extends MetaValueItem> extends Item implements 
 
 	public T getMetaValueItem(ItemStack stack) {
 		return this.getMetaValueItem((short) stack.getMetadata());
+	}
+
+	public T getMetaValueItem(String unlocalizedName) {
+		TShortObjectIterator<T> ite = this.metaItem.iterator();
+		while (ite.hasNext()) {
+			ite.advance();
+			T metaValueItem = ite.value();
+			if (metaValueItem.getUnlocalizedName().equals(unlocalizedName)) {
+				return metaValueItem;
+			}
+		}
+		return null;
 	}
 
 	@Nonnull

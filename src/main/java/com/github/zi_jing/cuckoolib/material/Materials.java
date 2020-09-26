@@ -4,6 +4,7 @@ import com.github.zi_jing.cuckoolib.material.type.DustMaterial;
 import com.github.zi_jing.cuckoolib.material.type.Material;
 import com.github.zi_jing.cuckoolib.material.type.PlasticityMaterial;
 import com.github.zi_jing.cuckoolib.material.type.StateMaterial;
+import com.github.zi_jing.cuckoolib.util.ArraysUtil;
 
 public class Materials {
 	public static final StateMaterial HYDROGEN = new StateMaterial(1, "hydrogen", 0x00ffff);
@@ -99,8 +100,19 @@ public class Materials {
 	public static final StateMaterial RADON = new StateMaterial(86, "radon", 0xf000f0);
 
 	public static final DustMaterial FLINT = new DustMaterial(800, "flint", 0x002040);
+	public static final DustMaterial STONE = new DustMaterial(801, "stone", 0xc8c8c8);
 
 	public static void register() {
+		ArraysUtil.registerAll(HYDROGEN, HELIUM, LITHIUM, BERYLLIUM, BORON, CARBON, NITROGEN, OXYGEN, FLUORINE, NEON,
+				SODIUM, MAGNESIUM, ALUMINIUM, SILICON, PHOSPHOR, SULFUR, CHLORINE, ARGON, POTASSIUM, CALCIUM, SCANDIUM,
+				TITANIUM, VANADIUM, CHROME, MANGANESE, IRON, COBALT, NICKEL, COPPER, ZINC, GALLIUM, GERMANIUM, ARSENIC,
+				SELENIUM, BROMINE, KRYPTON, RUBIDIUM, STRONTIUM, YTTRIUM, ZIRCONIUM, NIOBIUM, MOLYBDENUM, TECHNETIUM,
+				RUTHENIUM, RHODIUM, PALLADIUM, SILVER, CADMIUM, INDIUM, TIN, ANTIMONY, TELLURIUM, IODINE, XENON,
+				CAESIUM, BARIUM, LANTANIUM, CERIUM, PRASEODYMIUM, NEODYMIUM, PROMETHIUM, SAMARIUM, EUROPIUM, GADOLINIUM,
+				TERBIUM, DYSPROSIUM, HOLMIUM, ERBIUM, THULIUM, YTTERBIUM, LUTETIUM, HAFNIUM, TANTALUM, TUNGSTEN,
+				RHENIUM, OSMIUM, IRIDIUM, PLATINUM, GOLD, MERCURY, THALLIUM, LEAD, BISMUTH, POLONIUM, ASTATINE, RADON);
+		ArraysUtil.registerAll(FLINT, STONE);
+
 		HYDROGEN.setPoint(-1, 0, -1);
 		HELIUM.setPoint(-1, 0, -1);
 		NITROGEN.setPoint(-1, 0, -1);
@@ -115,6 +127,15 @@ public class Materials {
 		MERCURY.setPoint(0, -1, -1);
 		RADON.setPoint(-1, 0, -1);
 
+		COPPER.addFlag(Material.GENERATE_TOOL);
+		IRON.addFlag(Material.GENERATE_TOOL);
 		FLINT.addFlag(Material.GENERATE_TOOL);
+		STONE.addFlag(Material.GENERATE_TOOL);
+
+		FLINT.setDurability(25600);
+		STONE.setDurability(12800);
+
+		FLINT.setHarvestLevel(1);
+		STONE.setHarvestLevel(1);
 	}
 }

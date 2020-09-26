@@ -59,8 +59,8 @@ public class TextUtil {
       if (index == -1) { // 没有任何样式代码
         if (tmp.isEmpty()) { // 所有字符都处理完毕了，直接结束
           break;
-        } else {
-          for (char c : tmp.toCharArray()) { // 给剩余字符附上样式并结束
+        }
+		for (char c : tmp.toCharArray()) { // 给剩余字符附上样式并结束
             if (colored) {
               output.append(styleMark);
               output.append(currentColor);
@@ -88,7 +88,6 @@ public class TextUtil {
             output.append(c);
           }
           break;
-        }
       }
       if (index != 0) { // 有样式代码但是不在开头，要先把前面的字符附上已有的样式
         for (char c : tmp.toCharArray()) {

@@ -7,6 +7,7 @@ import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.material.SolidShape;
 import com.github.zi_jing.cuckoolib.material.type.Material;
 
+import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -20,9 +21,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MaterialMetaItem extends MetaItem<MetaValueItem> {
-	private TIntObjectMap<SolidShape> solidShapeMap;
-	private boolean isMetadataGenerated;
-	private List<Short> validMetadata;
+	protected TIntObjectMap<SolidShape> solidShapeMap;
+	protected boolean isMetadataGenerated;
+	protected List<Short> validMetadata;
 
 	public MaterialMetaItem(String modid, String name, SolidShape... shape) {
 		super(modid, name);
@@ -100,6 +101,19 @@ public class MaterialMetaItem extends MetaItem<MetaValueItem> {
 		return this.getItemMaterial((short) stack.getMetadata());
 	}
 
+	public ItemStack getItemStack(SolidShape shape, Material material, int count) {
+		if (this.solidShapeMap.containsValue(shape) && shape.generateMaterial(material)) {
+			TIntObjectIterator<SolidShape> ite = this.solidShapeMap.iterator();
+			while (ite.hasNext()) {
+				if (ite.value() == shape) {
+					return new ItemStack(this, count, ite.key() * 1024 + material.getId());
+				}
+				ite.advance();
+			}
+		}
+		return ItemStack.EMPTY;
+	}
+
 	public List<Short> getValidMetadata() {
 		if (!this.isMetadataGenerated) {
 			this.validMetadata.clear();
@@ -132,5 +146,4 @@ public class MaterialMetaItem extends MetaItem<MetaValueItem> {
 		}
 		return "";
 	}
-
 }

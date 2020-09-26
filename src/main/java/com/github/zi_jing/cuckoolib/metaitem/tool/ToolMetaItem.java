@@ -9,6 +9,7 @@ import com.github.zi_jing.cuckoolib.metaitem.MetaItem;
 import com.github.zi_jing.cuckoolib.util.NBTAdapter;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +22,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ToolMetaItem extends MetaItem<ToolMetaValueItem> {
 	public ToolMetaItem(String modid, String name) {
@@ -31,12 +34,37 @@ public class ToolMetaItem extends MetaItem<ToolMetaValueItem> {
 		super(registryName);
 	}
 
+	public static ToolMetaItem getToolMetaItem(ItemStack stack) {
+		return (ToolMetaItem) stack.getItem();
+	}
+
 	public boolean validateToolMaterial(Material material) {
 		return material.hasFlag(Material.GENERATE_TOOL);
 	}
 
 	public NBTTagCompound getToolBaseNBT(ItemStack stack) {
 		return NBTAdapter.getTagCompound(NBTAdapter.getItemStackCompound(stack), "tool_info", new NBTTagCompound());
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	protected int getItemColor(ItemStack stack, int tintIndex) {
+		if (tintIndex == 0) {
+			Material material = this.getToolMaterial(stack);
+			if (material != null) {
+				return material.getColor();
+			}
+		}
+		return 0xffffff;
+	}
+
+	@Override
+	public String getItemStackDisplayName(ItemStack stack) {
+		Material material = this.getToolMaterial(stack);
+		if (material != null) {
+			return I18n.format(this.getUnlocalizedName(stack) + ".name", material.getLocalizedName());
+		}
+		return I18n.format(this.getUnlocalizedName(stack) + ".name", "");
 	}
 
 	@Override
@@ -104,11 +132,11 @@ public class ToolMetaItem extends MetaItem<ToolMetaValueItem> {
 	@Override
 	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
 		ToolMetaValueItem toolMetaValueItem = this.getMetaValueItem(stack);
-		if (toolMetaValueItem == null) {
-			return;
+		if (toolMetaValueItem != null) {
+			IToolInfo toolInfo = toolMetaValueItem.getToolInfo();
+			toolInfo.addInformation(stack, world, tooltip, flag);
 		}
-		IToolInfo toolInfo = toolMetaValueItem.getToolInfo();
-		toolInfo.addInformation(stack, world, tooltip, flag);
+		super.addInformation(stack, world, tooltip, flag);
 	}
 
 	@Override
