@@ -101,14 +101,18 @@ public class MaterialMetaItem extends MetaItem<MetaValueItem> {
 		return this.getItemMaterial((short) stack.getMetadata());
 	}
 
+	public ItemStack getItemStack(SolidShape shape, Material material) {
+		return this.getItemStack(shape, material, 1);
+	}
+
 	public ItemStack getItemStack(SolidShape shape, Material material, int count) {
 		if (this.solidShapeMap.containsValue(shape) && shape.generateMaterial(material)) {
 			TIntObjectIterator<SolidShape> ite = this.solidShapeMap.iterator();
 			while (ite.hasNext()) {
+				ite.advance();
 				if (ite.value() == shape) {
 					return new ItemStack(this, count, ite.key() * 1024 + material.getId());
 				}
-				ite.advance();
 			}
 		}
 		return ItemStack.EMPTY;
