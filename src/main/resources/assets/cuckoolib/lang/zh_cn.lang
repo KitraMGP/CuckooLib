@@ -92,8 +92,30 @@ cuckoolib.material.polonium.name=钋
 cuckoolib.material.astatine.name=砹
 cuckoolib.material.radon.name=氡气
 
+cuckoolib.material.wrought_iron.name=熟铁
+cuckoolib.material.pig_iron.name=生铁
+cuckoolib.material.steel.name=钢
+cuckoolib.material.bronze.name=青铜
+cuckoolib.material.brass.name=黄铜
+cuckoolib.material.cupronickel.name=白铜
+cuckoolib.material.black_bronze.name=黑青铜
+cuckoolib.material.bismuth_bronze.name=铋青铜
+cuckoolib.material.red_alloy.name=红色合金
+cuckoolib.material.blue_alloy.name=蓝色合金
+cuckoolib.material.sterling_silver.name=标准银
+cuckoolib.material.sterling_gold.name=标准金
+cuckoolib.material.invar.name=因瓦合金
+
+cuckoolib.material.redstone.name=红石
+cuckoolib.material.bluestone.name=蓝石
+cuckoolib.material.diamond.name=钻石
+cuckoolib.material.emerald.name=绿宝石
+cuckoolib.material.coal.name=煤炭
+cuckoolib.material.charcoal.name=木炭
+
 cuckoolib.material.flint.name=燧石
 cuckoolib.material.stone.name=石
+cuckoolib.material.wood.name=木
 
 metaitem.cuckoolib.tool.durability=耐久:
 metaitem.cuckoolib.tool.harvest_level=采集等级:

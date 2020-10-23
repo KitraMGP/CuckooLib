@@ -1,10 +1,10 @@
 package com.github.zi_jing.cuckoolib.material;
 
 import com.github.zi_jing.cuckoolib.material.type.DustMaterial;
+import com.github.zi_jing.cuckoolib.material.type.GemMaterial;
 import com.github.zi_jing.cuckoolib.material.type.Material;
 import com.github.zi_jing.cuckoolib.material.type.PlasticityMaterial;
 import com.github.zi_jing.cuckoolib.material.type.StateMaterial;
-import com.github.zi_jing.cuckoolib.util.ArraysUtil;
 
 public class Materials {
 	public static final StateMaterial HYDROGEN = new StateMaterial(1, "hydrogen", 0x00ffff);
@@ -99,20 +99,32 @@ public class Materials {
 	public static final DustMaterial ASTATINE = new DustMaterial(85, "astatine", 0x328c28);
 	public static final StateMaterial RADON = new StateMaterial(86, "radon", 0xf000f0);
 
+	public static final PlasticityMaterial WROUGHT_IRON = new PlasticityMaterial(200, "wrought_iron", 0xc8b4b4);
+	public static final PlasticityMaterial PIG_IRON = new PlasticityMaterial(201, "pig_iron", 0xc8b4b4);
+	public static final PlasticityMaterial STEEL = new PlasticityMaterial(202, "steel", 0x5a5a5a);
+	public static final PlasticityMaterial BRONZE = new PlasticityMaterial(203, "bronze", 0xb45a28);
+	public static final PlasticityMaterial BRASS = new PlasticityMaterial(204, "brass", 0xf0b400);
+	public static final PlasticityMaterial CUPRONICKEL = new PlasticityMaterial(205, "cupronickel", 0xf0b400);
+	public static final PlasticityMaterial BLACK_BRONZE = new PlasticityMaterial(206, "black_bronze", 0x461e5a);
+	public static final PlasticityMaterial BISMUTH_BRONZE = new PlasticityMaterial(207, "bismuth_bronze", 0x5a8282);
+	public static final PlasticityMaterial RED_ALLOY = new PlasticityMaterial(208, "red_alloy", 0xc83232);
+	public static final PlasticityMaterial BLUE_ALLOY = new PlasticityMaterial(209, "blue_alloy", 0x3232c8);
+	public static final PlasticityMaterial STERLING_SILVER = new PlasticityMaterial(210, "sterling_silver", 0xe6c8dc);
+	public static final PlasticityMaterial STERLING_GOLD = new PlasticityMaterial(211, "sterling_gold", 0xfadc14);
+	public static final PlasticityMaterial INVAR = new PlasticityMaterial(212, "invar", 0xd2d28c);
+
+	public static final DustMaterial REDSTONE = new DustMaterial(500, "redstone", 0xc80000);
+	public static final DustMaterial BLUESTONE = new DustMaterial(501, "bluestone", 0x005ac8);
+	public static final GemMaterial DIAMOND = new GemMaterial(502, "diamond", 0xb4f0f0);
+	public static final GemMaterial EMERALD = new GemMaterial(503, "emerald", 0x64f064);
+	public static final DustMaterial COAL = new DustMaterial(504, "coal", 0x323232);
+	public static final DustMaterial CHARCOAL = new DustMaterial(505, "charcoal", 0x463232);
+
 	public static final DustMaterial FLINT = new DustMaterial(800, "flint", 0x002040);
 	public static final DustMaterial STONE = new DustMaterial(801, "stone", 0xc8c8c8);
+	public static final DustMaterial WOOD = new DustMaterial(802, "wood", 0x8c5a28);
 
 	public static void register() {
-		ArraysUtil.registerAll(HYDROGEN, HELIUM, LITHIUM, BERYLLIUM, BORON, CARBON, NITROGEN, OXYGEN, FLUORINE, NEON,
-				SODIUM, MAGNESIUM, ALUMINIUM, SILICON, PHOSPHOR, SULFUR, CHLORINE, ARGON, POTASSIUM, CALCIUM, SCANDIUM,
-				TITANIUM, VANADIUM, CHROME, MANGANESE, IRON, COBALT, NICKEL, COPPER, ZINC, GALLIUM, GERMANIUM, ARSENIC,
-				SELENIUM, BROMINE, KRYPTON, RUBIDIUM, STRONTIUM, YTTRIUM, ZIRCONIUM, NIOBIUM, MOLYBDENUM, TECHNETIUM,
-				RUTHENIUM, RHODIUM, PALLADIUM, SILVER, CADMIUM, INDIUM, TIN, ANTIMONY, TELLURIUM, IODINE, XENON,
-				CAESIUM, BARIUM, LANTANIUM, CERIUM, PRASEODYMIUM, NEODYMIUM, PROMETHIUM, SAMARIUM, EUROPIUM, GADOLINIUM,
-				TERBIUM, DYSPROSIUM, HOLMIUM, ERBIUM, THULIUM, YTTERBIUM, LUTETIUM, HAFNIUM, TANTALUM, TUNGSTEN,
-				RHENIUM, OSMIUM, IRIDIUM, PLATINUM, GOLD, MERCURY, THALLIUM, LEAD, BISMUTH, POLONIUM, ASTATINE, RADON);
-		ArraysUtil.registerAll(FLINT, STONE);
-
 		HYDROGEN.setPoint(-1, 0, -1);
 		HELIUM.setPoint(-1, 0, -1);
 		NITROGEN.setPoint(-1, 0, -1);
@@ -129,12 +141,34 @@ public class Materials {
 
 		COPPER.addFlag(Material.GENERATE_TOOL);
 		IRON.addFlag(Material.GENERATE_TOOL);
+		WROUGHT_IRON.addFlag(Material.GENERATE_TOOL);
+		PIG_IRON.addFlag(Material.GENERATE_TOOL);
+		STEEL.addFlag(Material.GENERATE_TOOL);
+		BRONZE.addFlag(Material.GENERATE_TOOL);
+		BLACK_BRONZE.addFlag(Material.GENERATE_TOOL);
+		BISMUTH_BRONZE.addFlag(Material.GENERATE_TOOL);
 		FLINT.addFlag(Material.GENERATE_TOOL);
 		STONE.addFlag(Material.GENERATE_TOOL);
 
-		FLINT.setDurability(25600);
-		STONE.setDurability(12800);
+		COPPER.setDurability(51200);
+		IRON.setDurability(204800);
+		WROUGHT_IRON.setDurability(204800);
+		PIG_IRON.setDurability(204800);
+		STEEL.setDurability(409600);
+		BRONZE.setDurability(102400);
+		BLACK_BRONZE.setDurability(102400);
+		BISMUTH_BRONZE.setDurability(102400);
+		FLINT.setDurability(6400);
+		STONE.setDurability(3200);
 
+		COPPER.setHarvestLevel(2);
+		IRON.setHarvestLevel(2);
+		WROUGHT_IRON.setHarvestLevel(2);
+		PIG_IRON.setHarvestLevel(2);
+		STEEL.setHarvestLevel(2);
+		BRONZE.setHarvestLevel(2);
+		BLACK_BRONZE.setHarvestLevel(2);
+		BISMUTH_BRONZE.setHarvestLevel(2);
 		FLINT.setHarvestLevel(1);
 		STONE.setHarvestLevel(1);
 	}

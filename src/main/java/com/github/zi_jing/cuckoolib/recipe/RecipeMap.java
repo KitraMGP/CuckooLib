@@ -17,7 +17,7 @@ public class RecipeMap {
 	private TIntObjectMap<Recipe> recipes;
 
 	public RecipeMap(String unlocalizedName, int minInput, int maxInput, int minOutput, int maxOutput,
-			int minFluidInput, int maxFluidInput, int minFluidOutput, int maxFluidOutput, RecipeBuilder builder) {
+			int minFluidInput, int maxFluidInput, int minFluidOutput, int maxFluidOutput) {
 		this.unlocalizedName = unlocalizedName;
 		this.minInput = minInput;
 		this.maxInput = Math.max(minInput, maxInput);
@@ -27,8 +27,15 @@ public class RecipeMap {
 		this.maxFluidInput = Math.max(minFluidInput, maxFluidInput);
 		this.minFluidOutput = minFluidOutput;
 		this.maxFluidOutput = Math.max(minFluidOutput, maxFluidOutput);
-		this.builder = builder;
 		this.recipes = new TIntObjectHashMap<Recipe>();
+	}
+
+	public RecipeMap(String unlocalizedName, int minInput, int maxInput, int minOutput, int maxOutput,
+			int minFluidInput, int maxFluidInput, int minFluidOutput, int maxFluidOutput, RecipeBuilder builder) {
+		this(unlocalizedName, minInput, maxInput, minOutput, maxOutput, minFluidInput, maxFluidInput, minFluidOutput,
+				maxFluidOutput);
+		this.builder = builder;
+		builder.recipeMap = this;
 	}
 
 	public String getUnlocalizedName() {

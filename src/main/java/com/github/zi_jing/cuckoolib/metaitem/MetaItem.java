@@ -70,7 +70,6 @@ public abstract class MetaItem<T extends MetaValueItem> extends Item implements 
 		this.modid = modid;
 		this.metaItem = new TShortObjectHashMap<T>();
 		this.itemModel = new TShortObjectHashMap<List<ModelResourceLocation>>();
-		META_ITEMS.add(this);
 	}
 
 	public MetaItem(ResourceLocation registryName) {

@@ -92,6 +92,27 @@ cuckoolib.material.polonium.name=Polonium
 cuckoolib.material.astatine.name=Astatine
 cuckoolib.material.radon.name=Radon
 
+cuckoolib.material.wrought_iron.name=Wrought Iron
+cuckoolib.material.pig_iron.name=Pig Iron
+cuckoolib.material.steel.name=Steel
+cuckoolib.material.bronze.name=Bronze
+cuckoolib.material.brass.name=Brass
+cuckoolib.material.cupronickel.name=Cupronickel
+cuckoolib.material.black_bronze.name=Black Bronze
+cuckoolib.material.bismuth_bronze.name=Bismuth Bronze
+cuckoolib.material.red_alloy.name=Red Alloy
+cuckoolib.material.blue_alloy.name=Blue Alloy
+cuckoolib.material.sterling_silver.name=Sterling Silver
+cuckoolib.material.sterling_gold.name=Sterling Gold
+cuckoolib.material.invar.name=Invar
+
+cuckoolib.material.redstone.name=Redstone
+cuckoolib.material.bluestone.name=Bluestone
+cuckoolib.material.diamond.name=Diamond
+cuckoolib.material.emerald.name=Emerald
+cuckoolib.material.coal.name=Coal
+cuckoolib.material.charcoal.name=Charcoal
+
 cuckoolib.material.flint.name=Flint
 cuckoolib.material.stone.name=Stone
 

@@ -25,14 +25,18 @@ public class RecipeBuilder {
 	protected Map<RecipeValueFormat, Object> values;
 	protected ValidateResult result;
 
-	protected RecipeBuilder(RecipeMap recipeMap) {
-		this.recipeMap = recipeMap;
+	public RecipeBuilder() {
 		this.inputs = NonNullList.<IngredientIndex>create();
 		this.outputs = NonNullList.<ChanceEntry>create();
 		this.fluidInputs = new ArrayList<FluidStack>();
 		this.fluidOutputs = new ArrayList<FluidStack>();
 		this.values = new HashMap<RecipeValueFormat, Object>();
 		this.result = ValidateResult.VALID;
+	}
+
+	protected RecipeBuilder(RecipeMap recipeMap) {
+		this();
+		this.recipeMap = recipeMap;
 	}
 
 	protected RecipeBuilder(Recipe recipe) {
@@ -229,5 +233,12 @@ public class RecipeBuilder {
 
 	public RecipeBuilder fluidOutputs(Collection<FluidStack> output) {
 		return this.fluidOutputs(output.toArray(new FluidStack[0]));
+	}
+
+	public <T> RecipeBuilder addValue(RecipeValueFormat<T> format, T value) {
+		if (format.validate(value)) {
+			this.values.put(format, value);
+		}
+		return this;
 	}
 }

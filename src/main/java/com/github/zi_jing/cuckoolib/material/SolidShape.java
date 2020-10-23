@@ -1,6 +1,7 @@
 package com.github.zi_jing.cuckoolib.material;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class SolidShape implements IRegistrable {
 		this.ignoredMaterials = new HashSet<Material>();
 		this.generatedMaterials = new HashSet<Material>();
 		this.recipeRegister = new ArrayList<IMaterialRecipeRegister>();
+		this.register();
 	}
 
 	public static SolidShape getShapeByName(String name) {
@@ -58,12 +60,12 @@ public class SolidShape implements IRegistrable {
 		return this.unit;
 	}
 
-	public void addGeneratedMaterial(Material material) {
-		this.generatedMaterials.add(material);
+	public void addGeneratedMaterial(Material... material) {
+		this.generatedMaterials.addAll(Arrays.asList(material));
 	}
 
-	public void addIgnoredMaterial(Material material) {
-		this.ignoredMaterials.add(material);
+	public void addIgnoredMaterial(Material... material) {
+		this.ignoredMaterials.addAll(Arrays.asList(material));
 	}
 
 	public boolean generateMaterial(Material material) {

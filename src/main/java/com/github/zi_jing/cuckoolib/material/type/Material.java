@@ -38,6 +38,7 @@ public abstract class Material implements IRegistrable {
 		this.id = id;
 		this.name = name;
 		this.color = color;
+		this.register();
 	}
 
 	public static Material getMaterialById(int id) {
