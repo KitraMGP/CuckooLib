@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.client.gui.modulargui;
+package com.github.zi_jing.cuckoolib.gui.modulargui;
 
 import net.minecraft.client.Minecraft;
 

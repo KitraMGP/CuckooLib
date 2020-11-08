@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.client.gui.widget;
+package com.github.zi_jing.cuckoolib.gui.widget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

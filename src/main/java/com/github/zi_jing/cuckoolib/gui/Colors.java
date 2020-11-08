@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.client.gui;
+package com.github.zi_jing.cuckoolib.gui;
 
 public class Colors {
   public static final int DEFAULT_TEXT = 0xE0E0E0;

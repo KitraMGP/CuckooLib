@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.client.gui.modulargui;
+package com.github.zi_jing.cuckoolib.gui.modulargui;
 
 /**
  * 定义了与MetaGui相关的类使用的样式常量。<br>

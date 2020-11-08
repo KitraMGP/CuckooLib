@@ -1,9 +1,10 @@
-package com.github.zi_jing.cuckoolib.client.gui.modulargui;
+package com.github.zi_jing.cuckoolib.gui.modulargui;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
-import com.github.zi_jing.cuckoolib.client.gui.Colors;
 import com.github.zi_jing.cuckoolib.client.render.GLUtils;
 import com.github.zi_jing.cuckoolib.client.util.ClientUtils;
+import com.github.zi_jing.cuckoolib.gui.Colors;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
