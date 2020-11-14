@@ -1,5 +1,6 @@
 package com.github.zi_jing.cuckoolib.network;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
@@ -14,7 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageModularGuiOpen implements IMessage {
-	private ResourceLocation registryName;
+	private PacketBuffer holderPacket;
 	private List<PacketBuffer> updateData;
 	private int window;
 
@@ -22,8 +23,8 @@ public class MessageModularGuiOpen implements IMessage {
 
 	}
 
-	public MessageModularGuiOpen(ResourceLocation registryName, List<PacketBuffer> updateData, int window) {
-		this.registryName = registryName;
+	public MessageModularGuiOpen(PacketBuffer holderPacket, List<PacketBuffer> updateData, int window) {
+		this.holderPacket = holderPacket;
 		this.updateData = updateData;
 		this.window = window;
 	}
@@ -31,19 +32,19 @@ public class MessageModularGuiOpen implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.window = buf.readInt();
-		this.registryName = new PacketBuffer(buf.readBytes(buf.readInt())).readResourceLocation();
+		this.holderPacket = new PacketBuffer(Unpooled.copiedBuffer(buf.readBytes(buf.readInt())));
 		int size = buf.readInt();
+		this.updateData = new ArrayList<PacketBuffer>();
 		for (int i = 0; i < size; i++) {
-			this.updateData.add(new PacketBuffer(buf.readBytes(buf.readInt())));
+			this.updateData.add(new PacketBuffer(Unpooled.copiedBuffer(buf.readBytes(buf.readInt()))));
 		}
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.window);
-		PacketBuffer name = new PacketBuffer(Unpooled.buffer()).writeResourceLocation(this.registryName);
-		buf.writeInt(name.readableBytes());
-		buf.writeBytes(name);
+		buf.writeInt(this.holderPacket.readableBytes());
+		buf.writeBytes(this.holderPacket);
 		buf.writeInt(this.updateData.size());
 		this.updateData.forEach((data) -> {
 			buf.writeInt(data.readableBytes());
@@ -55,9 +56,10 @@ public class MessageModularGuiOpen implements IMessage {
 		@Override
 		public IMessage onMessage(MessageModularGuiOpen msg, MessageContext ctx) {
 			CuckooLib.proxy.getThreadListener(ctx).addScheduledTask(() -> {
-				if (ModularGuiInfo.REGISTRY.containsKey(msg.registryName)) {
-					ModularGuiInfo.openClientModularGui(msg.window, ModularGuiInfo.REGISTRY.getObject(msg.registryName),
-							msg.updateData);
+				ResourceLocation codecName = msg.holderPacket.readResourceLocation();
+				if (ModularGuiInfo.REGISTRY.containsKey(codecName)) {
+					ModularGuiInfo.openClientModularGui(msg.window,
+							ModularGuiInfo.REGISTRY.getObject(codecName).readHolder(msg.holderPacket), msg.updateData);
 				} else {
 					throw new RuntimeException("The gui holder registry name is invalid");
 				}

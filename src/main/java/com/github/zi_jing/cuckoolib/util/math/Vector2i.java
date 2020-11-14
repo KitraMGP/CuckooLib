@@ -11,6 +11,10 @@ public class Vector2i {
 		this.y = height;
 	}
 
+	public static Vector2i of(int x, int y) {
+		return new Vector2i(x, y);
+	}
+
 	public int getX() {
 		return this.x;
 	}

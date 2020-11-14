@@ -13,8 +13,11 @@ import com.github.zi_jing.cuckoolib.util.math.Vector2i;
 import com.github.zi_jing.cuckoolib.util.registry.SizeLimitedRegistry;
 
 import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -28,7 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 public class ModularGuiInfo {
-	public static final SizeLimitedRegistry<ResourceLocation, ModularGuiHolder> REGISTRY = new SizeLimitedRegistry<ResourceLocation, ModularGuiHolder>(
+	public static final SizeLimitedRegistry<ResourceLocation, IGuiHolderCodec> REGISTRY = new SizeLimitedRegistry<ResourceLocation, IGuiHolderCodec>(
 			1024);
 
 	protected ModularContainer container;
@@ -46,12 +49,13 @@ public class ModularGuiInfo {
 		this.player = player;
 	}
 
-	public static void openModularGui(ModularGuiHolder holder, EntityPlayerMP player) {
+	public static void openModularGui(IModularGuiHolder holder, EntityPlayerMP player) {
 		if (player instanceof FakePlayer) {
 			throw new IllegalArgumentException("The player of the gui info can't be fake");
 		}
-		if (!REGISTRY.hasObject(holder)) {
-			throw new IllegalArgumentException("The gui holder is unregistered");
+		IGuiHolderCodec codec = holder.getCodec();
+		if (!REGISTRY.hasObject(codec)) {
+			throw new IllegalArgumentException("The gui holder codec is unregistered");
 		}
 		ModularGuiInfo guiInfo = holder.createGuiInfo(player);
 		guiInfo.initWidgets();
@@ -63,15 +67,17 @@ public class ModularGuiInfo {
 		container.detectAndSendChanges();
 		List<PacketBuffer> updateData = new ArrayList<PacketBuffer>(container.getBlockedData());
 		container.setDataBlocked(false);
-		NetworkHandler.NETWORK.sendTo(
-				new MessageModularGuiOpen(holder.getRegistryName(), updateData, player.currentWindowId), player);
+		PacketBuffer holderBuf = new PacketBuffer(Unpooled.buffer());
+		holderBuf.writeResourceLocation(codec.getRegistryName());
+		codec.writeHolder(holderBuf, holder);
+		NetworkHandler.NETWORK.sendTo(new MessageModularGuiOpen(holderBuf, updateData, player.currentWindowId), player);
 		player.openContainer = container;
 		container.addListener(player);
 		MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, container));
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void openClientModularGui(int window, ModularGuiHolder holder, List<PacketBuffer> updateData) {
+	public static void openClientModularGui(int window, IModularGuiHolder holder, List<PacketBuffer> updateData) {
 		Minecraft minecraft = Minecraft.getMinecraft();
 		EntityPlayerSP player = minecraft.player;
 		ModularGuiInfo guiInfo = holder.createGuiInfo(player);
@@ -100,8 +106,12 @@ public class ModularGuiInfo {
 		return this.player;
 	}
 
-	public Vector2i getWidth() {
-		return this.size;
+	public int getWidth() {
+		return this.size.getX();
+	}
+
+	public int getHeight() {
+		return this.size.getY();
 	}
 
 	public IWidget getWidget(int id) {
@@ -125,12 +135,56 @@ public class ModularGuiInfo {
 		this.openListeners.forEach((listener) -> listener.accept(this.container));
 	}
 
+	@SideOnly(Side.CLIENT)
+	public void drawInBackground(float partialTicks, int mouseX, int mouseY) {
+		this.widgets.forEachValue((widget) -> {
+			GlStateManager.pushMatrix();
+			GlStateManager.color(1, 1, 1, 1);
+			GlStateManager.enableBlend();
+			widget.drawInBackground(partialTicks, mouseX, mouseY);
+			GlStateManager.popMatrix();
+			return true;
+		});
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void drawInForeground(int mouseX, int mouseY) {
+		this.widgets.forEachValue((widget) -> {
+			GlStateManager.pushMatrix();
+			GlStateManager.color(1, 1, 1, 1);
+			GlStateManager.enableBlend();
+			widget.drawInForeground(mouseX, mouseY);
+			GlStateManager.popMatrix();
+			return true;
+		});
+	}
+
+	public void handleMouseHovered(int mouseX, int mouseY) {
+
+	}
+
+	public void handleMouseClicked(int mouseX, int mouseY, int mouseButton) {
+
+	}
+
+	public void handleMouseReleased(int mouseX, int mouseY, int mouseButton) {
+
+	}
+
+	public void handleMouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
+
+	}
+
 	public void initWidgets() {
 		this.widgets.forEachValue((widget) -> {
 			widget.setGuiInfo(this);
 			widget.initWidget();
 			return true;
 		});
+	}
+
+	public static Builder builder() {
+		return new Builder(176, 166);
 	}
 
 	public static Builder builder(int width, int height) {
@@ -144,6 +198,9 @@ public class ModularGuiInfo {
 
 		public Builder(int width, int height) {
 			this.size = new Vector2i(width, height);
+			this.widgets = new TIntObjectHashMap<IWidget>();
+			this.openListeners = new ArrayList<Consumer<ModularContainer>>();
+			this.closeListeners = new ArrayList<Consumer<ModularContainer>>();
 		}
 
 		public Builder addWidget(IWidget widget) {

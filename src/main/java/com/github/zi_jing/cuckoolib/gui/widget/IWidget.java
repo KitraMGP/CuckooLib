@@ -50,12 +50,17 @@ public interface IWidget {
 	}
 
 	@SideOnly(Side.CLIENT)
-	default void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+	default void updateScreen() {
 
 	}
 
 	@SideOnly(Side.CLIENT)
-	default void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	default void drawInForeground(int mouseX, int mouseY) {
+
+	}
+
+	@SideOnly(Side.CLIENT)
+	default void drawInBackground(float partialTicks, int mouseX, int mouseY) {
 
 	}
 }

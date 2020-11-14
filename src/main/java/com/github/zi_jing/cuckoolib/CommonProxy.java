@@ -1,5 +1,7 @@
 package com.github.zi_jing.cuckoolib;
 
+import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
+import com.github.zi_jing.cuckoolib.gui.TEGuiHolderCodec;
 import com.github.zi_jing.cuckoolib.material.Materials;
 import com.github.zi_jing.cuckoolib.material.SolidShapes;
 import com.github.zi_jing.cuckoolib.network.NetworkHandler;
@@ -16,6 +18,7 @@ public class CommonProxy {
 		Materials.register();
 		SolidShapes.register();
 		NetworkHandler.register();
+		ModularGuiInfo.REGISTRY.register(0, TEGuiHolderCodec.REGISTRY_NAME, TEGuiHolderCodec.INSTANCE);
 	}
 
 	public void init(FMLInitializationEvent e) {
