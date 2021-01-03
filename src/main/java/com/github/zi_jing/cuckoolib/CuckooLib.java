@@ -1,49 +1,77 @@
 package com.github.zi_jing.cuckoolib;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("cuckoolib")
+import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
+import com.github.zi_jing.cuckoolib.gui.TileEntityCodec;
+import com.github.zi_jing.cuckoolib.material.ModMaterials;
+import com.github.zi_jing.cuckoolib.material.ModSolidShapes;
+import com.github.zi_jing.cuckoolib.network.IMessage;
+import com.github.zi_jing.cuckoolib.network.MessageCapabilityUpdate;
+import com.github.zi_jing.cuckoolib.network.MessageGuiToClient;
+import com.github.zi_jing.cuckoolib.network.MessageGuiToServer;
+import com.github.zi_jing.cuckoolib.network.MessageModularGuiOpen;
+
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
+
+@Mod(CuckooLib.MODID)
 public class CuckooLib {
+	public static final String MODID = "cuckoolib";
+	public static final String MODNAME = "Cuckoo Lib";
+	public static final String VERSION = "1.0.1";
 
-    private static final Logger LOGGER = LogManager.getLogger("CuckooLib");
+	private static final Logger LOGGER = LogManager.getLogger("CuckooLib");
 
-    public CuckooLib() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
+			.named(new ResourceLocation(MODID, "main")).networkProtocolVersion(() -> VERSION)
+			.serverAcceptedVersions(VERSION::equals).clientAcceptedVersions(VERSION::equals).simpleChannel();
 
-    public static Logger getLogger() {
-        return LOGGER;
-    }
+	public CuckooLib() {
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
+		ModMaterials.register();
+		ModSolidShapes.register();
+	}
 
-    // 在注册事件之后被调用
-    @SubscribeEvent
-    public void init(final FMLCommonSetupEvent event) {
-    }
+	public static Logger getLogger() {
+		return LOGGER;
+	}
 
-    @SubscribeEvent
-    public void clientInit(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-    }
+	public void setup(FMLCommonSetupEvent event) {
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
+		this.registerMessage(0, MessageModularGuiOpen.class, MessageModularGuiOpen::decode,
+				NetworkDirection.PLAY_TO_CLIENT);
+		this.registerMessage(1, MessageGuiToServer.class, MessageGuiToServer::decode, NetworkDirection.PLAY_TO_SERVER);
+		this.registerMessage(2, MessageGuiToClient.class, MessageGuiToClient::decode, NetworkDirection.PLAY_TO_CLIENT);
+		this.registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode,
+				NetworkDirection.PLAY_TO_CLIENT);
+		ModularGuiInfo.registerGuiHolderCodec(TileEntityCodec.INSTANCE);
+	}
 
-    @SubscribeEvent
-    public void enqueueIMC(final InterModEnqueueEvent event) {
-    }
+	public void onServerStarting(FMLServerStartingEvent event) {
 
-    @SubscribeEvent
-    public void processIMC(final InterModProcessEvent event) {
-    }
+	}
 
-    @SubscribeEvent
-    public void onServerStarting(final FMLServerStartingEvent event) {
-        // do something when the server starts
-    }
+	private <T extends IMessage> void registerMessage(int id, Class<T> type, Function<PacketBuffer, T> decoder,
+			NetworkDirection direction) {
+		CHANNEL.registerMessage(id, type, (msg, buf) -> {
+			msg.encode(buf);
+		}, decoder, (msg, ctx) -> {
+			msg.process(ctx);
+			ctx.get().setPacketHandled(true);
+		}, Optional.of(direction));
+	}
 }
