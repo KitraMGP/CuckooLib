@@ -35,6 +35,10 @@ public class Material {
 	protected long flagValue;
 	protected float efficiency, meltingPoint, boilingPoint, plasmaPoint;
 
+	static {
+		ModMaterials.register();
+	}
+
 	public Material(String name, int color) {
 		this.name = name;
 		this.color = color;

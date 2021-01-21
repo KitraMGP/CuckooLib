@@ -6,6 +6,9 @@ import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
 import com.github.zi_jing.cuckoolib.util.math.Vector2i;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 public class WidgetBase implements IWidget {
 	protected ModularGuiInfo guiInfo;
 	protected ISyncedWidgetList widgetList;
@@ -30,6 +33,7 @@ public class WidgetBase implements IWidget {
 	}
 
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public void drawInBackground(MatrixStack transform, float partialTicks, int mouseX, int mouseY, int guiLeft,
 			int guiTop) {
 		if (this.isEnable && this.renderer != null) {

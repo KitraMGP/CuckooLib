@@ -1,6 +1,7 @@
 package com.github.zi_jing.cuckoolib.item;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -23,16 +25,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 
-public class ToolItem extends Item {
+public class ToolItem extends ItemBase {
+	public static final List<ToolItem> REGISTERED_TOOL_ITEM = new ArrayList<ToolItem>();
+
 	protected String modid, name;
 	protected IToolInfo toolInfo;
 
-	public ToolItem(String modid, String name, Properties properties, IToolInfo toolInfo) {
-		super(properties);
-		this.modid = modid;
-		this.name = name;
+	public ToolItem(String modid, String name, ItemGroup group, IToolInfo toolInfo) {
+		super(modid, name, group);
 		this.toolInfo = toolInfo;
-		this.setRegistryName(modid, name);
+		REGISTERED_TOOL_ITEM.add(this);
 	}
 
 	public IToolInfo getToolInfo() {

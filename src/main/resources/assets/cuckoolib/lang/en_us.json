@@ -1,4 +1,6 @@
 {
+	"itemGroup.cuckoolib_material": "CuckooLib - Material",
+
 	"cuckoolib.shape.dust.name": "%s Dust",
 	"cuckoolib.shape.plate.name": "%s Plate",
 	"cuckoolib.shape.knife_head.name": "%s Knife Head",

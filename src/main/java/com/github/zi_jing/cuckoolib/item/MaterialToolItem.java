@@ -1,10 +1,8 @@
 package com.github.zi_jing.cuckoolib.item;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,11 +20,8 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.NonNullList;
 
 public class MaterialToolItem extends ToolItem {
-	public static final List<MaterialToolItem> REGISTERED_TOOL_ITEM = new ArrayList<MaterialToolItem>();
-
-	public MaterialToolItem(String modid, String name, Properties properties, IToolInfo toolInfo) {
-		super(modid, name, properties, toolInfo);
-		REGISTERED_TOOL_ITEM.add(this);
+	public MaterialToolItem(String modid, String name, ItemGroup group, IToolInfo toolInfo) {
+		super(modid, name, group, toolInfo);
 	}
 
 	public static Map<Integer, Pair<String, Material>> getToolAllMaterial(ItemStack stack) {

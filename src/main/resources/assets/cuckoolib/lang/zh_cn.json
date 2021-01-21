@@ -1,4 +1,6 @@
 {
+	"itemGroup.cuckoolib_material": "CuckooLib - 材料",
+
 	"cuckoolib.shape.dust.name": "%s粉",
 	"cuckoolib.shape.plate.name": "%s板",
 	"cuckoolib.shape.knife_head.name": "%s刀头",

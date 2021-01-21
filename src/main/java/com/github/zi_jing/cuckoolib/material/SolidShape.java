@@ -19,6 +19,10 @@ public class SolidShape {
 	private Predicate<Material> materialPredicate;
 	private Set<Material> ignoredMaterials, generatedMaterials;
 
+	static {
+		ModSolidShapes.register();
+	}
+
 	public SolidShape(String name, int unit, Predicate<Material> materialPredicate) {
 		if (REGISTRY.containsKey(name)) {
 			throw new IllegalStateException("Solid shape [ " + name + " ] has registered");
@@ -44,6 +48,10 @@ public class SolidShape {
 
 	public int getUnit() {
 		return this.unit;
+	}
+
+	public boolean isEmpty() {
+		return this == ModSolidShapes.EMPTY;
 	}
 
 	public void addGeneratedMaterial(Material... material) {

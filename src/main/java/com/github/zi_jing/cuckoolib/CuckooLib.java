@@ -8,14 +8,18 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
 import com.github.zi_jing.cuckoolib.gui.TileEntityCodec;
-import com.github.zi_jing.cuckoolib.material.ModMaterials;
-import com.github.zi_jing.cuckoolib.material.ModSolidShapes;
+import com.github.zi_jing.cuckoolib.item.MaterialItem;
+import com.github.zi_jing.cuckoolib.item.MaterialToolItem;
 import com.github.zi_jing.cuckoolib.network.IMessage;
 import com.github.zi_jing.cuckoolib.network.MessageCapabilityUpdate;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToClient;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToServer;
 import com.github.zi_jing.cuckoolib.network.MessageModularGuiOpen;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,11 +43,16 @@ public class CuckooLib {
 			.named(new ResourceLocation(MODID, "main")).networkProtocolVersion(() -> VERSION)
 			.serverAcceptedVersions(VERSION::equals).clientAcceptedVersions(VERSION::equals).simpleChannel();
 
+	public static final ItemGroup GROUP_MATERIAL = new ItemGroup(MODID + "_material") {
+		@Override
+		public ItemStack createIcon() {
+			return new ItemStack(Items.IRON_INGOT);
+		}
+	};
+
 	public CuckooLib() {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
-		ModMaterials.register();
-		ModSolidShapes.register();
 	}
 
 	public static Logger getLogger() {
@@ -59,6 +68,13 @@ public class CuckooLib {
 		this.registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode,
 				NetworkDirection.PLAY_TO_CLIENT);
 		ModularGuiInfo.registerGuiHolderCodec(TileEntityCodec.INSTANCE);
+		MaterialToolItem.REGISTERED_TOOL_ITEM.forEach((item) -> {
+			if (item instanceof MaterialToolItem) {
+				Minecraft.getInstance().getItemColors().register(((MaterialToolItem) item)::getItemColor, item);
+			}
+		});
+		MaterialItem.REGISTERED_MATERIAL_ITEM
+				.forEach((item) -> Minecraft.getInstance().getItemColors().register(item::getItemColor, item));
 	}
 
 	public void onServerStarting(FMLServerStartingEvent event) {
