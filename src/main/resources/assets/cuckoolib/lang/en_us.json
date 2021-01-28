@@ -1,11 +1,11 @@
 {
 	"itemGroup.cuckoolib_material": "CuckooLib - Material",
 
-	"cuckoolib.shape.dust.name": "%s Dust",
-	"cuckoolib.shape.plate.name": "%s Plate",
-	"cuckoolib.shape.knife_head.name": "%s Knife Head",
-	"cuckoolib.shape.hammer_head.name": "%s Hammer Head",
-	"cuckoolib.shape.chisel_head.name": "%s Chisel Head",
+	"cuckoolib.shape.dusts.name": "%s Dust",
+	"cuckoolib.shape.plates.name": "%s Plate",
+	"cuckoolib.shape.knife_heads.name": "%s Knife Head",
+	"cuckoolib.shape.hammer_heads.name": "%s Hammer Head",
+	"cuckoolib.shape.chisel_heads.name": "%s Chisel Head",
 
 	"cuckoolib.material.hydrogen.name": "Hydrogen",
 	"cuckoolib.material.helium.name": "Helium",

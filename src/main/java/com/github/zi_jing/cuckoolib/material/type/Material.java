@@ -107,8 +107,7 @@ public class Material {
 	}
 
 	public static Material getMaterialByName(String name) {
-		Material material = REGISTRY.get(name);
-		return material == null ? ModMaterials.EMPTY : material;
+		return REGISTRY.get(name);
 	}
 
 	public void addFlag(IMaterialFlag flag) {
@@ -121,10 +120,6 @@ public class Material {
 
 	public int getColor() {
 		return this.color;
-	}
-
-	public boolean isEmpty() {
-		return this == ModMaterials.EMPTY;
 	}
 
 	public boolean hasFlag(IMaterialFlag flag) {

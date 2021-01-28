@@ -13,7 +13,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class RegisterEventHandler {
 	@SubscribeEvent
 	public static void registerItem(RegistryEvent.Register<Item> event) {
-		event.getRegistry().registerAll(MaterialItem.REGISTERED_MATERIAL_ITEM.toArray(new Item[0]));
+		MaterialItem.REGISTERED_MATERIAL_ITEM.values()
+				.forEach((map) -> event.getRegistry().registerAll(map.values().toArray(new MaterialItem[0])));
 		event.getRegistry().registerAll(ItemBase.REGISTERED_ITEM.toArray(new Item[0]));
 	}
 }

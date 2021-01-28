@@ -18,6 +18,12 @@ public class RecipeMap {
 
 	public RecipeMap(String unlocalizedName, int minInput, int maxInput, int minOutput, int maxOutput,
 			int minFluidInput, int maxFluidInput, int minFluidOutput, int maxFluidOutput) {
+		this(unlocalizedName, minInput, maxInput, minOutput, maxOutput, minFluidInput, maxFluidInput, minFluidOutput,
+				maxFluidOutput, new RecipeBuilder());
+	}
+
+	public RecipeMap(String unlocalizedName, int minInput, int maxInput, int minOutput, int maxOutput,
+			int minFluidInput, int maxFluidInput, int minFluidOutput, int maxFluidOutput, RecipeBuilder builder) {
 		this.unlocalizedName = unlocalizedName;
 		this.minInput = minInput;
 		this.maxInput = Math.max(minInput, maxInput);
@@ -28,12 +34,6 @@ public class RecipeMap {
 		this.minFluidOutput = minFluidOutput;
 		this.maxFluidOutput = Math.max(minFluidOutput, maxFluidOutput);
 		this.recipes = new HashMap<Integer, Recipe>();
-	}
-
-	public RecipeMap(String unlocalizedName, int minInput, int maxInput, int minOutput, int maxOutput,
-			int minFluidInput, int maxFluidInput, int minFluidOutput, int maxFluidOutput, RecipeBuilder builder) {
-		this(unlocalizedName, minInput, maxInput, minOutput, maxOutput, minFluidInput, maxFluidInput, minFluidOutput,
-				maxFluidOutput);
 		this.builder = builder;
 		builder.recipeMap = this;
 	}

@@ -50,10 +50,6 @@ public class SolidShape {
 		return this.unit;
 	}
 
-	public boolean isEmpty() {
-		return this == ModSolidShapes.EMPTY;
-	}
-
 	public void addGeneratedMaterial(Material... material) {
 		this.generatedMaterials.addAll(Arrays.asList(material));
 	}

@@ -6,8 +6,6 @@ import com.github.zi_jing.cuckoolib.material.type.Material;
 import com.github.zi_jing.cuckoolib.material.type.PlasticityMaterial;
 
 public class ModMaterials {
-	public static final Material EMPTY = new Material("empty", 0xffffff);
-
 	public static final Material HYDROGEN = new Material("hydrogen", 0x00ffff);
 	public static final Material HELIUM = new Material("helium", 0xdddd00);
 

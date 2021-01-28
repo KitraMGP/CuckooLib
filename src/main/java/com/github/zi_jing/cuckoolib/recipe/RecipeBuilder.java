@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
+import com.github.zi_jing.cuckoolib.material.SolidShape;
+import com.github.zi_jing.cuckoolib.material.type.Material;
 import com.github.zi_jing.cuckoolib.util.ValidateResult;
 import com.github.zi_jing.cuckoolib.util.math.MathUtil;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -155,25 +159,25 @@ public class RecipeBuilder {
 		return this;
 	}
 
-//	public RecipeBuilder inputOre(String oreDict) {
-//		this.inputs.add(IngredientIndex.from(oreDict));
-//		return this;
-//	}
-//
-//	public RecipeBuilder inputOre(String oreDict, int count) {
-//		this.inputs.add(IngredientIndex.from(oreDict, count));
-//		return this;
-//	}
-//
-//	public RecipeBuilder inputOre(SolidShape shape, Material material) {
-//		this.inputs.add(IngredientIndex.from(shape, material));
-//		return this;
-//	}
-//
-//	public RecipeBuilder inputOre(SolidShape shape, Material material, int count) {
-//		this.inputs.add(IngredientIndex.from(shape, material, count));
-//		return this;
-//	}
+	public RecipeBuilder inputOre(ITag<Item> tag) {
+		this.inputs.add(IngredientIndex.from(tag));
+		return this;
+	}
+
+	public RecipeBuilder inputOre(ITag<Item> tag, int count) {
+		this.inputs.add(IngredientIndex.from(tag, count));
+		return this;
+	}
+
+	public RecipeBuilder inputOre(SolidShape shape, Material material) {
+		this.inputs.add(IngredientIndex.from(shape, material));
+		return this;
+	}
+
+	public RecipeBuilder inputOre(SolidShape shape, Material material, int count) {
+		this.inputs.add(IngredientIndex.from(shape, material, count));
+		return this;
+	}
 
 	public RecipeBuilder outputItem(ItemStack... output) {
 		for (int i = 0; i < output.length; i++) {

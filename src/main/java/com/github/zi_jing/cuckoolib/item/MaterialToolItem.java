@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.github.zi_jing.cuckoolib.material.ModMaterials;
 import com.github.zi_jing.cuckoolib.material.type.Material;
 import com.github.zi_jing.cuckoolib.tool.IToolInfo;
 import com.github.zi_jing.cuckoolib.util.data.NBTAdapter;
@@ -52,7 +51,7 @@ public class MaterialToolItem extends ToolItem {
 				}
 			}
 		}
-		return ModMaterials.EMPTY;
+		return null;
 	}
 
 	public static Material getToolMaterial(ItemStack stack, String part) {
@@ -67,7 +66,7 @@ public class MaterialToolItem extends ToolItem {
 				}
 			}
 		}
-		return ModMaterials.EMPTY;
+		return null;
 	}
 
 	public static void setToolMaterial(ItemStack stack, int index, String part, Material material) {
@@ -99,7 +98,7 @@ public class MaterialToolItem extends ToolItem {
 
 	public int getItemColor(ItemStack stack, int tintIndex) {
 		Material material = getToolMaterial(stack, tintIndex);
-		if (!material.isEmpty()) {
+		if (material != null) {
 			return material.getColor();
 		}
 		return 0xffffff;

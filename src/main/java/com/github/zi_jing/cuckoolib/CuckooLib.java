@@ -22,16 +22,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 @Mod(CuckooLib.MODID)
+@Mod.EventBusSubscriber(modid = CuckooLib.MODID, bus = Bus.MOD)
 public class CuckooLib {
 	public static final String MODID = "cuckoolib";
 	public static final String MODNAME = "Cuckoo Lib";
@@ -51,21 +51,19 @@ public class CuckooLib {
 	};
 
 	public CuckooLib() {
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
+
 	}
 
 	public static Logger getLogger() {
 		return LOGGER;
 	}
 
-	public void setup(FMLCommonSetupEvent event) {
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
-		this.registerMessage(0, MessageModularGuiOpen.class, MessageModularGuiOpen::decode,
-				NetworkDirection.PLAY_TO_CLIENT);
-		this.registerMessage(1, MessageGuiToServer.class, MessageGuiToServer::decode, NetworkDirection.PLAY_TO_SERVER);
-		this.registerMessage(2, MessageGuiToClient.class, MessageGuiToClient::decode, NetworkDirection.PLAY_TO_CLIENT);
-		this.registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode,
+	@SubscribeEvent
+	public static void setup(FMLCommonSetupEvent event) {
+		registerMessage(0, MessageModularGuiOpen.class, MessageModularGuiOpen::decode, NetworkDirection.PLAY_TO_CLIENT);
+		registerMessage(1, MessageGuiToServer.class, MessageGuiToServer::decode, NetworkDirection.PLAY_TO_SERVER);
+		registerMessage(2, MessageGuiToClient.class, MessageGuiToClient::decode, NetworkDirection.PLAY_TO_CLIENT);
+		registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode,
 				NetworkDirection.PLAY_TO_CLIENT);
 		ModularGuiInfo.registerGuiHolderCodec(TileEntityCodec.INSTANCE);
 		MaterialToolItem.REGISTERED_TOOL_ITEM.forEach((item) -> {
@@ -73,15 +71,11 @@ public class CuckooLib {
 				Minecraft.getInstance().getItemColors().register(((MaterialToolItem) item)::getItemColor, item);
 			}
 		});
-		MaterialItem.REGISTERED_MATERIAL_ITEM
-				.forEach((item) -> Minecraft.getInstance().getItemColors().register(item::getItemColor, item));
+		MaterialItem.REGISTERED_MATERIAL_ITEM.values().forEach((map) -> map.values()
+				.forEach((item) -> Minecraft.getInstance().getItemColors().register(item::getItemColor, item)));
 	}
 
-	public void onServerStarting(FMLServerStartingEvent event) {
-
-	}
-
-	private <T extends IMessage> void registerMessage(int id, Class<T> type, Function<PacketBuffer, T> decoder,
+	private static <T extends IMessage> void registerMessage(int id, Class<T> type, Function<PacketBuffer, T> decoder,
 			NetworkDirection direction) {
 		CHANNEL.registerMessage(id, type, (msg, buf) -> {
 			msg.encode(buf);

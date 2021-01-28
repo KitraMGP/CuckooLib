@@ -1,9 +1,11 @@
 package com.github.zi_jing.cuckoolib.item;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
+import com.github.zi_jing.cuckoolib.material.MaterialEntry;
 import com.github.zi_jing.cuckoolib.material.SolidShape;
 import com.github.zi_jing.cuckoolib.material.type.Material;
 
@@ -12,16 +14,29 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 public class MaterialItem extends ItemBase {
-	public static final List<MaterialItem> REGISTERED_MATERIAL_ITEM = new ArrayList<MaterialItem>();
+	public static final Map<String, Map<MaterialEntry, MaterialItem>> REGISTERED_MATERIAL_ITEM = new HashMap<String, Map<MaterialEntry, MaterialItem>>();
+
+	public static final Comparator<MaterialItem> COMPARATOR = (itemA, itemB) -> {
+		String shapeA = itemA.getShape().getName();
+		String shapeB = itemB.getShape().getName();
+		String materialA = itemA.getMaterial().getName();
+		String materialB = itemB.getMaterial().getName();
+		return shapeA.equals(shapeB) ? materialA.compareTo(materialB) : shapeA.compareTo(shapeB);
+	};
 
 	protected SolidShape shape;
 	protected Material material;
 
 	public MaterialItem(String modid, SolidShape shape, Material material) {
-		super(modid, "material_item." + shape.getName() + "." + material.getName(), CuckooLib.GROUP_MATERIAL);
+		super(modid, "material_item." + shape.getName() + "." + material.getName(), new Properties(),
+				CuckooLib.GROUP_MATERIAL, false);
 		this.shape = shape;
 		this.material = material;
-		REGISTERED_MATERIAL_ITEM.add(this);
+		if (!REGISTERED_MATERIAL_ITEM.containsKey(modid)) {
+			REGISTERED_MATERIAL_ITEM.put(modid, new HashMap<MaterialEntry, MaterialItem>());
+		}
+		Map<MaterialEntry, MaterialItem> map = REGISTERED_MATERIAL_ITEM.get(modid);
+		map.put(new MaterialEntry(shape, material), this);
 	}
 
 	public static SolidShape getItemShape(ItemStack stack) {
@@ -50,7 +65,7 @@ public class MaterialItem extends ItemBase {
 
 	public int getItemColor(ItemStack stack, int tintIndex) {
 		Material material = getItemMaterial(stack);
-		if (!material.isEmpty()) {
+		if (material != null) {
 			return material.getColor();
 		}
 		return 0xffffff;

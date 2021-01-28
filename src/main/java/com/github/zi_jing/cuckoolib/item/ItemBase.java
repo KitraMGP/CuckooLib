@@ -20,11 +20,17 @@ public class ItemBase extends Item {
 	}
 
 	public ItemBase(String modid, String name, Properties properties, ItemGroup group) {
+		this(modid, name, properties, group, true);
+	}
+
+	public ItemBase(String modid, String name, Properties properties, ItemGroup group, boolean register) {
 		super(properties.group(group));
 		this.modid = modid;
 		this.name = name;
 		this.setRegistryName(modid, name);
-		REGISTERED_ITEM.add(this);
+		if (register) {
+			REGISTERED_ITEM.add(this);
+		}
 	}
 
 	public String getItemModid() {
