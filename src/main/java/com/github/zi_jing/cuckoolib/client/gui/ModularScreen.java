@@ -1,18 +1,32 @@
 package com.github.zi_jing.cuckoolib.client.gui;
 
+import com.github.zi_jing.cuckoolib.CuckooLib;
+import com.github.zi_jing.cuckoolib.client.render.TextureArea;
+import com.github.zi_jing.cuckoolib.gui.IModularGuiHolder;
 import com.github.zi_jing.cuckoolib.gui.ModularContainer;
 import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 public class ModularScreen extends ContainerScreen<ModularContainer> {
+	public static final TextureArea TITLE_1 = TextureArea
+			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/title_1.png"));
+	public static final TextureArea TITLE_2 = TextureArea
+			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/title_2.png"));
+	public static final TextureArea BACK = TextureArea
+			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/back.png"));
+	public static final TextureArea REFRESH = TextureArea
+			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/refresh.png"));
+
 	protected ModularGuiInfo guiInfo;
 
-	public ModularScreen(int window, ModularGuiInfo guiInfo, PlayerInventory inv, ITextComponent title) {
-		super(new ModularContainer(null, window, guiInfo), inv, title);
+	public ModularScreen(int window, ModularGuiInfo guiInfo, IModularGuiHolder[] parentGuiHolders, PlayerInventory inv,
+			ITextComponent title) {
+		super(new ModularContainer(null, window, guiInfo, parentGuiHolders), inv, title);
 		this.guiInfo = guiInfo;
 	}
 
@@ -38,6 +52,7 @@ public class ModularScreen extends ContainerScreen<ModularContainer> {
 		super.render(transform, mouseX, mouseY, partialTicks);
 		this.renderHoveredTooltip(transform, mouseX, mouseY);
 		this.guiInfo.handleMouseHovered(mouseX, mouseY);
+		TITLE_1.draw(transform, this.guiLeft - 26, this.guiTop + 3, 23, 47);
 	}
 
 	@Override

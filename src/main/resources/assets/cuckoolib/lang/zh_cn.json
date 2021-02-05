@@ -1,6 +1,8 @@
 {
 	"itemGroup.cuckoolib_material": "CuckooLib - 材料",
 
+	"modulargui.plan.name": "计划板",
+
 	"cuckoolib.shape.dusts.name": "%s粉",
 	"cuckoolib.shape.plates.name": "%s板",
 	"cuckoolib.shape.knife_heads.name": "%s刀头",

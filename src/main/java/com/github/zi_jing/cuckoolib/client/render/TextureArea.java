@@ -1,10 +1,14 @@
 package com.github.zi_jing.cuckoolib.client.render;
 
+import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.util.ResourceLocation;
 
 public class TextureArea implements IWidgetRenderer {
+	public static final TextureArea DEFAULT_BACKGROUND = createFullTexture(
+			new ResourceLocation(CuckooLib.MODID, "textures/gui/default_background.png"));
+
 	private ResourceLocation location;
 	private float x, y, width, height;
 

@@ -1,6 +1,8 @@
-package com.github.zi_jing.cuckoolib.gui;
+package com.github.zi_jing.cuckoolib.gui.impl;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
+import com.github.zi_jing.cuckoolib.gui.IGuiHolderCodec;
+import com.github.zi_jing.cuckoolib.gui.IModularGuiHolder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;

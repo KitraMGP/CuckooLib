@@ -1,5 +1,7 @@
 {
 	"itemGroup.cuckoolib_material": "CuckooLib - Material",
+	
+	"modulargui.plan.name": "Plan Board",
 
 	"cuckoolib.shape.dusts.name": "%s Dust",
 	"cuckoolib.shape.plates.name": "%s Plate",

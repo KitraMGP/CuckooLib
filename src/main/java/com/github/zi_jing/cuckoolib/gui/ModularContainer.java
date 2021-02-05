@@ -36,15 +36,17 @@ import net.minecraftforge.fml.network.NetworkDirection;
 
 public class ModularContainer extends Container implements ISyncedWidgetList {
 	protected ModularGuiInfo guiInfo;
+	protected IModularGuiHolder[] parentGuiHolders;
 	protected Map<ISlotWidget, Slot> slotMap;
 	protected Deque<Pair<Long, Vector2i>> mouseHoveredData;
 	protected List<PacketBuffer> blockedData;
 	protected boolean isDataBlocked;
 
-	public ModularContainer(ContainerType type, int id, ModularGuiInfo info) {
+	public ModularContainer(ContainerType type, int id, ModularGuiInfo info, IModularGuiHolder[] parentGuiHolders) {
 		super(type, id);
 		this.guiInfo = info;
 		info.container = this;
+		this.parentGuiHolders = parentGuiHolders;
 		this.slotMap = new HashMap<ISlotWidget, Slot>();
 		this.mouseHoveredData = new LinkedList<Pair<Long, Vector2i>>();
 		this.blockedData = new ArrayList<PacketBuffer>();
@@ -73,6 +75,10 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 
 	public ModularGuiInfo getGuiInfo() {
 		return this.guiInfo;
+	}
+
+	public IModularGuiHolder[] getParentGuiHolders() {
+		return this.parentGuiHolders;
 	}
 
 	public void setDataBlocked(boolean blocked) {
@@ -106,10 +112,10 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
+		List<IContainerListener> listListener = getContainerListeners(this);
 		for (int i = 0; i < this.inventorySlots.size(); i++) {
 			ItemStack stack = this.inventorySlots.get(i).getStack();
 			if (CapabilityListener.shouldSync(stack)) {
-				List<IContainerListener> listListener = getContainerListeners(this);
 				for (IContainerListener listener : listListener) {
 					if (listener instanceof CapabilityListener) {
 						listener.sendSlotContents(this, i, stack);

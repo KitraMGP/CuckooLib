@@ -7,7 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
-import com.github.zi_jing.cuckoolib.gui.TileEntityCodec;
+import com.github.zi_jing.cuckoolib.gui.impl.PlanGuiCodec;
+import com.github.zi_jing.cuckoolib.gui.impl.TileEntityCodec;
 import com.github.zi_jing.cuckoolib.item.MaterialItem;
 import com.github.zi_jing.cuckoolib.item.MaterialToolItem;
 import com.github.zi_jing.cuckoolib.network.IMessage;
@@ -66,6 +67,7 @@ public class CuckooLib {
 		registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode,
 				NetworkDirection.PLAY_TO_CLIENT);
 		ModularGuiInfo.registerGuiHolderCodec(TileEntityCodec.INSTANCE);
+		ModularGuiInfo.registerGuiHolderCodec(PlanGuiCodec.INSTANCE);
 		MaterialToolItem.REGISTERED_TOOL_ITEM.forEach((item) -> {
 			if (item instanceof MaterialToolItem) {
 				Minecraft.getInstance().getItemColors().register(((MaterialToolItem) item)::getItemColor, item);

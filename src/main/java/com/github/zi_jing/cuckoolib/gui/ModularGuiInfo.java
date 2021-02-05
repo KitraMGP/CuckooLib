@@ -1,14 +1,19 @@
 package com.github.zi_jing.cuckoolib.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.client.gui.ModularScreen;
+import com.github.zi_jing.cuckoolib.client.render.EmptyWidgetRenderer;
 import com.github.zi_jing.cuckoolib.client.render.IWidgetRenderer;
+import com.github.zi_jing.cuckoolib.gui.widget.ButtonWidget;
 import com.github.zi_jing.cuckoolib.gui.widget.IWidget;
 import com.github.zi_jing.cuckoolib.gui.widget.SlotWidget;
 import com.github.zi_jing.cuckoolib.network.MessageModularGuiOpen;
@@ -24,7 +29,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,6 +44,7 @@ public class ModularGuiInfo {
 	protected ModularContainer container;
 	protected PlayerEntity player;
 	protected Vector2i size;
+	protected ITextComponent title;
 	protected IWidgetRenderer background;
 	protected Map<Integer, IWidget> widgets;
 	protected List<Consumer<ModularContainer>> openListeners, closeListeners;
@@ -55,6 +61,11 @@ public class ModularGuiInfo {
 	}
 
 	public static void openModularGui(IModularGuiHolder holder, ServerPlayerEntity player) {
+		openModularGui(holder, player, new IModularGuiHolder[0]);
+	}
+
+	public static void openModularGui(IModularGuiHolder holder, ServerPlayerEntity player,
+			IModularGuiHolder[] parentHolders) {
 		if (player.world.isRemote) {
 			return;
 		}
@@ -68,8 +79,10 @@ public class ModularGuiInfo {
 		player.closeContainer();
 		player.getNextWindowId();
 		ModularGuiInfo guiInfo = holder.createGuiInfo(player);
+		guiInfo.title = holder.getTitle(player);
 		guiInfo.initWidgets();
-		ModularContainer container = new ModularContainer(null, player.currentWindowId, guiInfo);
+		ModularContainer container = new ModularContainer(null, player.currentWindowId, guiInfo,
+				ArrayUtils.add(parentHolders, holder));
 		container.setDataBlocked(true);
 		container.detectAndSendChanges();
 		List<PacketBuffer> updateData = new ArrayList<PacketBuffer>(container.getBlockedData());
@@ -78,20 +91,48 @@ public class ModularGuiInfo {
 		PacketBuffer holderBuf = new PacketBuffer(Unpooled.buffer());
 		holderBuf.writeResourceLocation(codec.getRegistryName());
 		codec.writeHolder(holderBuf, holder);
-		CuckooLib.CHANNEL.sendTo(new MessageModularGuiOpen(holderBuf, updateData, player.currentWindowId),
+		PacketBuffer[] parentHolderBuf = new PacketBuffer[parentHolders.length];
+		for (int i = 0; i < parentHolderBuf.length; i++) {
+			IGuiHolderCodec parentCodec = parentHolders[i].getCodec();
+			if (!REGISTRY.containsValue(parentCodec)) {
+				throw new IllegalArgumentException("The gui holder codec is unregistered");
+			}
+			parentHolderBuf[i] = new PacketBuffer(Unpooled.buffer());
+			parentHolderBuf[i].writeResourceLocation(parentCodec.getRegistryName());
+			parentCodec.writeHolder(parentHolderBuf[i], parentHolders[i]);
+		}
+		CuckooLib.CHANNEL.sendTo(
+				new MessageModularGuiOpen(holderBuf, parentHolderBuf, updateData, player.currentWindowId),
 				player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
 		player.openContainer = container;
 		player.openContainer.addListener(player);
 		MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, container));
 	}
 
+	public static void backToParentGui(ModularContainer container) {
+		IModularGuiHolder[] parentHolders = container.getParentGuiHolders();
+		if (parentHolders.length >= 2) {
+			openModularGui(parentHolders[parentHolders.length - 2], (ServerPlayerEntity) container.guiInfo.player,
+					Arrays.copyOf(parentHolders, parentHolders.length - 2));
+		}
+	}
+
+	public static void refreshGui(ModularContainer container) {
+		IModularGuiHolder[] parentHolders = container.parentGuiHolders;
+		openModularGui(parentHolders[parentHolders.length - 1], (ServerPlayerEntity) container.guiInfo.player,
+				Arrays.copyOf(parentHolders, parentHolders.length - 1));
+	}
+
 	@OnlyIn(Dist.CLIENT)
-	public static void openClientModularGui(int window, IModularGuiHolder holder, List<PacketBuffer> updateData) {
+	public static void openClientModularGui(int window, IModularGuiHolder holder, IModularGuiHolder[] parentHolders,
+			List<PacketBuffer> updateData) {
 		Minecraft minecraft = Minecraft.getInstance();
 		ClientPlayerEntity player = minecraft.player;
 		ModularGuiInfo guiInfo = holder.createGuiInfo(player);
+		guiInfo.title = holder.getTitle(player);
 		guiInfo.initWidgets();
-		ModularScreen screen = new ModularScreen(window, guiInfo, player.inventory, new StringTextComponent("Test"));
+		ModularScreen screen = new ModularScreen(window, guiInfo, ArrayUtils.add(parentHolders, holder),
+				player.inventory, guiInfo.title);
 		updateData.forEach((data) -> {
 			IWidget widget = guiInfo.container.getGuiInfo().getWidget(data.readInt());
 			widget.receiveMessageFromServer(data);
@@ -211,7 +252,7 @@ public class ModularGuiInfo {
 
 	public static class Builder {
 		private Vector2i size;
-		private IWidgetRenderer background;
+		private IWidgetRenderer background = EmptyWidgetRenderer.INSTANCE;
 		private Map<Integer, IWidget> widgets;
 		private List<Consumer<ModularContainer>> openListeners, closeListeners;
 
@@ -220,6 +261,12 @@ public class ModularGuiInfo {
 			this.widgets = new HashMap<Integer, IWidget>();
 			this.openListeners = new ArrayList<Consumer<ModularContainer>>();
 			this.closeListeners = new ArrayList<Consumer<ModularContainer>>();
+			this.addWidget(new ButtonWidget(this.size.getX() - 19, -9, 9, 9, (data, container) -> {
+				backToParentGui(container);
+			}).setRenderer(ModularScreen.BACK));
+			this.addWidget(new ButtonWidget(this.size.getX() - 9, -9, 9, 9, (data, container) -> {
+				refreshGui(container);
+			}).setRenderer(ModularScreen.REFRESH));
 		}
 
 		public Builder setBackground(IWidgetRenderer background) {

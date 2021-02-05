@@ -27,8 +27,8 @@ public class WidgetBase implements IWidget {
 		this.isEnable = true;
 	}
 
-	public WidgetBase setRenderer(IWidgetRenderer texture) {
-		this.renderer = texture;
+	public WidgetBase setRenderer(IWidgetRenderer renderer) {
+		this.renderer = renderer;
 		return this;
 	}
 
