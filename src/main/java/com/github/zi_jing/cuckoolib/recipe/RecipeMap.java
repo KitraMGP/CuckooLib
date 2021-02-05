@@ -1,5 +1,6 @@
 package com.github.zi_jing.cuckoolib.recipe;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,6 +98,18 @@ public class RecipeMap {
 			}
 		}
 		return null;
+	}
+
+	public List<Recipe> findAllRecipes(List<ItemStack> items, List<FluidStack> fluids) {
+		List<Recipe> list = new ArrayList<Recipe>();
+		Iterator<Recipe> ite = this.recipes.values().iterator();
+		while (ite.hasNext()) {
+			Recipe recipe = ite.next();
+			if (recipe.matches(false, items, fluids)) {
+				list.add(recipe);
+			}
+		}
+		return list;
 	}
 
 	public RecipeBuilder builder() {

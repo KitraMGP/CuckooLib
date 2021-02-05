@@ -29,9 +29,24 @@ public class RecipeMatcher {
 			this.itemCount[j] = items.get(j).getCount();
 		}
 		for (int i = 0; i < inputs.size(); i++) {
-			this.flag = new boolean[items.size()];
-			if (this.match(i, inputs.get(i).getCount()) > 0) {
-				return false;
+			int size = inputs.get(i).getCount();
+			if (size == 0) {
+				boolean result = false;
+				for (int j = 0; j < this.matchCount.length; j++) {
+					if (this.map[i][j]) {
+						result = true;
+					}
+				}
+				if (!result) {
+					return false;
+				}
+			} else {
+				for (int k = 0; k < size; k++) {
+					this.flag = new boolean[items.size()];
+					if (!this.match(i)) {
+						return false;
+					}
+				}
 			}
 		}
 		if (isConsume) {
@@ -42,46 +57,18 @@ public class RecipeMatcher {
 		return true;
 	}
 
-	private int match(int i, int num) {
-		if (num == 0) {
-			for (int j = 0; j < this.matchCount.length; j++) {
-				if (this.map[i][j]) {
-					return 0;
-				}
-			}
-			return 1;
-		}
+	private boolean match(int i) {
 		for (int j = 0; j < this.matchCount.length; j++) {
 			if (this.map[i][j] && !this.flag[j]) {
-				if (this.itemCount[j] >= this.matchCount[j] + num) {
-					if (this.itemCount[j] == this.matchCount[j] + num) {
-						this.flag[j] = true;
-					}
-					this.match[j][i] += num;
-					this.matchCount[j] += num;
-					return 0;
-				}
 				this.flag[j] = true;
-				int consume = this.itemCount[j] - this.matchCount[j];
-				this.match[j][i] += consume;
-				this.matchCount[j] += consume;
-				num -= consume;
-				for (int k = 0; k < this.match[j].length && num > 0; k++) {
-					int oldMatch = this.match[j][k];
-					if (oldMatch == 0 || k == i) {
-						continue;
-					}
-					int move = oldMatch - this.match(k, Math.min(num, oldMatch));
-					this.match[j][k] -= move;
-					this.match[j][i] += move;
-					num -= move;
-				}
-				if (num == 0) {
-					break;
+				if (this.itemCount[j] > this.matchCount[j] || this.match(j)) {
+					this.match[j][i]++;
+					this.matchCount[j]++;
+					return true;
 				}
 			}
 		}
-		return num;
+		return false;
 	}
 
 	private void init(List<IngredientIndex> inputs, List<ItemStack> items) {
