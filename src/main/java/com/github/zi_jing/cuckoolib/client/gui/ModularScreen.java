@@ -1,5 +1,9 @@
 package com.github.zi_jing.cuckoolib.client.gui;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.client.render.TextureArea;
 import com.github.zi_jing.cuckoolib.gui.IModularGuiHolder;
@@ -11,6 +15,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 public class ModularScreen extends ContainerScreen<ModularContainer> {
 	public static final TextureArea TITLE_1 = TextureArea
@@ -49,6 +54,16 @@ public class ModularScreen extends ContainerScreen<ModularContainer> {
 	public void render(MatrixStack transform, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(transform);
 		this.guiInfo.getBackground().draw(transform, this.guiLeft, this.guiTop, this.xSize, this.ySize);
+		List<ITextComponent> titles = Arrays.asList(this.container.getParentGuiHolders()).stream()
+				.map((holder) -> holder.getTitle(this.container.getGuiInfo().getPlayer())).collect(Collectors.toList());
+		String text = "";
+		for (int i = 0; i < titles.size(); i++) {
+			text += titles.get(i).getString();
+			if (i != titles.size() - 1) {
+				text += TextFormatting.GREEN + " > " + TextFormatting.RESET;
+			}
+		}
+		drawString(transform, this.font, text, this.guiLeft + 1, this.guiTop - 11, 0xffffff);
 		super.render(transform, mouseX, mouseY, partialTicks);
 		this.renderHoveredTooltip(transform, mouseX, mouseY);
 		this.guiInfo.handleMouseHovered(mouseX, mouseY);

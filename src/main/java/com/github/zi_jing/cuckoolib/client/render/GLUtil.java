@@ -692,6 +692,20 @@ public class GLUtil {
 		drawTexturedRectWithCustomSizedTexture(matrixStack, x, y, 0, 0, width, height, textureWidth, textureHeight);
 	}
 
+	public static void drawScaledTexturedRect(MatrixStack transform, int x, int y, int width, int height,
+			float textureX, float textureY, float textureWidth, float textureHeight) {
+		preRenderTexture();
+		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		Matrix4f matrix4f = transform.getLast().getMatrix();
+		bufferBuilder.pos(matrix4f, x, y + height, 0).tex(textureX, textureY + textureHeight).endVertex();
+		bufferBuilder.pos(matrix4f, x + width, y + height, 0).tex(textureX + textureWidth, textureY + textureHeight)
+				.endVertex();
+		bufferBuilder.pos(matrix4f, x + width, y, 0).tex(textureX + textureWidth, textureY).endVertex();
+		bufferBuilder.pos(matrix4f, x, y, 0).tex(textureX, textureY).endVertex();
+		tessellator.draw();
+		postRenderTexture();
+	}
+
 	/**
 	 * 将材质的指定部分缩放绘制到指定界面范围内
 	 * 
@@ -703,10 +717,11 @@ public class GLUtil {
 	 * @param textureY      材质绘制部分开始位置的y占比, 属于[0, 1]
 	 * @param textureWidth  材质绘制部分宽度的x占比, 属于[0, 1]
 	 * @param textureHeight 材质绘制部分高度的x占比, 属于[0, 1]
+	 * @param alpha         亮度, 属于[0, 255]
 	 */
 	public static void drawScaledTexturedRect(MatrixStack transform, int x, int y, int width, int height,
-			float textureX, float textureY, float textureWidth, float textureHeight) {
-		preRenderTexture();
+			float textureX, float textureY, float textureWidth, float textureHeight, int alpha) {
+		preRenderTexture(255, 255, 255, alpha);
 		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		Matrix4f matrix4f = transform.getLast().getMatrix();
 		bufferBuilder.pos(matrix4f, x, y + height, 0).tex(textureX, textureY + textureHeight).endVertex();

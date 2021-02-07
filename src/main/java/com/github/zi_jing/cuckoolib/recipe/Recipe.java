@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -19,7 +20,7 @@ public class Recipe {
 	protected Map<IRecipeProperty, Object> properties;
 
 	public Recipe(RecipeMap recipeMap, List<IngredientIndex> inputs, List<ChanceEntry> outputs,
-			List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs) {
+			List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs, Map<IRecipeProperty, Object> properties) {
 		this.recipeMap = recipeMap;
 		this.inputs = NonNullList.<IngredientIndex>create();
 		this.inputs.addAll(inputs);
@@ -27,6 +28,7 @@ public class Recipe {
 		this.outputs.addAll(outputs);
 		this.fluidInputs = ImmutableList.<FluidStack>copyOf(fluidInputs);
 		this.fluidOutputs = ImmutableList.<FluidStack>copyOf(fluidOutputs);
+		this.properties = ImmutableMap.<IRecipeProperty, Object>copyOf(properties);
 	}
 
 	public RecipeMap getRecipeMap() {
@@ -112,6 +114,10 @@ public class Recipe {
 			}
 		}
 		return true;
+	}
+
+	public <T> boolean containsProperty(IRecipeProperty<T> property) {
+		return this.properties.containsKey(property);
 	}
 
 	public <T> T getPropertyValue(IRecipeProperty<T> property) {

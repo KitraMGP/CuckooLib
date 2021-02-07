@@ -261,10 +261,10 @@ public class ModularGuiInfo {
 			this.widgets = new HashMap<Integer, IWidget>();
 			this.openListeners = new ArrayList<Consumer<ModularContainer>>();
 			this.closeListeners = new ArrayList<Consumer<ModularContainer>>();
-			this.addWidget(new ButtonWidget(this.size.getX() - 19, -9, 9, 9, (data, container) -> {
+			this.addWidget(new ButtonWidget(-1, this.size.getX() - 19, -9, 9, 9, (data, container) -> {
 				backToParentGui(container);
 			}).setRenderer(ModularScreen.BACK));
-			this.addWidget(new ButtonWidget(this.size.getX() - 9, -9, 9, 9, (data, container) -> {
+			this.addWidget(new ButtonWidget(-2, this.size.getX() - 9, -9, 9, 9, (data, container) -> {
 				refreshGui(container);
 			}).setRenderer(ModularScreen.REFRESH));
 		}

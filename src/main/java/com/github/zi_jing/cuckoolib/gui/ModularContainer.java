@@ -110,6 +110,11 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 	}
 
 	@Override
+	public ItemStack transferStackInSlot(PlayerEntity player, int index) {
+		return ItemStack.EMPTY;
+	}
+
+	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 		List<IContainerListener> listListener = getContainerListeners(this);

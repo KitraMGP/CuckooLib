@@ -67,7 +67,8 @@ public class RecipeBuilder {
 	public Recipe build(int id) {
 		this.validate();
 		if (this.result == ValidateResult.VALID) {
-			Recipe recipe = new Recipe(this.recipeMap, this.inputs, this.outputs, this.fluidInputs, this.fluidOutputs);
+			Recipe recipe = new Recipe(this.recipeMap, this.inputs, this.outputs, this.fluidInputs, this.fluidOutputs,
+					this.properties);
 			this.recipeMap.addRecipe(id, recipe);
 			return recipe;
 		}

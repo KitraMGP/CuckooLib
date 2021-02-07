@@ -20,7 +20,7 @@ public class SlotWidget extends WidgetBase implements ISlotWidget {
 
 	public SlotWidget(int x, int y, IItemHandler inventory, int index, boolean canPutItems, boolean canTakeItems) {
 		super(x, y, 18, 18);
-		this.slot = new WidgetSlotItemHandler(inventory, index, position.getX(), position.getY());
+		this.slot = new WidgetSlotItemHandler(inventory, index, this.position.getX(), this.position.getY());
 		this.canPutItems = canPutItems;
 		this.canTakeItems = canTakeItems;
 	}

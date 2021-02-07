@@ -3,10 +3,10 @@ package com.github.zi_jing.cuckoolib.util.data;
 import io.netty.buffer.ByteBuf;
 
 public class ButtonClickData {
-	private int widgetId, x, y, button;
+	private int count, x, y, button;
 
-	public ButtonClickData(int widgetId, int x, int y, int button) {
-		this.widgetId = widgetId;
+	public ButtonClickData(int count, int x, int y, int button) {
+		this.count = count;
 		this.x = x;
 		this.y = y;
 		this.button = button;
@@ -17,14 +17,14 @@ public class ButtonClickData {
 	}
 
 	public void writeToBuf(ByteBuf buf) {
-		buf.writeInt(this.widgetId);
+		buf.writeInt(this.count);
 		buf.writeInt(this.x);
 		buf.writeInt(this.y);
 		buf.writeInt(this.button);
 	}
 
-	public int getWidgetId() {
-		return this.widgetId;
+	public int getCount() {
+		return this.count;
 	}
 
 	public int getX() {
