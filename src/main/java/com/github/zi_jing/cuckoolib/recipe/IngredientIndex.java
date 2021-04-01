@@ -3,11 +3,14 @@ package com.github.zi_jing.cuckoolib.recipe;
 import com.github.zi_jing.cuckoolib.material.MaterialUtil;
 import com.github.zi_jing.cuckoolib.material.SolidShape;
 import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
+import net.minecraft.util.JSONUtils;
 
 public class IngredientIndex {
 	public static IngredientIndex from(ItemStack stack) {
@@ -34,6 +37,11 @@ public class IngredientIndex {
 		return from(MaterialUtil.getMaterialTag(shape, material), count);
 	}
 
+	public static IngredientIndex deserialize(JsonElement element) {
+		JsonObject json = element.getAsJsonObject();
+		return new IngredientIndex(Ingredient.deserialize(json.get("ingredient")), JSONUtils.getInt(json, "count"));
+	}
+
 	private Ingredient ingredient;
 	private int count;
 
@@ -48,5 +56,12 @@ public class IngredientIndex {
 
 	public int getCount() {
 		return this.count;
+	}
+
+	public JsonElement serialize() {
+		JsonObject json = new JsonObject();
+		json.add("ingredient", this.ingredient.serialize());
+		json.addProperty("count", this.count);
+		return json;
 	}
 }

@@ -69,7 +69,7 @@ public class MaterialToolItem extends ToolItem {
 		return null;
 	}
 
-	public static void setToolMaterial(ItemStack stack, int index, String part, Material material) {
+	public static ItemStack setToolMaterial(ItemStack stack, int index, String part, Material material) {
 		CompoundNBT nbt = getToolBaseNBT(stack);
 		ListNBT list = NBTAdapter.getList(nbt, "material", 10);
 		CompoundNBT compound = new CompoundNBT();
@@ -77,6 +77,7 @@ public class MaterialToolItem extends ToolItem {
 		compound.putString("part", part);
 		compound.putString("material", material.getName());
 		list.add(compound);
+		return stack;
 	}
 
 	public ItemStack createItemStack() {
@@ -88,7 +89,13 @@ public class MaterialToolItem extends ToolItem {
 		this.toolInfo.getDefaultMaterial()
 				.forEach((index, pair) -> setToolMaterial(stack, index, pair.getLeft(), pair.getRight()));
 		CompoundNBT nbt = getToolBaseNBT(stack);
-		ListNBT list = nbt.getList("material", 10);
+		return stack;
+	}
+
+	public ItemStack createItemStack(int count, Map<Integer, Pair<String, Material>> materials) {
+		ItemStack stack = new ItemStack(this, count);
+		CompoundNBT nbt = getToolBaseNBT(stack);
+		materials.forEach((index, pair) -> setToolMaterial(stack, index, pair.getLeft(), pair.getRight()));
 		return stack;
 	}
 

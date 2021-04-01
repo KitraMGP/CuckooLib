@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 public class RecipeMap {
 	private String unlocalizedName;
 	private int minInput, maxInput, minOutput, maxOutput, minFluidInput, maxFluidInput, minFluidOutput, maxFluidOutput;
 	private RecipeBuilder builder;
-	private Map<Integer, Recipe> recipes;
+	private Map<ResourceLocation, Recipe> recipes;
 
 	public RecipeMap(String unlocalizedName, int minInput, int maxInput, int minOutput, int maxOutput,
 			int minFluidInput, int maxFluidInput, int minFluidOutput, int maxFluidOutput) {
@@ -34,7 +35,7 @@ public class RecipeMap {
 		this.maxFluidInput = Math.max(minFluidInput, maxFluidInput);
 		this.minFluidOutput = minFluidOutput;
 		this.maxFluidOutput = Math.max(minFluidOutput, maxFluidOutput);
-		this.recipes = new HashMap<Integer, Recipe>();
+		this.recipes = new HashMap<ResourceLocation, Recipe>();
 		this.builder = builder;
 		builder.recipeMap = this;
 	}
@@ -79,11 +80,11 @@ public class RecipeMap {
 		return this.maxFluidOutput;
 	}
 
-	public void addRecipe(int id, Recipe recipe) {
+	public void addRecipe(ResourceLocation id, Recipe recipe) {
 		this.recipes.put(id, recipe);
 	}
 
-	public void removeRecipe(int id) {
+	public void removeRecipe(ResourceLocation id) {
 		if (this.recipes.containsKey(id)) {
 			this.recipes.remove(id);
 		}

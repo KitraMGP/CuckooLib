@@ -15,6 +15,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.gui.widget.ISlotWidget;
+import com.github.zi_jing.cuckoolib.gui.widget.VariableListWidget;
+import com.github.zi_jing.cuckoolib.network.MessageGuiTask;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToClient;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToServer;
 import com.github.zi_jing.cuckoolib.util.math.Vector2i;
@@ -59,6 +61,14 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 				this.addSlot(slot);
 				((ISlotWidget) widget).setSlotCount(slot.slotNumber);
 			}
+			if (widget instanceof VariableListWidget) {
+				((VariableListWidget) widget).getAllSlotWidgets().values().forEach((slotWidget) -> {
+					Slot slot = ((ISlotWidget) slotWidget).getSlot();
+					this.slotMap.put((ISlotWidget) slotWidget, slot);
+					this.addSlot(slot);
+					((ISlotWidget) slotWidget).setSlotCount(slot.slotNumber);
+				});
+			}
 		});
 		info.onGuiOpen();
 	}
@@ -75,6 +85,10 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 
 	public ModularGuiInfo getGuiInfo() {
 		return this.guiInfo;
+	}
+
+	public IModularGuiHolder getGuiHolder() {
+		return this.parentGuiHolders[this.parentGuiHolders.length - 1];
 	}
 
 	public IModularGuiHolder[] getParentGuiHolders() {
@@ -129,6 +143,16 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 			}
 		}
 		this.guiInfo.widgets.forEach((id, widget) -> widget.detectAndSendChanges());
+		IModularGuiHolder holder = this.getGuiHolder();
+		int[] tasks = holder.getTasksToExecute(this);
+		for (int id : tasks) {
+			holder.executeTask(this, id);
+		}
+		if (!this.guiInfo.player.world.isRemote) {
+			CuckooLib.CHANNEL.sendTo(new MessageGuiTask(this.windowId, tasks),
+					((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.getNetworkManager(),
+					NetworkDirection.PLAY_TO_CLIENT);
+		}
 	}
 
 	@Override
@@ -192,11 +216,6 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		} catch (SecurityException | ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public ItemStack notifyTransferStack(ItemStack stack, boolean simulate) {
-		return stack;
 	}
 
 	public static class EmptySlot extends Slot {

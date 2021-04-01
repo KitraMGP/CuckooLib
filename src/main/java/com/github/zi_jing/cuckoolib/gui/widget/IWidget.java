@@ -42,8 +42,8 @@ public interface IWidget {
 		return x >= posX && x < posX + this.getSize().getX() && y >= posY && y < posY + this.getSize().getY();
 	}
 
-	default void initWidget() {
-
+	default void initWidget(ModularGuiInfo info) {
+		this.setGuiInfo(info);
 	}
 
 	default void receiveMessageFromServer(PacketBuffer data) {
@@ -82,11 +82,11 @@ public interface IWidget {
 	@OnlyIn(Dist.CLIENT)
 	void drawInBackground(MatrixStack transform, float partialTicks, int mouseX, int mouseY, int guiLeft, int guiTop);
 
-	default void writeToClient(int widgetId, Consumer<PacketBuffer> data) {
+	default void writePacketToClient(int widgetId, Consumer<PacketBuffer> data) {
 		this.getWidgetList().writeToClient(widgetId, data);
 	}
 
-	default void writeToServer(int widgetId, Consumer<PacketBuffer> data) {
+	default void writePacketToServer(int widgetId, Consumer<PacketBuffer> data) {
 		this.getWidgetList().writeToServer(widgetId, data);
 	}
 }

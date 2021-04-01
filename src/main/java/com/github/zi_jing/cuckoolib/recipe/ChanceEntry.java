@@ -7,13 +7,13 @@ import net.minecraft.util.math.MathHelper;
 
 public class ChanceEntry {
 	private ItemStack stack;
-	private double chance;
+	private float chance;
 
 	public ChanceEntry(ItemStack stack) {
 		this(stack, 1);
 	}
 
-	public ChanceEntry(ItemStack stack, double chance) {
+	public ChanceEntry(ItemStack stack, float chance) {
 		this.stack = stack.copy();
 		this.chance = MathHelper.clamp(chance, 0, 1);
 	}

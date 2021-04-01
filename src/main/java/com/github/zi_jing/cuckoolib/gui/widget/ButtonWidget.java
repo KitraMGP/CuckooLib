@@ -12,20 +12,30 @@ import net.minecraft.util.SoundEvents;
 
 public class ButtonWidget extends WidgetBase {
 	protected int count;
-	protected BiConsumer<ButtonClickData, ModularContainer> callback;
+	protected BiConsumer<ButtonClickData, ModularContainer> callback, callbackClient;
 
 	public ButtonWidget(int count, int x, int y, int width, int height,
 			BiConsumer<ButtonClickData, ModularContainer> callback) {
+		this(count, x, y, width, height, callback, null);
+	}
+
+	public ButtonWidget(int count, int x, int y, int width, int height,
+			BiConsumer<ButtonClickData, ModularContainer> callback,
+			BiConsumer<ButtonClickData, ModularContainer> callbackClient) {
 		super(x, y, width, height);
 		this.count = count;
 		this.callback = callback;
+		this.callbackClient = callbackClient;
 	}
 
 	@Override
 	public boolean onMouseClicked(double mouseX, double mouseY, int button) {
 		ButtonClickData data = new ButtonClickData(this.count, (int) mouseX - this.position.getX(),
 				(int) mouseY - this.position.getY(), button);
-		this.writeToServer(this.id, (buf) -> {
+		if (this.callbackClient != null) {
+			this.callbackClient.accept(data, this.guiInfo.getContainer());
+		}
+		this.writePacketToServer(this.id, (buf) -> {
 			data.writeToBuf(buf);
 		});
 		Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));

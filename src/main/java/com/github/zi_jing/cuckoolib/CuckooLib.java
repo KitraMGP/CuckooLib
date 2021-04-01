@@ -13,9 +13,11 @@ import com.github.zi_jing.cuckoolib.item.MaterialItem;
 import com.github.zi_jing.cuckoolib.item.MaterialToolItem;
 import com.github.zi_jing.cuckoolib.network.IMessage;
 import com.github.zi_jing.cuckoolib.network.MessageCapabilityUpdate;
+import com.github.zi_jing.cuckoolib.network.MessageGuiTask;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToClient;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToServer;
 import com.github.zi_jing.cuckoolib.network.MessageModularGuiOpen;
+import com.github.zi_jing.cuckoolib.recipe.data.DataRecipeSerializer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemGroup;
@@ -23,10 +25,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -52,7 +56,8 @@ public class CuckooLib {
 	};
 
 	public CuckooLib() {
-
+		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		DataRecipeSerializer.RECIPE_SERIALIZERS.register(bus);
 	}
 
 	public static Logger getLogger() {
@@ -66,6 +71,7 @@ public class CuckooLib {
 		registerMessage(2, MessageGuiToClient.class, MessageGuiToClient::decode, NetworkDirection.PLAY_TO_CLIENT);
 		registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode,
 				NetworkDirection.PLAY_TO_CLIENT);
+		registerMessage(4, MessageGuiTask.class, MessageGuiTask::decode, NetworkDirection.PLAY_TO_CLIENT);
 		ModularGuiInfo.registerGuiHolderCodec(TileEntityCodec.INSTANCE);
 		ModularGuiInfo.registerGuiHolderCodec(PlanGuiCodec.INSTANCE);
 		MaterialToolItem.REGISTERED_TOOL_ITEM.forEach((item) -> {

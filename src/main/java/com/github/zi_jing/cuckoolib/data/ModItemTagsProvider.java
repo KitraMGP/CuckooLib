@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.tag;
+package com.github.zi_jing.cuckoolib.data;
 
 import java.util.Map;
 

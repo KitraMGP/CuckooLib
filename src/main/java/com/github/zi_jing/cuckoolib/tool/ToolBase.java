@@ -27,7 +27,8 @@ public abstract class ToolBase implements IToolInfo {
 
 	@Override
 	public int getMaxDamage(ItemStack stack) {
-		return MaterialToolItem.getToolMaterial(stack, 0).getDurability();
+		Material material = MaterialToolItem.getToolMaterial(stack, 0);
+		return material != null ? material.getDurability() : 0;
 	}
 
 	@Override

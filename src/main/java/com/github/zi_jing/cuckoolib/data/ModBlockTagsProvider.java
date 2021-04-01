@@ -1,4 +1,4 @@
-package com.github.zi_jing.cuckoolib.tag;
+package com.github.zi_jing.cuckoolib.data;
 
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;

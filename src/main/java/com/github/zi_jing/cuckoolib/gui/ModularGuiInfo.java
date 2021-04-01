@@ -190,19 +190,26 @@ public class ModularGuiInfo {
 	@OnlyIn(Dist.CLIENT)
 	public void drawInBackground(MatrixStack transform, float partialTicks, int mouseX, int mouseY, int guiLeft,
 			int guiTop) {
-		this.widgets.forEach(
-				(id, widget) -> widget.drawInBackground(transform, partialTicks, mouseX, mouseY, guiLeft, guiTop));
+		this.widgets.forEach((id, widget) -> {
+			if (widget.isEnable()) {
+				widget.drawInBackground(transform, partialTicks, mouseX, mouseY, guiLeft, guiTop);
+			}
+		});
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public void drawInForeground(MatrixStack transform, int mouseX, int mouseY, int guiLeft, int guiTop) {
-		this.widgets.forEach((id, widget) -> widget.drawInForeground(transform, mouseX, mouseY, guiLeft, guiTop));
+		this.widgets.forEach((id, widget) -> {
+			if (widget.isEnable()) {
+				widget.drawInForeground(transform, mouseX, mouseY, guiLeft, guiTop);
+			}
+		});
 	}
 
 	public void handleMouseHovered(int mouseX, int mouseY) {
 		this.container.addMouseHoveredData(mouseX, mouseY);
 		this.widgets.forEach((id, widget) -> {
-			if (widget.isInRange(mouseX, mouseY)) {
+			if (widget.isEnable() && widget.isInRange(mouseX, mouseY)) {
 				widget.onMouseHovered(mouseX, mouseY);
 			}
 		});
@@ -210,35 +217,34 @@ public class ModularGuiInfo {
 
 	public boolean handleMouseClicked(double mouseX, double mouseY, int button) {
 		this.widgets.forEach((id, widget) -> {
-			if (widget.isInRange(mouseX, mouseY)) {
+			if (widget.isEnable() && widget.isInRange(mouseX, mouseY)) {
 				widget.onMouseClicked(mouseX, mouseY, button);
 			}
 		});
-		return false;
+		return true;
 	}
 
 	public boolean handleMouseReleased(double mouseX, double mouseY, int button) {
 		this.widgets.forEach((id, widget) -> {
-			if (widget.isInRange(mouseX, mouseY)) {
+			if (widget.isEnable() && widget.isInRange(mouseX, mouseY)) {
 				widget.onMouseReleased(mouseX, mouseY, button);
 			}
 		});
-		return false;
+		return true;
 	}
 
 	public boolean handleMouseClickMove(double mouseX, double mouseY, int button, double dragX, double dragY) {
 		this.widgets.forEach((id, widget) -> {
-			if (widget.isInRange(mouseX, mouseY)) {
+			if (widget.isEnable() && widget.isInRange(mouseX, mouseY)) {
 				widget.onMouseClickMove(mouseX, mouseY, button, dragX, dragY);
 			}
 		});
-		return false;
+		return true;
 	}
 
 	public void initWidgets() {
 		this.widgets.forEach((id, widget) -> {
-			widget.setGuiInfo(this);
-			widget.initWidget();
+			widget.initWidget(this);
 		});
 	}
 
@@ -251,20 +257,22 @@ public class ModularGuiInfo {
 	}
 
 	public static class Builder {
+		private int internalCount;
 		private Vector2i size;
 		private IWidgetRenderer background = EmptyWidgetRenderer.INSTANCE;
 		private Map<Integer, IWidget> widgets;
 		private List<Consumer<ModularContainer>> openListeners, closeListeners;
 
 		public Builder(int width, int height) {
+			this.internalCount = -1;
 			this.size = new Vector2i(width, height);
 			this.widgets = new HashMap<Integer, IWidget>();
 			this.openListeners = new ArrayList<Consumer<ModularContainer>>();
 			this.closeListeners = new ArrayList<Consumer<ModularContainer>>();
-			this.addWidget(new ButtonWidget(-1, this.size.getX() - 19, -9, 9, 9, (data, container) -> {
+			this.addInternalWidget(new ButtonWidget(-1, this.size.getX() - 19, -9, 9, 9, (data, container) -> {
 				backToParentGui(container);
 			}).setRenderer(ModularScreen.BACK));
-			this.addWidget(new ButtonWidget(-2, this.size.getX() - 9, -9, 9, 9, (data, container) -> {
+			this.addInternalWidget(new ButtonWidget(-2, this.size.getX() - 9, -9, 9, 9, (data, container) -> {
 				refreshGui(container);
 			}).setRenderer(ModularScreen.REFRESH));
 		}
@@ -274,20 +282,30 @@ public class ModularGuiInfo {
 			return this;
 		}
 
-		public Builder addWidget(IWidget widget) {
-			int id = this.widgets.size();
+		public Builder addWidget(int id, IWidget widget) {
 			this.widgets.put(id, widget);
 			widget.setWidgetId(id);
 			return this;
 		}
 
+		protected Builder addInternalWidget(IWidget widget) {
+			this.widgets.put(this.internalCount, widget);
+			widget.setWidgetId(this.internalCount);
+			this.internalCount--;
+			return this;
+		}
+
+		public Builder addPlayerInventory(PlayerInventory inventory) {
+			return this.addPlayerInventory(inventory, 8, 84);
+		}
+
 		public Builder addPlayerInventory(PlayerInventory inventory, int x, int y) {
 			for (int i = 0; i < 9; i++) {
-				this.addWidget(new SlotWidget(x + i * 18, y + 58, new PlayerMainInvWrapper(inventory), i));
+				this.addInternalWidget(new SlotWidget(x + i * 18, y + 58, new PlayerMainInvWrapper(inventory), i));
 			}
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 9; j++) {
-					this.addWidget(new SlotWidget(x + j * 18, y + i * 18, new PlayerMainInvWrapper(inventory),
+					this.addInternalWidget(new SlotWidget(x + j * 18, y + i * 18, new PlayerMainInvWrapper(inventory),
 							(i + 1) * 9 + j));
 				}
 			}

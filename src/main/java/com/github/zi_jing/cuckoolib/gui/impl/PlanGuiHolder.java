@@ -48,7 +48,7 @@ public class PlanGuiHolder implements IModularGuiHolder {
 		for (int i = 0; i < this.planInfoProvider.getPlanCount(); i++) {
 			int x = i % 9;
 			int y = i / 9;
-			builder.addWidget(new ButtonWidget(i, x * 18 + 3, y * 18 + 3, 18, 18, (data, container) -> {
+			builder.addWidget(i, new ButtonWidget(i, x * 18 + 3, y * 18 + 3, 18, 18, (data, container) -> {
 				this.planInfoProvider.callback(data.getCount());
 				ModularGuiInfo.backToParentGui(container);
 			}).setRenderer(BUTTON.merge(this.planInfoProvider.getOverlayRenderer(i))));

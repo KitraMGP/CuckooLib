@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 public class RecipeBuilder {
@@ -64,7 +65,15 @@ public class RecipeBuilder {
 		return new RecipeBuilder(this);
 	}
 
-	public Recipe build(int id) {
+	public Recipe build(String name) {
+		return this.build(new ResourceLocation(CuckooLib.MODID, name));
+	}
+
+	public Recipe build(String modid, String name) {
+		return this.build(new ResourceLocation(modid, name));
+	}
+
+	public Recipe build(ResourceLocation id) {
 		this.validate();
 		if (this.result == ValidateResult.VALID) {
 			Recipe recipe = new Recipe(this.recipeMap, this.inputs, this.outputs, this.fluidInputs, this.fluidOutputs,
@@ -196,7 +205,7 @@ public class RecipeBuilder {
 		return this.outputItem(output.toArray(new ItemStack[0]));
 	}
 
-	public RecipeBuilder outputChancedItem(ItemStack stack, double chance) {
+	public RecipeBuilder outputChancedItem(ItemStack stack, float chance) {
 		if (stack == null || stack.isEmpty()) {
 			CuckooLib.getLogger().error("The recipe output ItemStack can't be empty");
 			this.result = ValidateResult.ERROR;
