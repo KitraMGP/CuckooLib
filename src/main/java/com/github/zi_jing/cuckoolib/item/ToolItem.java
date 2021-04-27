@@ -80,8 +80,8 @@ public class ToolItem extends ItemBase {
 	}
 
 	@Override
-	public int getHarvestLevel(ItemStack stack, ToolType tool, PlayerEntity player, BlockState blockState) {
-		return this.toolInfo.getHarvestLevel(stack, tool, player, blockState);
+	public int getHarvestLevel(ItemStack stack, ToolType tool, PlayerEntity player, BlockState state) {
+		return this.toolInfo.canHarvestBlock(state) ? this.toolInfo.getHarvestLevel(stack, tool, player, state) : -1;
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import com.github.zi_jing.cuckoolib.item.MaterialItem;
 import com.github.zi_jing.cuckoolib.material.MaterialEntry;
 import com.github.zi_jing.cuckoolib.material.MaterialUtil;
 import com.github.zi_jing.cuckoolib.material.SolidShape;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
@@ -29,7 +29,7 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 			SolidShape.REGISTRY.values().forEach((shape) -> {
 				INamedTag<Item> tagShape = MaterialUtil.createForgeItemTag(shape.getName());
 				TagsProvider.Builder<Item> shapeBuilder = this.getOrCreateBuilder(tagShape);
-				Material.REGISTRY.values().forEach((material) -> {
+				MaterialBase.REGISTRY.values().forEach((material) -> {
 					MaterialEntry entry = new MaterialEntry(shape, material);
 					INamedTag<Item> tagEntry = MaterialUtil.createForgeItemTag(entry.toString());
 					if (map.containsKey(entry)) {

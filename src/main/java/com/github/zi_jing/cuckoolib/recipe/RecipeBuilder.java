@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.material.SolidShape;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 import com.github.zi_jing.cuckoolib.util.ValidateResult;
 import com.github.zi_jing.cuckoolib.util.math.MathUtil;
 
@@ -179,12 +179,12 @@ public class RecipeBuilder {
 		return this;
 	}
 
-	public RecipeBuilder inputOre(SolidShape shape, Material material) {
+	public RecipeBuilder inputOre(SolidShape shape, MaterialBase material) {
 		this.inputs.add(IngredientIndex.from(shape, material));
 		return this;
 	}
 
-	public RecipeBuilder inputOre(SolidShape shape, Material material, int count) {
+	public RecipeBuilder inputOre(SolidShape shape, MaterialBase material, int count) {
 		this.inputs.add(IngredientIndex.from(shape, material, count));
 		return this;
 	}

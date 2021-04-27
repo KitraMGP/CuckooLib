@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 import com.github.zi_jing.cuckoolib.tool.IToolInfo;
 import com.github.zi_jing.cuckoolib.util.data.NBTAdapter;
 
@@ -23,23 +23,23 @@ public class MaterialToolItem extends ToolItem {
 		super(modid, name, group, toolInfo);
 	}
 
-	public static Map<Integer, Pair<String, Material>> getToolAllMaterial(ItemStack stack) {
+	public static Map<Integer, Pair<String, MaterialBase>> getToolAllMaterial(ItemStack stack) {
 		CompoundNBT nbt = getToolBaseNBT(stack);
 		if (nbt.contains("material")) {
 			ListNBT list = nbt.getList("material", 10);
 			Iterator<INBT> ite = list.iterator();
-			Map<Integer, Pair<String, Material>> map = new HashMap<Integer, Pair<String, Material>>();
+			Map<Integer, Pair<String, MaterialBase>> map = new HashMap<Integer, Pair<String, MaterialBase>>();
 			while (ite.hasNext()) {
 				CompoundNBT compound = (CompoundNBT) ite.next();
 				map.put(compound.getInt("index"), Pair.of(compound.getString("part"),
-						Material.getMaterialByName(compound.getString("material"))));
+						MaterialBase.getMaterialByName(compound.getString("material"))));
 			}
 			return map;
 		}
 		return Collections.emptyMap();
 	}
 
-	public static Material getToolMaterial(ItemStack stack, int index) {
+	public static MaterialBase getToolMaterial(ItemStack stack, int index) {
 		CompoundNBT nbt = getToolBaseNBT(stack);
 		if (nbt.contains("material")) {
 			ListNBT list = nbt.getList("material", 10);
@@ -47,14 +47,14 @@ public class MaterialToolItem extends ToolItem {
 			while (ite.hasNext()) {
 				CompoundNBT compound = (CompoundNBT) ite.next();
 				if (compound.getInt("index") == index) {
-					return Material.getMaterialByName(compound.getString("material"));
+					return MaterialBase.getMaterialByName(compound.getString("material"));
 				}
 			}
 		}
 		return null;
 	}
 
-	public static Material getToolMaterial(ItemStack stack, String part) {
+	public static MaterialBase getToolMaterial(ItemStack stack, String part) {
 		CompoundNBT nbt = getToolBaseNBT(stack);
 		if (nbt.contains("material")) {
 			ListNBT list = nbt.getList("material", 10);
@@ -62,14 +62,14 @@ public class MaterialToolItem extends ToolItem {
 			while (ite.hasNext()) {
 				CompoundNBT compound = (CompoundNBT) ite.next();
 				if (compound.getString("part").equals(part)) {
-					return Material.getMaterialByName(compound.getString("material"));
+					return MaterialBase.getMaterialByName(compound.getString("material"));
 				}
 			}
 		}
 		return null;
 	}
 
-	public static ItemStack setToolMaterial(ItemStack stack, int index, String part, Material material) {
+	public static ItemStack setToolMaterial(ItemStack stack, int index, String part, MaterialBase material) {
 		CompoundNBT nbt = getToolBaseNBT(stack);
 		ListNBT list = NBTAdapter.getList(nbt, "material", 10);
 		CompoundNBT compound = new CompoundNBT();
@@ -92,19 +92,19 @@ public class MaterialToolItem extends ToolItem {
 		return stack;
 	}
 
-	public ItemStack createItemStack(int count, Map<Integer, Pair<String, Material>> materials) {
+	public ItemStack createItemStack(int count, Map<Integer, Pair<String, MaterialBase>> materials) {
 		ItemStack stack = new ItemStack(this, count);
 		CompoundNBT nbt = getToolBaseNBT(stack);
 		materials.forEach((index, pair) -> setToolMaterial(stack, index, pair.getLeft(), pair.getRight()));
 		return stack;
 	}
 
-	public boolean validateToolMaterial(Material material) {
-		return material.hasFlag(Material.GENERATE_TOOL);
+	public boolean validateToolMaterial(MaterialBase material) {
+		return material.hasFlag(MaterialBase.GENERATE_TOOL);
 	}
 
 	public int getItemColor(ItemStack stack, int tintIndex) {
-		Material material = getToolMaterial(stack, tintIndex);
+		MaterialBase material = getToolMaterial(stack, tintIndex);
 		if (material != null) {
 			return material.getColor();
 		}

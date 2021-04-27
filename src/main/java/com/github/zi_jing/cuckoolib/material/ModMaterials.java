@@ -2,21 +2,21 @@ package com.github.zi_jing.cuckoolib.material;
 
 import com.github.zi_jing.cuckoolib.material.type.DustMaterial;
 import com.github.zi_jing.cuckoolib.material.type.GemMaterial;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 import com.github.zi_jing.cuckoolib.material.type.PlasticityMaterial;
 
 public class ModMaterials {
-	public static final Material HYDROGEN = new Material("hydrogen", 0x00ffff);
-	public static final Material HELIUM = new Material("helium", 0xdddd00);
+	public static final MaterialBase HYDROGEN = new MaterialBase("hydrogen", 0x00ffff);
+	public static final MaterialBase HELIUM = new MaterialBase("helium", 0xdddd00);
 
 	public static final PlasticityMaterial LITHIUM = new PlasticityMaterial("lithium", 0xc8c8c8);
 	public static final PlasticityMaterial BERYLLIUM = new PlasticityMaterial("beryllium", 0x64b464);
 	public static final PlasticityMaterial BORON = new PlasticityMaterial("boron", 0xaad2d2);
 	public static final DustMaterial CARBON = new DustMaterial("carbon", 0x333333);
-	public static final Material NITROGEN = new Material("nitrogen", 0x50b4a0);
-	public static final Material OXYGEN = new Material("oxygen", 0xa0c8fa);
-	public static final Material FLUORINE = new Material("fluorine", 0xb4ffaa);
-	public static final Material NEON = new Material("neon", 0xdd0000);
+	public static final MaterialBase NITROGEN = new MaterialBase("nitrogen", 0x50b4a0);
+	public static final MaterialBase OXYGEN = new MaterialBase("oxygen", 0xa0c8fa);
+	public static final MaterialBase FLUORINE = new MaterialBase("fluorine", 0xb4ffaa);
+	public static final MaterialBase NEON = new MaterialBase("neon", 0xdd0000);
 
 	public static final PlasticityMaterial SODIUM = new PlasticityMaterial("sodium", 0x000096);
 	public static final PlasticityMaterial MAGNESIUM = new PlasticityMaterial("magnesium", 0xf09696);
@@ -24,8 +24,8 @@ public class ModMaterials {
 	public static final PlasticityMaterial SILICON = new PlasticityMaterial("silicon", 0x3c3c50);
 	public static final DustMaterial PHOSPHOR = new DustMaterial("phosphor", 0x821e1e);
 	public static final DustMaterial SULFUR = new DustMaterial("sulfur", 0xc8c800);
-	public static final Material CHLORINE = new Material("chlorine", 0xffffaa);
-	public static final Material ARGON = new Material("argon", 0x32e600);
+	public static final MaterialBase CHLORINE = new MaterialBase("chlorine", 0xffffaa);
+	public static final MaterialBase ARGON = new MaterialBase("argon", 0x32e600);
 
 	public static final PlasticityMaterial POTASSIUM = new PlasticityMaterial("potassium", 0x0a4696);
 	public static final PlasticityMaterial CALCIUM = new PlasticityMaterial("calcium", 0xddddaa);
@@ -43,8 +43,8 @@ public class ModMaterials {
 	public static final PlasticityMaterial GERMANIUM = new PlasticityMaterial("germanium", 0xc8e6a0);
 	public static final PlasticityMaterial ARSENIC = new PlasticityMaterial("arsenic", 0xc8c8aa);
 	public static final PlasticityMaterial SELENIUM = new PlasticityMaterial("selenium", 0xb48296);
-	public static final Material BROMINE = new Material("bromine", 0x82501e);
-	public static final Material KRYPTON = new Material("krypton", 0x145ad2);
+	public static final MaterialBase BROMINE = new MaterialBase("bromine", 0x82501e);
+	public static final MaterialBase KRYPTON = new MaterialBase("krypton", 0x145ad2);
 
 	public static final PlasticityMaterial RUBIDIUM = new PlasticityMaterial("rubidium", 0xb4463c);
 	public static final PlasticityMaterial STRONTIUM = new PlasticityMaterial("strontium", 0xc88c1e);
@@ -63,7 +63,7 @@ public class ModMaterials {
 	public static final PlasticityMaterial ANTIMONY = new PlasticityMaterial("antimony", 0xdcdcc8);
 	public static final PlasticityMaterial TELLURIUM = new PlasticityMaterial("tellurium", 0x8cb46e);
 	public static final DustMaterial IODINE = new DustMaterial("iodine", 0x8232a0);
-	public static final Material XENON = new Material("xenon", 0x3ca0aa);
+	public static final MaterialBase XENON = new MaterialBase("xenon", 0x3ca0aa);
 
 	public static final PlasticityMaterial CAESIUM = new PlasticityMaterial("caesium", 0xa0505a);
 	public static final PlasticityMaterial BARIUM = new PlasticityMaterial("barium", 0x78d2a0);
@@ -90,13 +90,13 @@ public class ModMaterials {
 	public static final PlasticityMaterial IRIDIUM = new PlasticityMaterial("iridium", 0xf0f0f0);
 	public static final PlasticityMaterial PLATINUM = new PlasticityMaterial("platinum", 0xf0f096);
 	public static final PlasticityMaterial GOLD = new PlasticityMaterial("gold", 0xf0f000);
-	public static final Material MERCURY = new Material("mercury", 0xa0a0a0);
+	public static final MaterialBase MERCURY = new MaterialBase("mercury", 0xa0a0a0);
 	public static final PlasticityMaterial THALLIUM = new PlasticityMaterial("thallium", 0xb47882);
 	public static final PlasticityMaterial LEAD = new PlasticityMaterial("lead", 0x8c648c);
 	public static final PlasticityMaterial BISMUTH = new PlasticityMaterial("bismuth", 0x64a0a0);
 	public static final PlasticityMaterial POLONIUM = new PlasticityMaterial("polonium", 0xb43232);
 	public static final DustMaterial ASTATINE = new DustMaterial("astatine", 0x328c28);
-	public static final Material RADON = new Material("radon", 0xf000f0);
+	public static final MaterialBase RADON = new MaterialBase("radon", 0xf000f0);
 
 	public static final PlasticityMaterial WROUGHT_IRON = new PlasticityMaterial("wrought_iron", 0xc8b4b4);
 	public static final PlasticityMaterial PIG_IRON = new PlasticityMaterial("pig_iron", 0xc8b4b4);
@@ -124,16 +124,16 @@ public class ModMaterials {
 	public static final DustMaterial WOOD = new DustMaterial("wood", 0x8c5a28);
 
 	public static void register() {
-		COPPER.addFlag(Material.GENERATE_TOOL);
-		IRON.addFlag(Material.GENERATE_TOOL);
-		WROUGHT_IRON.addFlag(Material.GENERATE_TOOL);
-		PIG_IRON.addFlag(Material.GENERATE_TOOL);
-		STEEL.addFlag(Material.GENERATE_TOOL);
-		BRONZE.addFlag(Material.GENERATE_TOOL);
-		BLACK_BRONZE.addFlag(Material.GENERATE_TOOL);
-		BISMUTH_BRONZE.addFlag(Material.GENERATE_TOOL);
-		FLINT.addFlag(Material.GENERATE_TOOL);
-		STONE.addFlag(Material.GENERATE_TOOL);
+		COPPER.addFlag(MaterialBase.GENERATE_TOOL);
+		IRON.addFlag(MaterialBase.GENERATE_TOOL);
+		WROUGHT_IRON.addFlag(MaterialBase.GENERATE_TOOL);
+		PIG_IRON.addFlag(MaterialBase.GENERATE_TOOL);
+		STEEL.addFlag(MaterialBase.GENERATE_TOOL);
+		BRONZE.addFlag(MaterialBase.GENERATE_TOOL);
+		BLACK_BRONZE.addFlag(MaterialBase.GENERATE_TOOL);
+		BISMUTH_BRONZE.addFlag(MaterialBase.GENERATE_TOOL);
+		FLINT.addFlag(MaterialBase.GENERATE_TOOL);
+		STONE.addFlag(MaterialBase.GENERATE_TOOL);
 
 		COPPER.setToolProperty(51200, 2, 5);
 		IRON.setToolProperty(204800, 2, 6);

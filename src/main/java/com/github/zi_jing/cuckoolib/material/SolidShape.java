@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 import com.github.zi_jing.cuckoolib.util.data.UnorderedRegistry;
 
 import net.minecraft.client.resources.I18n;
@@ -16,22 +16,22 @@ public class SolidShape {
 
 	private String name;
 	private int unit;
-	private Predicate<Material> materialPredicate;
-	private Set<Material> ignoredMaterials, generatedMaterials;
+	private Predicate<MaterialBase> materialPredicate;
+	private Set<MaterialBase> ignoredMaterials, generatedMaterials;
 
 	static {
 		ModSolidShapes.register();
 	}
 
-	public SolidShape(String name, int unit, Predicate<Material> materialPredicate) {
+	public SolidShape(String name, int unit, Predicate<MaterialBase> materialPredicate) {
 		if (REGISTRY.containsKey(name)) {
 			throw new IllegalStateException("Solid shape [ " + name + " ] has registered");
 		}
 		this.name = name;
 		this.unit = unit;
 		this.materialPredicate = materialPredicate;
-		this.ignoredMaterials = new HashSet<Material>();
-		this.generatedMaterials = new HashSet<Material>();
+		this.ignoredMaterials = new HashSet<MaterialBase>();
+		this.generatedMaterials = new HashSet<MaterialBase>();
 		this.register();
 	}
 
@@ -50,15 +50,15 @@ public class SolidShape {
 		return this.unit;
 	}
 
-	public void addGeneratedMaterial(Material... material) {
+	public void addGeneratedMaterial(MaterialBase... material) {
 		this.generatedMaterials.addAll(Arrays.asList(material));
 	}
 
-	public void addIgnoredMaterial(Material... material) {
+	public void addIgnoredMaterial(MaterialBase... material) {
 		this.ignoredMaterials.addAll(Arrays.asList(material));
 	}
 
-	public boolean generateMaterial(Material material) {
+	public boolean generateMaterial(MaterialBase material) {
 		return this.materialPredicate.test(material) && !this.ignoredMaterials.contains(material);
 	}
 
@@ -66,7 +66,7 @@ public class SolidShape {
 		return CuckooLib.MODID + ".shape." + this.name + ".name";
 	}
 
-	public String getLocalizedname(Material material) {
+	public String getLocalizedname(MaterialBase material) {
 		return I18n.format(this.getUnlocalizedName(), material.getLocalizedName());
 	}
 

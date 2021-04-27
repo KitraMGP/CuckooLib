@@ -2,7 +2,7 @@ package com.github.zi_jing.cuckoolib.recipe;
 
 import com.github.zi_jing.cuckoolib.material.MaterialUtil;
 import com.github.zi_jing.cuckoolib.material.SolidShape;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -29,11 +29,11 @@ public class IngredientIndex {
 		return new IngredientIndex(Ingredient.fromTag(tag), count);
 	}
 
-	public static IngredientIndex from(SolidShape shape, Material material) {
+	public static IngredientIndex from(SolidShape shape, MaterialBase material) {
 		return from(shape, material, 1);
 	}
 
-	public static IngredientIndex from(SolidShape shape, Material material, int count) {
+	public static IngredientIndex from(SolidShape shape, MaterialBase material, int count) {
 		return from(MaterialUtil.getMaterialTag(shape, material), count);
 	}
 

@@ -2,13 +2,13 @@ package com.github.zi_jing.cuckoolib.material;
 
 import org.apache.commons.lang3.Validate;
 
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 
 public class MaterialEntry {
 	private SolidShape shape;
-	private Material material;
+	private MaterialBase material;
 
-	public MaterialEntry(SolidShape shape, Material material) {
+	public MaterialEntry(SolidShape shape, MaterialBase material) {
 		Validate.notNull(shape);
 		Validate.notNull(material);
 		this.shape = shape;
@@ -19,7 +19,7 @@ public class MaterialEntry {
 		return this.shape;
 	}
 
-	public Material getMaterial() {
+	public MaterialBase getMaterial() {
 		return this.material;
 	}
 

@@ -7,7 +7,7 @@ import java.util.Map;
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.material.MaterialEntry;
 import com.github.zi_jing.cuckoolib.material.SolidShape;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -25,9 +25,9 @@ public class MaterialItem extends ItemBase {
 	};
 
 	protected SolidShape shape;
-	protected Material material;
+	protected MaterialBase material;
 
-	public MaterialItem(String modid, SolidShape shape, Material material) {
+	public MaterialItem(String modid, SolidShape shape, MaterialBase material) {
 		super(modid, "material_item." + shape.getName() + "." + material.getName(), new Properties(),
 				CuckooLib.GROUP_MATERIAL, false);
 		this.shape = shape;
@@ -43,7 +43,7 @@ public class MaterialItem extends ItemBase {
 		return ((MaterialItem) stack.getItem()).shape;
 	}
 
-	public static Material getItemMaterial(ItemStack stack) {
+	public static MaterialBase getItemMaterial(ItemStack stack) {
 		return ((MaterialItem) stack.getItem()).material;
 	}
 
@@ -51,7 +51,7 @@ public class MaterialItem extends ItemBase {
 		return this.shape;
 	}
 
-	public Material getMaterial() {
+	public MaterialBase getMaterial() {
 		return this.material;
 	}
 
@@ -64,7 +64,7 @@ public class MaterialItem extends ItemBase {
 	}
 
 	public int getItemColor(ItemStack stack, int tintIndex) {
-		Material material = getItemMaterial(stack);
+		MaterialBase material = getItemMaterial(stack);
 		if (material != null) {
 			return material.getColor();
 		}
@@ -74,7 +74,7 @@ public class MaterialItem extends ItemBase {
 	@Override
 	public ITextComponent getDisplayName(ItemStack stack) {
 		SolidShape shape = getItemShape(stack);
-		Material material = getItemMaterial(stack);
+		MaterialBase material = getItemMaterial(stack);
 		if (shape != null && material != null) {
 			return new StringTextComponent(getItemShape(stack).getLocalizedname(getItemMaterial(stack)));
 		}

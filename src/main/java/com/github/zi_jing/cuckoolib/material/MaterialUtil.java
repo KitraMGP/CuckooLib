@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.zi_jing.cuckoolib.item.MaterialItem;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,7 +15,7 @@ import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.ResourceLocation;
 
 public class MaterialUtil {
-	public static Item getMaterialItem(SolidShape shape, Material material) {
+	public static Item getMaterialItem(SolidShape shape, MaterialBase material) {
 		MaterialEntry entry = new MaterialEntry(shape, material);
 		for (Map<MaterialEntry, MaterialItem> map : MaterialItem.REGISTERED_MATERIAL_ITEM.values()) {
 			if (map.containsKey(entry)) {
@@ -32,11 +32,11 @@ public class MaterialUtil {
 		return null;
 	}
 
-	public static ItemStack getMaterialItemStack(SolidShape shape, Material material) {
+	public static ItemStack getMaterialItemStack(SolidShape shape, MaterialBase material) {
 		return getMaterialItemStack(shape, material, 1);
 	}
 
-	public static ItemStack getMaterialItemStack(SolidShape shape, Material material, int count) {
+	public static ItemStack getMaterialItemStack(SolidShape shape, MaterialBase material, int count) {
 		Item item = getMaterialItem(shape, material);
 		if (item != null) {
 			return new ItemStack(item, count);
@@ -52,7 +52,7 @@ public class MaterialUtil {
 		return getItemTag(entry.toString());
 	}
 
-	public static ITag<Item> getMaterialTag(SolidShape shape, Material material) {
+	public static ITag<Item> getMaterialTag(SolidShape shape, MaterialBase material) {
 		return getMaterialTag(new MaterialEntry(shape, material));
 	}
 

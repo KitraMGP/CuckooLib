@@ -3,7 +3,7 @@ package com.github.zi_jing.cuckoolib.tool;
 import java.util.List;
 
 import com.github.zi_jing.cuckoolib.item.MaterialToolItem;
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 import com.github.zi_jing.cuckoolib.util.text.GreekAlphabet;
 
 import net.minecraft.block.BlockState;
@@ -21,13 +21,13 @@ import net.minecraftforge.common.ToolType;
 
 public abstract class ToolBase implements IToolInfo {
 	@Override
-	public boolean validateMaterial(Material material) {
-		return material.hasFlag(Material.GENERATE_TOOL);
+	public boolean validateMaterial(MaterialBase material) {
+		return material.hasFlag(MaterialBase.GENERATE_TOOL);
 	}
 
 	@Override
 	public int getMaxDamage(ItemStack stack) {
-		Material material = MaterialToolItem.getToolMaterial(stack, 0);
+		MaterialBase material = MaterialToolItem.getToolMaterial(stack, 0);
 		return material != null ? material.getDurability() : 0;
 	}
 

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.github.zi_jing.cuckoolib.material.type.Material;
+import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -22,7 +22,7 @@ import net.minecraftforge.common.ToolType;
 public interface IToolInfo {
 	ResourceLocation getRegistryName();
 
-	boolean validateMaterial(Material material);
+	boolean validateMaterial(MaterialBase material);
 
 	int getMaxDamage(ItemStack stack);
 
@@ -40,7 +40,7 @@ public interface IToolInfo {
 
 	float getDestroySpeed(ItemStack stack);
 
-	default Map<Integer, Pair<String, Material>> getDefaultMaterial() {
+	default Map<Integer, Pair<String, MaterialBase>> getDefaultMaterial() {
 		return Collections.emptyMap();
 	}
 

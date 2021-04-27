@@ -11,10 +11,10 @@ import com.github.zi_jing.cuckoolib.util.data.UnorderedRegistry;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.fluid.Fluid;
 
-public class Material {
-	public static final UnorderedRegistry<String, Material> REGISTRY = new UnorderedRegistry<String, Material>();
+public class MaterialBase {
+	public static final UnorderedRegistry<String, MaterialBase> REGISTRY = new UnorderedRegistry<String, MaterialBase>();
 
-	public static final Map<Class<? extends Material>, Long> DEFAULT_FLAGS = new HashMap<Class<? extends Material>, Long>();
+	public static final Map<Class<? extends MaterialBase>, Long> DEFAULT_FLAGS = new HashMap<Class<? extends MaterialBase>, Long>();
 
 	public static final IMaterialFlag GENERATE_DUST = createFlag(0);
 	public static final IMaterialFlag GENERATE_PLATE = createFlag(1);
@@ -39,13 +39,13 @@ public class Material {
 		ModMaterials.register();
 	}
 
-	public Material(String name, int color) {
+	public MaterialBase(String name, int color) {
 		this.name = name;
 		this.color = color;
 		this.register();
 	}
 
-	public static void registerDefaultFlags(Class<? extends Material> type, IMaterialFlag... flags) {
+	public static void registerDefaultFlags(Class<? extends MaterialBase> type, IMaterialFlag... flags) {
 		DEFAULT_FLAGS.put(type, combineFlags(flags));
 	}
 
@@ -106,7 +106,7 @@ public class Material {
 		}
 	}
 
-	public static Material getMaterialByName(String name) {
+	public static MaterialBase getMaterialByName(String name) {
 		return REGISTRY.get(name);
 	}
 
