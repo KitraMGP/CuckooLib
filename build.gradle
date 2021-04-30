@@ -118,3 +118,10 @@ if (JavaVersion.current().isJava8Compatible()) {
         options.addStringOption('Xdoclint:none', '-quiet')
     }
 }
+
+repositories{
+    maven {
+        name = 'AliyunMaven'
+        url = 'http://maven.aliyun.com/nexus/content/groups/public'
+    }
+}
