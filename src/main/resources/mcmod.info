@@ -1,19 +1,19 @@
 [
-{
-  "modid": "cuckoolib",
-  "name": "CuckooLib",
-  "description": "The Cuckoo commons library.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": [
-    "zi_jing",
-    "Os-Ir"
-  ],
-  "credits": "Mojang, Forge Development Team and Cuckoo Mod Development Team",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "cuckoolib",
+    "name": "CuckooLib",
+    "description": "The Cuckoo commons library.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "zi_jing",
+      "Os-Ir"
+    ],
+    "credits": "Mojang, Forge Development Team and Cuckoo Mod Development Team",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
 ]

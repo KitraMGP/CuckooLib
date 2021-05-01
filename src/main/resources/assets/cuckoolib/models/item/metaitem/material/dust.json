@@ -1,6 +1,6 @@
 {
-	"parent": "item/generated",
-    "textures": {
-        "layer0": "cuckoolib:items/metaitem/material/dust"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "cuckoolib:items/metaitem/material/dust"
+  }
 }

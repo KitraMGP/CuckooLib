@@ -25,20 +25,20 @@ public class EasyList extends GuiListExtended {
         return this.itemEntries.size();
     }
 
-    public void setItemTexture(ResourceLocation textureItem){
+    public void setItemTexture(ResourceLocation textureItem) {
         this.TEXTURE_ITEM = textureItem;
     }
 
-    public void addEntry(ItemStack stack){
+    public void addEntry(ItemStack stack) {
         EasyListEntry entry = new EasyListEntry(this.mc, stack);
         this.itemEntries.add(entry);
     }
 
-    public class EasyListEntry implements IGuiListEntry{
+    public class EasyListEntry implements IGuiListEntry {
         private ItemStack stack;
         private Minecraft mc;
 
-        public EasyListEntry(Minecraft mc, ItemStack stack){
+        public EasyListEntry(Minecraft mc, ItemStack stack) {
             this.stack = stack;
             this.mc = mc;
         }

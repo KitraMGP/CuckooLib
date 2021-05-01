@@ -6,10 +6,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface IGuiHolderCodec {
-	ResourceLocation getRegistryName();
+    ResourceLocation getRegistryName();
 
-	void writeHolder(PacketBuffer buf, IModularGuiHolder holder);
+    void writeHolder(PacketBuffer buf, IModularGuiHolder holder);
 
-	@SideOnly(Side.CLIENT)
-	IModularGuiHolder readHolder(PacketBuffer buf);
+    @SideOnly(Side.CLIENT)
+    IModularGuiHolder readHolder(PacketBuffer buf);
 }
