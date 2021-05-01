@@ -38,4 +38,19 @@ public class Vector2i {
 	public int scalarMultiply(Vector2i vec) {
 		return this.x * vec.x + this.y * vec.y;
 	}
+
+	public Vector2i scaleToSize(int width, int height) {
+		float a = (float) width / (float) this.x;
+		float b = (float) height / (float) this.y;
+		float w, h;
+		w = this.x * a;
+		h = this.y * a;
+		if (w > width || h > height) {
+			w = this.x * b;
+			h = this.y * b;
+		}
+		this.x = (int) w;
+		this.y = (int) h;
+		return this;
+	}
 }
