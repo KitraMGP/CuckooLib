@@ -23,7 +23,7 @@ public class OutputItemChanceEntry {
 
 	public static OutputItemChanceEntry deserialize(JsonElement element) {
 		JsonObject json = element.getAsJsonObject();
-		return new OutputItemChanceEntry(OutputItem.fromJson(json.get("output")), JSONUtils.getFloat(json, "chance"));
+		return new OutputItemChanceEntry(OutputItem.fromJson(json.get("output")), JSONUtils.getAsFloat(json, "chance"));
 	}
 
 	public OutputItem getOutputItem() {

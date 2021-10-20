@@ -8,18 +8,19 @@ public class ToolUtil {
 	}
 
 	public static boolean canPickaxeHarvest(Material material) {
-		return material == Material.IRON || material == Material.ANVIL || material == Material.ROCK;
+		return material == Material.METAL || material == Material.HEAVY_METAL || material == Material.STONE;
 	}
 
 	public static boolean canAxeHarvest(Material material) {
-		return material == Material.WOOD || material == Material.NETHER_WOOD || material == Material.PLANTS
-				|| material == Material.TALL_PLANTS || material == Material.BAMBOO || material == Material.GOURD;
+		return material == Material.WOOD || material == Material.NETHER_WOOD || material == Material.PLANT
+				|| material == Material.REPLACEABLE_PLANT || material == Material.WATER_PLANT
+				|| material == Material.BAMBOO;
 	}
 
 	public static boolean canSwordHarvest(Material material) {
-		return material == Material.PLANTS || material == Material.TALL_PLANTS || material == Material.CORAL
-				|| material == Material.GOURD || material == Material.LEAVES || material == Material.WEB
-				|| material == Material.CARPET || material == Material.CACTUS || material == Material.CAKE
-				|| material == Material.TNT || material == Material.SPONGE;
+		return material == Material.PLANT || material == Material.REPLACEABLE_PLANT || material == Material.CORAL
+				|| material == Material.LEAVES || material == Material.WEB || material == Material.WOOL
+				|| material == Material.CACTUS || material == Material.CAKE || material == Material.EXPLOSIVE
+				|| material == Material.SPONGE;
 	}
 }

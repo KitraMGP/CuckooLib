@@ -51,9 +51,9 @@ public class MessageGuiTask implements IMessage {
 			Container container;
 			if (player != null) {
 				if (this.window == 0) {
-					container = player.container;
-				} else if (this.window == player.openContainer.windowId) {
-					container = player.openContainer;
+					container = player.containerMenu;
+				} else if (this.window == player.containerMenu.containerId) {
+					container = player.containerMenu;
 				} else {
 					return;
 				}

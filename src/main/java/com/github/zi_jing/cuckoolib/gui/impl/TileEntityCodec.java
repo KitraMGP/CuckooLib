@@ -24,7 +24,7 @@ public class TileEntityCodec implements IGuiHolderCodec {
 	@Override
 	public void writeHolder(PacketBuffer buf, IModularGuiHolder holder) {
 		if (holder instanceof TileEntity) {
-			buf.writeBlockPos(((TileEntity) holder).getPos());
+			buf.writeBlockPos(((TileEntity) holder).getBlockPos());
 		} else {
 			throw new IllegalArgumentException("The modular gui holder isn't TileEntity");
 		}
@@ -33,6 +33,6 @@ public class TileEntityCodec implements IGuiHolderCodec {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public IModularGuiHolder readHolder(PacketBuffer buf) {
-		return (IModularGuiHolder) Minecraft.getInstance().world.getTileEntity(buf.readBlockPos());
+		return (IModularGuiHolder) Minecraft.getInstance().level.getBlockEntity(buf.readBlockPos());
 	}
 }

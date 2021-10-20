@@ -47,14 +47,14 @@ public class TextureArea implements IWidgetRenderer {
 	public void drawSubArea(MatrixStack transform, int x, int y, int width, int height, float subX, float subY,
 			float subWidth, float subHeight) {
 		GLUtil.bindTexture(this.location);
-		GLUtil.drawScaledTexturedRect(transform, x, y, width, height, this.x + x * this.width, this.y + y * this.height,
-				width * this.width, height * this.height);
+		GLUtil.drawScaledTexturedRect(transform, x, y, width, height, this.x + subX * this.width,
+				this.y + subY * this.height, subWidth * this.width, subHeight * this.height);
 	}
 
 	public void drawSubArea(MatrixStack transform, int x, int y, int width, int height, float subX, float subY,
 			float subWidth, float subHeight, int alpha) {
 		GLUtil.bindTexture(this.location);
-		GLUtil.drawScaledTexturedRect(transform, x, y, width, height, this.x + x * this.width, this.y + y * this.height,
-				width * this.width, height * this.height, alpha);
+		GLUtil.drawScaledTexturedRect(transform, x, y, width, height, this.x + subX * this.width,
+				this.y + subY * this.height, subWidth * this.width, subHeight * this.height, alpha);
 	}
 }

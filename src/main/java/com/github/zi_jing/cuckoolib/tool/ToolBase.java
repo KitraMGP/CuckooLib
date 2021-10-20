@@ -67,7 +67,7 @@ public abstract class ToolBase implements IToolInfo {
 		MaterialToolItem.getToolAllMaterial(stack)
 				.forEach((index,
 						pair) -> tooltip.add(new StringTextComponent(TextFormatting.BLUE
-								+ I18n.format("cuckoolib.item.tool." + pair.getLeft()) + " [" + TextFormatting.AQUA
+								+ I18n.get("cuckoolib.item.tool." + pair.getLeft()) + " [" + TextFormatting.AQUA
 								+ GreekAlphabet.getLowercase(index + 1) + TextFormatting.BLUE + "] : "
 								+ TextFormatting.GREEN + pair.getRight().getLocalizedName())));
 		MaterialToolItem item = this.getToolItem(stack);

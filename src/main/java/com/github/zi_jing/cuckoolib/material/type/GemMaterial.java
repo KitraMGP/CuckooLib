@@ -6,7 +6,7 @@ public class GemMaterial extends DustMaterial {
 	}
 
 	static {
-		registerDefaultFlags(GemMaterial.class, GENERATE_DUST, GENERATE_CRYSTAL, GENERATE_ROD, GENERATE_GEAR,
-				GENERATE_SCREW, GENERATE_RING);
+		registerDefaultFlags(GemMaterial.class, GENERATE_DUST, GENERATE_PLATE, GENERATE_CRYSTAL, GENERATE_ROD,
+				GENERATE_GEAR, GENERATE_SCREW, GENERATE_RING);
 	}
 }

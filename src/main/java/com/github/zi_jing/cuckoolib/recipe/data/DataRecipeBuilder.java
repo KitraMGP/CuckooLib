@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.github.zi_jing.cuckoolib.LibRegistryHandler;
 import com.github.zi_jing.cuckoolib.recipe.IngredientIndex;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -32,7 +33,7 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 		this.properties = new ArrayList<Consumer<JsonElement>>();
 		this.inputs = new ArrayList<IngredientIndex>();
 		this.outputs = new ArrayList<OutputItemChanceEntry>();
-		this.advancement = Advancement.Builder.builder();
+		this.advancement = Advancement.Builder.advancement();
 	}
 
 	public static DataRecipeBuilder builder() {
@@ -40,7 +41,7 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 	}
 
 	public DataRecipeBuilder addCriterion(String name, ICriterionInstance criterion) {
-		this.advancement.withCriterion(name, criterion);
+		this.advancement.addCriterion(name, criterion);
 		return this;
 	}
 
@@ -64,7 +65,7 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 	}
 
 	@Override
-	public void serialize(JsonObject json) {
+	public void serializeRecipeData(JsonObject json) {
 		JsonArray inputArray = new JsonArray();
 		JsonArray outputArray = new JsonArray();
 		this.inputs.forEach((index) -> inputArray.add(index.serialize()));
@@ -74,22 +75,22 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 	}
 
 	@Override
-	public ResourceLocation getID() {
+	public ResourceLocation getId() {
 		return this.id;
 	}
 
 	@Override
-	public IRecipeSerializer getSerializer() {
-		return DataRecipeSerializer.INSTANCE.get();
+	public IRecipeSerializer getType() {
+		return LibRegistryHandler.DATA_RECIPE.get();
 	}
 
 	@Override
-	public JsonObject getAdvancementJson() {
-		return this.advancement.serialize();
+	public JsonObject serializeAdvancement() {
+		return this.advancement.serializeToJson();
 	}
 
 	@Override
-	public ResourceLocation getAdvancementID() {
+	public ResourceLocation getAdvancementId() {
 		return new ResourceLocation(this.id.getNamespace(), "recipes/test/" + this.id.getPath());
 	}
 
@@ -105,9 +106,9 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 	public void build(Consumer<IFinishedRecipe> out, ResourceLocation id, String folder) {
 		this.id = id;
 		this.advancementId = new ResourceLocation(id.getNamespace(), "recipes/" + folder + "/" + id.getPath());
-		this.advancement.withParentId(new ResourceLocation("recipes/root"))
-				.withCriterion("has_recipe", RecipeUnlockedTrigger.create(id))
-				.withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
+		this.advancement.parent(new ResourceLocation("recipes/root"))
+				.addCriterion("has_recipe", RecipeUnlockedTrigger.unlocked(id))
+				.rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
 		out.accept(this);
 	}
 }

@@ -2,8 +2,15 @@
 	"itemGroup.cuckoolib_material": "CuckooLib - 材料",
 
 	"modulargui.plan.name": "计划板",
+	
+	"cuckoolib.tipinfo.fuel.title": "燃料信息",
+	"cuckoolib.tipinfo.fuel.mass": "燃料质量: ",
+	"cuckoolib.tipinfo.fuel.calorific_value": "热值: ",
+	"cuckoolib.tipinfo.fuel.ignition_point": "燃点: ",
 
 	"cuckoolib.shape.dusts.name": "%s粉",
+	"cuckoolib.shape.ingots.name": "%s锭",
+	"cuckoolib.shape.nuggets.name": "%s粒",
 	"cuckoolib.shape.plates.name": "%s板",
 	"cuckoolib.shape.knife_heads.name": "%s刀头",
 	"cuckoolib.shape.hammer_heads.name": "%s锤头",

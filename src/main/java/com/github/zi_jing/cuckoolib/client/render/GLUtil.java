@@ -48,11 +48,11 @@ public class GLUtil {
 		// 防止单元测试时出错
 		mc = Minecraft.getInstance();
 		try {
-			fontRenderer = mc.fontRenderer;
+			fontRenderer = mc.font;
 			resourceManager = mc.getResourceManager();
 			textureManager = mc.textureManager;
 			tessellator = Tessellator.getInstance();
-			bufferBuilder = Tessellator.getInstance().getBuffer();
+			bufferBuilder = Tessellator.getInstance().getBuilder();
 		} catch (NullPointerException e) {
 			CuckooLib.getLogger().warn("CuckooLib: Can't find the Minecraft instance");
 			CuckooLib.getLogger().warn("CuckooLib: If you are running JUnit tests, you can ignore this warning");
@@ -190,7 +190,7 @@ public class GLUtil {
 	 * @see #splitStringWithWidth(String, int)
 	 */
 	public static int getStringWidth(String str) {
-		return fontRenderer.getStringWidth(str);
+		return fontRenderer.width(str);
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class GLUtil {
 	 *      int, int)
 	 */
 	public static void drawString(MatrixStack matrixStack, String str, float x, float y, int color) {
-		fontRenderer.drawString(matrixStack, str, x, y, color);
+		fontRenderer.draw(matrixStack, str, x, y, color);
 	}
 
 	/**
@@ -256,7 +256,7 @@ public class GLUtil {
 	 * @see #drawString(MatrixStack, String, float, float, int)
 	 */
 	public static void drawStringWithShadow(MatrixStack matrixStack, String str, float x, float y, int color) {
-		fontRenderer.drawStringWithShadow(matrixStack, str, x, y, color);
+		fontRenderer.drawShadow(matrixStack, str, x, y, color);
 	}
 
 	/**
@@ -326,7 +326,7 @@ public class GLUtil {
 	 * 设置绘图时直线的粗细(像素)。
 	 */
 	public static void glLineWidth(float width) {
-		GlStateManager.lineWidth(width);
+		GlStateManager._lineWidth(width);
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class GLUtil {
 	 * @see #color4f(float, float, float, float)
 	 */
 	public static void color4i(int r, int g, int b, int a) {
-		GlStateManager.color4f(r / 255F, g / 255F, b / 255F, a / 255F);
+		GlStateManager._color4f(r / 255F, g / 255F, b / 255F, a / 255F);
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class GLUtil {
 	 * @see #color3f(float, float, float)
 	 */
 	public static void color4f(float r, float g, float b, float a) {
-		GlStateManager.color4f(r, g, b, a);
+		GlStateManager._color4f(r, g, b, a);
 	}
 
 	/**
@@ -380,7 +380,7 @@ public class GLUtil {
 	 * @see #bindTexture(int)
 	 */
 	public static void bindTexture(ResourceLocation textureLocation) {
-		textureManager.bindTexture(textureLocation);
+		textureManager.bind(textureLocation);
 	}
 
 	/**
@@ -389,7 +389,7 @@ public class GLUtil {
 	 * @see #bindTexture(ResourceLocation)
 	 */
 	public static void bindTexture(int textureId) {
-		GlStateManager.bindTexture(textureId);
+		GlStateManager._bindTexture(textureId);
 	}
 
 	/**
@@ -400,7 +400,7 @@ public class GLUtil {
 	 * @see #normalBlend()
 	 */
 	public static void enableBlend() {
-		GlStateManager.enableBlend();
+		GlStateManager._enableBlend();
 	}
 
 	/**
@@ -409,7 +409,7 @@ public class GLUtil {
 	 * @see #enableBlend()
 	 */
 	public static void disableBlend() {
-		GlStateManager.disableBlend();
+		GlStateManager._disableBlend();
 	}
 
 	/**
@@ -418,7 +418,7 @@ public class GLUtil {
 	 * @see #disableTexture()
 	 */
 	public static void enableTexture() {
-		GlStateManager.enableTexture();
+		GlStateManager._enableTexture();
 	}
 
 	/**
@@ -426,7 +426,7 @@ public class GLUtil {
 	 * 否则会引发严重后果!</strong>
 	 */
 	public static void disableTexture() {
-		GlStateManager.disableTexture();
+		GlStateManager._disableTexture();
 	}
 
 	/**
@@ -435,8 +435,8 @@ public class GLUtil {
 	 * @see #enableBlend()
 	 */
 	public static void normalBlend() {
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager._enableBlend();
+		GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	/**
@@ -444,7 +444,7 @@ public class GLUtil {
 	 * 具体含义及用途请查阅OpenGL相关文档。
 	 */
 	public static void pushMatrix() {
-		GlStateManager.pushMatrix();
+		GlStateManager._pushMatrix();
 	}
 
 	/**
@@ -452,7 +452,7 @@ public class GLUtil {
 	 * 具体含义及用途请查阅OpenGL相关文档。
 	 */
 	public static void popMatrix() {
-		GlStateManager.popMatrix();
+		GlStateManager._popMatrix();
 	}
 
 	/**
@@ -559,15 +559,15 @@ public class GLUtil {
 	public static void fill(MatrixStack matrixStack, int x, int y, int width, int height, int color) {
 		preRenderNoTexture(color);
 		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		Matrix4f matrix4f = matrixStack.getLast().getMatrix();
-		bufferBuilder.pos(matrix4f, x, y + height, 0).color(renderStateR, renderStateG, renderStateB, renderStateA)
+		Matrix4f matrix4f = matrixStack.last().pose();
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(renderStateR, renderStateG, renderStateB, renderStateA)
 				.endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y + height, 0)
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0)
 				.color(renderStateR, renderStateG, renderStateB, renderStateA).endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y, 0).color(renderStateR, renderStateG, renderStateB, renderStateA)
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(renderStateR, renderStateG, renderStateB, renderStateA)
 				.endVertex();
-		bufferBuilder.pos(matrix4f, x, y, 0).color(renderStateR, renderStateG, renderStateB, renderStateA).endVertex();
-		tessellator.draw();
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(renderStateR, renderStateG, renderStateB, renderStateA).endVertex();
+		tessellator.end();
 		postRenderNoTexture();
 	}
 
@@ -592,13 +592,13 @@ public class GLUtil {
 		preRenderTexture();
 		double m = 1D / 256D;
 		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		Matrix4f matrix4f = matrixStack.getLast().getMatrix();
-		bufferBuilder.pos(matrix4f, x, y + height, 0).tex((float) (m * u), (float) (m * (v + height))).endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y + height, 0).tex((float) (m * (u + width)), (float) (m * (v + height)))
+		Matrix4f matrix4f = matrixStack.last().pose();
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).uv((float) (m * u), (float) (m * (v + height))).endVertex();
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).uv((float) (m * (u + width)), (float) (m * (v + height)))
 				.endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y, 0).tex((float) (m * (u + width)), (float) (m * v)).endVertex();
-		bufferBuilder.pos(matrix4f, x, y, 0).tex((float) (m * u), (float) (m * v)).endVertex();
-		tessellator.draw();
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).uv((float) (m * (u + width)), (float) (m * v)).endVertex();
+		bufferBuilder.vertex(matrix4f, x, y, 0).uv((float) (m * u), (float) (m * v)).endVertex();
+		tessellator.end();
 		postRenderTexture();
 	}
 
@@ -654,13 +654,13 @@ public class GLUtil {
 		double mw = 1D / (double) textureWidth;
 		double mh = 1D / (double) textureHeight;
 		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		Matrix4f matrix4f = matrixStack.getLast().getMatrix();
-		bufferBuilder.pos(matrix4f, x, y + height, 0).tex((float) (mw * u), (float) (mh * (v + height))).endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y + height, 0)
-				.tex((float) (mw * (u + width)), (float) (mh * (v + height))).endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y, 0).tex((float) (mw * (u + width)), (float) (mh * v)).endVertex();
-		bufferBuilder.pos(matrix4f, x, y, 0).tex((float) (mw * u), (float) (mh * v)).endVertex();
-		tessellator.draw();
+		Matrix4f matrix4f = matrixStack.last().pose();
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).uv((float) (mw * u), (float) (mh * (v + height))).endVertex();
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0)
+				.uv((float) (mw * (u + width)), (float) (mh * (v + height))).endVertex();
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).uv((float) (mw * (u + width)), (float) (mh * v)).endVertex();
+		bufferBuilder.vertex(matrix4f, x, y, 0).uv((float) (mw * u), (float) (mh * v)).endVertex();
+		tessellator.end();
 		postRenderTexture();
 	}
 
@@ -696,13 +696,13 @@ public class GLUtil {
 			float textureX, float textureY, float textureWidth, float textureHeight) {
 		preRenderTexture();
 		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		Matrix4f matrix4f = transform.getLast().getMatrix();
-		bufferBuilder.pos(matrix4f, x, y + height, 0).tex(textureX, textureY + textureHeight).endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y + height, 0).tex(textureX + textureWidth, textureY + textureHeight)
+		Matrix4f matrix4f = transform.last().pose();
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).uv(textureX, textureY + textureHeight).endVertex();
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).uv(textureX + textureWidth, textureY + textureHeight)
 				.endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y, 0).tex(textureX + textureWidth, textureY).endVertex();
-		bufferBuilder.pos(matrix4f, x, y, 0).tex(textureX, textureY).endVertex();
-		tessellator.draw();
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).uv(textureX + textureWidth, textureY).endVertex();
+		bufferBuilder.vertex(matrix4f, x, y, 0).uv(textureX, textureY).endVertex();
+		tessellator.end();
 		postRenderTexture();
 	}
 
@@ -723,13 +723,13 @@ public class GLUtil {
 			float textureX, float textureY, float textureWidth, float textureHeight, int alpha) {
 		preRenderTexture(255, 255, 255, alpha);
 		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		Matrix4f matrix4f = transform.getLast().getMatrix();
-		bufferBuilder.pos(matrix4f, x, y + height, 0).tex(textureX, textureY + textureHeight).endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y + height, 0).tex(textureX + textureWidth, textureY + textureHeight)
+		Matrix4f matrix4f = transform.last().pose();
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).uv(textureX, textureY + textureHeight).endVertex();
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).uv(textureX + textureWidth, textureY + textureHeight)
 				.endVertex();
-		bufferBuilder.pos(matrix4f, x + width, y, 0).tex(textureX + textureWidth, textureY).endVertex();
-		bufferBuilder.pos(matrix4f, x, y, 0).tex(textureX, textureY).endVertex();
-		tessellator.draw();
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).uv(textureX + textureWidth, textureY).endVertex();
+		bufferBuilder.vertex(matrix4f, x, y, 0).uv(textureX, textureY).endVertex();
+		tessellator.end();
 		postRenderTexture();
 	}
 

@@ -66,7 +66,7 @@ public class ModularGuiInfo {
 
 	public static void openModularGui(IModularGuiHolder holder, ServerPlayerEntity player,
 			IModularGuiHolder[] parentHolders) {
-		if (player.world.isRemote) {
+		if (player.level.isClientSide) {
 			return;
 		}
 		if (player instanceof FakePlayer) {
@@ -77,14 +77,14 @@ public class ModularGuiInfo {
 			throw new IllegalArgumentException("The gui holder codec is unregistered");
 		}
 		player.closeContainer();
-		player.getNextWindowId();
+		player.nextContainerCounter();
 		ModularGuiInfo guiInfo = holder.createGuiInfo(player);
 		guiInfo.title = holder.getTitle(player);
 		guiInfo.initWidgets();
-		ModularContainer container = new ModularContainer(null, player.currentWindowId, guiInfo,
+		ModularContainer container = new ModularContainer(null, player.containerCounter, guiInfo,
 				ArrayUtils.add(parentHolders, holder));
 		container.setDataBlocked(true);
-		container.detectAndSendChanges();
+		container.broadcastChanges();
 		List<PacketBuffer> updateData = new ArrayList<PacketBuffer>(container.getBlockedData());
 		container.clearBlockedData();
 		container.setDataBlocked(false);
@@ -102,10 +102,10 @@ public class ModularGuiInfo {
 			parentCodec.writeHolder(parentHolderBuf[i], parentHolders[i]);
 		}
 		CuckooLib.CHANNEL.sendTo(
-				new MessageModularGuiOpen(holderBuf, parentHolderBuf, updateData, player.currentWindowId),
-				player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
-		player.openContainer = container;
-		player.openContainer.addListener(player);
+				new MessageModularGuiOpen(holderBuf, parentHolderBuf, updateData, player.containerCounter),
+				player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+		player.containerMenu = container;
+		player.containerMenu.addSlotListener(player);
 		MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, container));
 	}
 
@@ -137,8 +137,8 @@ public class ModularGuiInfo {
 			IWidget widget = guiInfo.container.getGuiInfo().getWidget(data.readInt());
 			widget.receiveMessageFromServer(data);
 		});
-		player.openContainer = guiInfo.container;
-		Minecraft.getInstance().displayGuiScreen(screen);
+		player.containerMenu = guiInfo.container;
+		Minecraft.getInstance().setScreen(screen);
 	}
 
 	public static void registerGuiHolderCodec(IGuiHolderCodec codec) {

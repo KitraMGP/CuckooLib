@@ -12,7 +12,7 @@ public class ItemBase extends Item {
 	protected String modid, name;
 
 	public ItemBase(String modid, String name) {
-		this(modid, name, ItemGroup.MISC);
+		this(modid, name, ItemGroup.TAB_MISC);
 	}
 
 	public ItemBase(String modid, String name, ItemGroup group) {
@@ -24,7 +24,7 @@ public class ItemBase extends Item {
 	}
 
 	public ItemBase(String modid, String name, Properties properties, ItemGroup group, boolean register) {
-		super(properties.group(group));
+		super(properties.tab(group));
 		this.modid = modid;
 		this.name = name;
 		this.setRegistryName(modid, name);

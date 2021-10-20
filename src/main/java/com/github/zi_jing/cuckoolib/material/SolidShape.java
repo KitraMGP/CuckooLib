@@ -67,7 +67,7 @@ public class SolidShape {
 	}
 
 	public String getLocalizedname(MaterialBase material) {
-		return I18n.format(this.getUnlocalizedName(), material.getLocalizedName());
+		return I18n.get(this.getUnlocalizedName(), material.getLocalizedName());
 	}
 
 	@Override

@@ -29,6 +29,6 @@ public class PlanGuiCodec implements IGuiHolderCodec {
 
 	@Override
 	public IModularGuiHolder readHolder(PacketBuffer buf) {
-		return new PlanGuiHolder((IPlanInfoTileEntity) Minecraft.getInstance().world.getTileEntity(buf.readBlockPos()));
+		return new PlanGuiHolder((IPlanInfoTileEntity) Minecraft.getInstance().level.getBlockEntity(buf.readBlockPos()));
 	}
 }

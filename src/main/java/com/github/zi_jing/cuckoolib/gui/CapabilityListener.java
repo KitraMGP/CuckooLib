@@ -63,7 +63,7 @@ public class CapabilityListener implements IContainerListener {
 	}
 
 	@Override
-	public void sendAllContents(Container container, NonNullList<ItemStack> items) {
+	public void refreshContainer(Container container, NonNullList<ItemStack> items) {
 		NonNullList<ItemStack> sync = NonNullList.withSize(items.size(), ItemStack.EMPTY);
 		for (int i = 0; i < items.size(); i++) {
 			ItemStack stack = items.get(i);
@@ -73,24 +73,24 @@ public class CapabilityListener implements IContainerListener {
 				sync.set(i, ItemStack.EMPTY);
 			}
 		}
-		MessageCapabilityUpdate msg = new MessageCapabilityUpdate(container.windowId, sync);
+		MessageCapabilityUpdate msg = new MessageCapabilityUpdate(container.containerId, sync);
 		if (msg.hasData()) {
-			CuckooLib.CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+			CuckooLib.CHANNEL.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 		}
 	}
 
 	@Override
-	public void sendSlotContents(Container container, int slot, ItemStack stack) {
+	public void slotChanged(Container container, int slot, ItemStack stack) {
 		if (shouldSync(stack)) {
-			MessageCapabilityUpdate msg = new MessageCapabilityUpdate(container.windowId, slot, stack);
+			MessageCapabilityUpdate msg = new MessageCapabilityUpdate(container.containerId, slot, stack);
 			if (msg.hasData()) {
-				CuckooLib.CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+				CuckooLib.CHANNEL.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 			}
 		}
 	}
 
 	@Override
-	public void sendWindowProperty(Container container, int varToUpdate, int newValue) {
+	public void setContainerData(Container container, int varToUpdate, int newValue) {
 
 	}
 }

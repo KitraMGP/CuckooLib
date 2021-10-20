@@ -18,10 +18,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 public class ModularScreen extends ContainerScreen<ModularContainer> {
-	public static final TextureArea TITLE_1 = TextureArea
-			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/title_1.png"));
-	public static final TextureArea TITLE_2 = TextureArea
-			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/title_2.png"));
+	public static final TextureArea TITLE_DEFAULT = TextureArea
+			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/title_default.png"));
 	public static final TextureArea BACK = TextureArea
 			.createFullTexture(new ResourceLocation(CuckooLib.MODID, "textures/gui/back.png"));
 	public static final TextureArea REFRESH = TextureArea
@@ -40,22 +38,23 @@ public class ModularScreen extends ContainerScreen<ModularContainer> {
 	}
 
 	public ModularContainer getContainer() {
-		return this.container;
+		return this.menu;
 	}
 
 	@Override
 	public void init() {
-		this.xSize = this.guiInfo.getWidth();
-		this.ySize = this.guiInfo.getHeight();
+		this.imageWidth = this.guiInfo.getWidth();
+		this.imageHeight = this.guiInfo.getHeight();
 		super.init();
 	}
 
 	@Override
 	public void render(MatrixStack transform, int mouseX, int mouseY, float partialTicks) {
+		this.menu.getGuiHolder().executeRenderTask(this);
 		this.renderBackground(transform);
-		this.guiInfo.getBackground().draw(transform, this.guiLeft, this.guiTop, this.xSize, this.ySize);
-		List<ITextComponent> titles = Arrays.asList(this.container.getParentGuiHolders()).stream()
-				.map((holder) -> holder.getTitle(this.container.getGuiInfo().getPlayer())).collect(Collectors.toList());
+		this.guiInfo.getBackground().draw(transform, this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
+		List<ITextComponent> titles = Arrays.asList(this.menu.getParentGuiHolders()).stream()
+				.map((holder) -> holder.getTitle(this.menu.getGuiInfo().getPlayer())).collect(Collectors.toList());
 		String text = "";
 		for (int i = 0; i < titles.size(); i++) {
 			text += titles.get(i).getString();
@@ -63,41 +62,41 @@ public class ModularScreen extends ContainerScreen<ModularContainer> {
 				text += TextFormatting.GREEN + " > " + TextFormatting.RESET;
 			}
 		}
-		drawString(transform, this.font, text, this.guiLeft + 1, this.guiTop - 11, 0xffffff);
+		drawString(transform, this.font, text, this.leftPos + 1, this.topPos - 11, 0xffffff);
 		super.render(transform, mouseX, mouseY, partialTicks);
-		this.renderHoveredTooltip(transform, mouseX, mouseY);
+		this.renderTooltip(transform, mouseX, mouseY);
 		this.guiInfo.handleMouseHovered(mouseX, mouseY);
-		TITLE_1.draw(transform, this.guiLeft - 26, this.guiTop + 3, 23, 47);
+		TITLE_DEFAULT.draw(transform, this.leftPos - 30, this.topPos, 30, 50);
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(MatrixStack transform, int mouseX, int mouseY) {
-		this.guiInfo.drawInForeground(transform, mouseX - this.guiLeft, mouseY - this.guiTop, this.guiLeft,
-				this.guiTop);
+	protected void renderLabels(MatrixStack transform, int mouseX, int mouseY) {
+		this.guiInfo.drawInForeground(transform, mouseX - this.leftPos, mouseY - this.topPos, this.leftPos,
+				this.topPos);
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack transform, float partialTicks, int mouseX, int mouseY) {
-		this.guiInfo.drawInBackground(transform, partialTicks, mouseX - this.guiLeft, mouseY - this.guiTop,
-				this.guiLeft, this.guiTop);
+	protected void renderBg(MatrixStack transform, float partialTicks, int mouseX, int mouseY) {
+		this.guiInfo.drawInBackground(transform, partialTicks, mouseX - this.leftPos, mouseY - this.topPos,
+				this.leftPos, this.topPos);
 	}
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		super.mouseClicked(mouseX, mouseY, button);
-		return this.guiInfo.handleMouseClicked(mouseX - this.guiLeft, mouseY - this.guiTop, button);
+		return this.guiInfo.handleMouseClicked(mouseX - this.leftPos, mouseY - this.topPos, button);
 	}
 
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		super.mouseReleased(mouseX, mouseY, button);
-		return this.guiInfo.handleMouseReleased(mouseX - this.guiLeft, mouseY - this.guiTop, button);
+		return this.guiInfo.handleMouseReleased(mouseX - this.leftPos, mouseY - this.topPos, button);
 	}
 
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
 		super.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY);
-		return this.guiInfo.handleMouseClickMove(mouseX - this.guiLeft, mouseY - this.guiTop, mouseButton, dragX,
+		return this.guiInfo.handleMouseClickMove(mouseX - this.leftPos, mouseY - this.topPos, mouseButton, dragX,
 				dragY);
 	}
 }

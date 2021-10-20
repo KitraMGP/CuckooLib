@@ -28,6 +28,7 @@ public class MaterialBase {
 	public static final IMaterialFlag GENERATE_RING = createFlag(9);
 	public static final IMaterialFlag GENERATE_WIRE = createFlag(10);
 	public static final IMaterialFlag GENERATE_ROTOR = createFlag(11);
+	public static final IMaterialFlag GENERATE_NUGGET = createFlag(12);
 	public static final IMaterialFlag GENERATE_TOOL = createFlag(16);
 
 	protected String name;
@@ -176,7 +177,7 @@ public class MaterialBase {
 	}
 
 	public String getLocalizedName() {
-		return I18n.format(this.getUnlocalizedName());
+		return I18n.get(this.getUnlocalizedName());
 	}
 
 	@Override

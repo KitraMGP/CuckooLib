@@ -1,7 +1,5 @@
 package com.github.zi_jing.cuckoolib.gui.widget;
 
-import com.github.zi_jing.cuckoolib.client.render.TextureArea;
-
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -10,7 +8,6 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotWidget extends WidgetBase implements ISlotWidget {
 	protected SlotItemHandler slot;
-	protected TextureArea texture;
 	protected int slotCount;
 	protected boolean canTakeItems, canPutItems;
 
@@ -48,10 +45,6 @@ public class SlotWidget extends WidgetBase implements ISlotWidget {
 		this.isEnable = enable;
 	}
 
-	public void setTexture(TextureArea texture) {
-		this.texture = texture;
-	}
-
 	public boolean canTakeItem(PlayerEntity player) {
 		return this.isEnable && this.canTakeItems;
 	}
@@ -66,17 +59,17 @@ public class SlotWidget extends WidgetBase implements ISlotWidget {
 		}
 
 		@Override
-		public boolean isItemValid(ItemStack stack) {
-			return super.isItemValid(stack) && SlotWidget.this.canPutItem(stack);
+		public boolean mayPlace(ItemStack stack) {
+			return super.mayPlace(stack) && SlotWidget.this.canPutItem(stack);
 		}
 
 		@Override
-		public boolean canTakeStack(PlayerEntity player) {
-			return super.canTakeStack(player) && SlotWidget.this.canTakeItem(player);
+		public boolean mayPickup(PlayerEntity player) {
+			return super.mayPickup(player) && SlotWidget.this.canTakeItem(player);
 		}
 
 		@Override
-		public boolean isEnabled() {
+		public boolean isActive() {
 			return SlotWidget.this.isEnable;
 		}
 	}

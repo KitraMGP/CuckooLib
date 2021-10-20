@@ -36,30 +36,30 @@ public abstract class OutputItem implements Supplier<ItemStack> {
 
 	public static OutputItem fromJson(JsonElement element) {
 		if (element.isJsonPrimitive()) {
-			return fromItemProvider(JSONUtils.getItem(element, "item"));
+			return fromItemProvider(JSONUtils.convertToItem(element, "item"));
 		}
 		if (!element.isJsonObject()) {
 			throw new JsonSyntaxException("JsonElement for OutputItem must be String or JsonObject");
 		}
 		JsonObject json = element.getAsJsonObject();
 		if (json.has("tag")) {
-			String name = JSONUtils.getString(json, "tag");
-			ITag<Item> tag = TagCollectionManager.getManager().getItemTags().get(new ResourceLocation(name));
+			String name = JSONUtils.getAsString(json, "tag");
+			ITag<Item> tag = TagCollectionManager.getInstance().getItems().getTag(new ResourceLocation(name));
 			if (tag == null) {
 				throw new JsonSyntaxException("Tag [ " + name + " ] for OutputItem is unknown");
 			}
-			int count = JSONUtils.getInt(json, "count", 1);
+			int count = JSONUtils.getAsInt(json, "count", 1);
 			return fromTag(tag, count);
 		}
 		return fromItemStack(CraftingHelper.getItemStack(json, true));
 	}
 
 	public static OutputItem fromPacketBuffer(PacketBuffer buffer) {
-		return fromItemStack(buffer.readItemStack());
+		return fromItemStack(buffer.readItem());
 	}
 
 	public PacketBuffer writeToPacketBuffer(PacketBuffer buffer) {
-		buffer.writeItemStack(this.get());
+		buffer.writeItem(this.get());
 		return buffer;
 	}
 
@@ -106,7 +106,7 @@ public abstract class OutputItem implements Supplier<ItemStack> {
 
 		@Override
 		public ItemStack get() {
-			List<Item> list = this.tag.getAllElements();
+			List<Item> list = this.tag.getValues();
 			if (list.isEmpty()) {
 				return ItemStack.EMPTY;
 			}
@@ -116,8 +116,7 @@ public abstract class OutputItem implements Supplier<ItemStack> {
 		@Override
 		public JsonElement serialize() {
 			JsonObject json = new JsonObject();
-			json.addProperty("tag",
-					TagCollectionManager.getManager().getItemTags().getValidatedIdFromTag(this.tag).toString());
+			json.addProperty("tag", TagCollectionManager.getInstance().getItems().getId(this.tag).toString());
 			if (this.count > 1) {
 				json.addProperty("count", this.count);
 			}

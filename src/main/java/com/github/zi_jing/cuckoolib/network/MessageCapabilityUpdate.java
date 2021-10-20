@@ -48,7 +48,7 @@ public class MessageCapabilityUpdate implements IMessage {
 		int size = buf.readInt();
 		for (int i = 0; i < size; i++) {
 			int slot = buf.readInt();
-			CompoundNBT nbt = buf.readCompoundTag();
+			CompoundNBT nbt = buf.readNbt();
 			msg.data.put(slot, nbt);
 		}
 		return msg;
@@ -64,7 +64,7 @@ public class MessageCapabilityUpdate implements IMessage {
 		buf.writeInt(this.data.size());
 		this.data.forEach((slot, nbt) -> {
 			buf.writeInt(slot);
-			buf.writeCompoundTag(nbt);
+			buf.writeNbt(nbt);
 		});
 	}
 
@@ -78,14 +78,14 @@ public class MessageCapabilityUpdate implements IMessage {
 			Container container;
 			if (player != null) {
 				if (this.window == 0) {
-					container = player.container;
-				} else if (this.window == player.openContainer.windowId) {
-					container = player.openContainer;
+					container = player.containerMenu;
+				} else if (this.window == player.containerMenu.containerId) {
+					container = player.containerMenu;
 				} else {
 					return;
 				}
 				this.data.forEach(
-						(slot, nbt) -> CapabilityListener.applyCapabilityData(container.getSlot(slot).getStack(), nbt));
+						(slot, nbt) -> CapabilityListener.applyCapabilityData(container.getSlot(slot).getItem(), nbt));
 			}
 		});
 	}

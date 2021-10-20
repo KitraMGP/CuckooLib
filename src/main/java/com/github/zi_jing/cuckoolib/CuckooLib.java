@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
 import com.github.zi_jing.cuckoolib.gui.impl.PlanGuiCodec;
 import com.github.zi_jing.cuckoolib.gui.impl.TileEntityCodec;
-import com.github.zi_jing.cuckoolib.item.MaterialItem;
 import com.github.zi_jing.cuckoolib.item.MaterialToolItem;
 import com.github.zi_jing.cuckoolib.network.IMessage;
 import com.github.zi_jing.cuckoolib.network.MessageCapabilityUpdate;
@@ -17,7 +16,6 @@ import com.github.zi_jing.cuckoolib.network.MessageGuiTask;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToClient;
 import com.github.zi_jing.cuckoolib.network.MessageGuiToServer;
 import com.github.zi_jing.cuckoolib.network.MessageModularGuiOpen;
-import com.github.zi_jing.cuckoolib.recipe.data.DataRecipeSerializer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemGroup;
@@ -50,14 +48,15 @@ public class CuckooLib {
 
 	public static final ItemGroup GROUP_MATERIAL = new ItemGroup(MODID + "_material") {
 		@Override
-		public ItemStack createIcon() {
+		public ItemStack makeIcon() {
 			return new ItemStack(Items.IRON_INGOT);
 		}
 	};
 
 	public CuckooLib() {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		DataRecipeSerializer.RECIPE_SERIALIZERS.register(bus);
+		LibRegistryHandler.register();
+		LibRegistryHandler.RECIPE_SERIALIZERS.register(bus);
 	}
 
 	public static Logger getLogger() {
@@ -79,8 +78,6 @@ public class CuckooLib {
 				Minecraft.getInstance().getItemColors().register(((MaterialToolItem) item)::getItemColor, item);
 			}
 		});
-		MaterialItem.REGISTERED_MATERIAL_ITEM.values().forEach((map) -> map.values()
-				.forEach((item) -> Minecraft.getInstance().getItemColors().register(item::getItemColor, item)));
 	}
 
 	private static <T extends IMessage> void registerMessage(int id, Class<T> type, Function<PacketBuffer, T> decoder,

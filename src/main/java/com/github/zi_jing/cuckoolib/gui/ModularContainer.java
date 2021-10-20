@@ -59,14 +59,14 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 				Slot slot = ((ISlotWidget) widget).getSlot();
 				this.slotMap.put((ISlotWidget) widget, slot);
 				this.addSlot(slot);
-				((ISlotWidget) widget).setSlotCount(slot.slotNumber);
+				((ISlotWidget) widget).setSlotCount(slot.index);
 			}
 			if (widget instanceof VariableListWidget) {
 				((VariableListWidget) widget).getAllSlotWidgets().values().forEach((slotWidget) -> {
 					Slot slot = ((ISlotWidget) slotWidget).getSlot();
 					this.slotMap.put((ISlotWidget) slotWidget, slot);
 					this.addSlot(slot);
-					((ISlotWidget) slotWidget).setSlotCount(slot.slotNumber);
+					((ISlotWidget) slotWidget).setSlotCount(slot.index);
 				});
 			}
 		});
@@ -119,25 +119,25 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 	}
 
 	@Override
-	public boolean canInteractWith(PlayerEntity player) {
+	public boolean stillValid(PlayerEntity player) {
 		return true;
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(PlayerEntity player, int index) {
+	public ItemStack quickMoveStack(PlayerEntity player, int index) {
 		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
+	public void broadcastChanges() {
+		super.broadcastChanges();
 		List<IContainerListener> listListener = getContainerListeners(this);
-		for (int i = 0; i < this.inventorySlots.size(); i++) {
-			ItemStack stack = this.inventorySlots.get(i).getStack();
+		for (int i = 0; i < this.slots.size(); i++) {
+			ItemStack stack = this.slots.get(i).getItem();
 			if (CapabilityListener.shouldSync(stack)) {
 				for (IContainerListener listener : listListener) {
 					if (listener instanceof CapabilityListener) {
-						listener.sendSlotContents(this, i, stack);
+						listener.slotChanged(this, i, stack);
 					}
 				}
 			}
@@ -148,9 +148,9 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		for (int id : tasks) {
 			holder.executeTask(this, id);
 		}
-		if (!this.guiInfo.player.world.isRemote) {
-			CuckooLib.CHANNEL.sendTo(new MessageGuiTask(this.windowId, tasks),
-					((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.getNetworkManager(),
+		if (!this.guiInfo.player.level.isClientSide) {
+			CuckooLib.CHANNEL.sendTo(new MessageGuiTask(this.containerId, tasks),
+					((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.connection,
 					NetworkDirection.PLAY_TO_CLIENT);
 		}
 	}
@@ -163,8 +163,8 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		if (this.isDataBlocked) {
 			this.blockedData.add(buffer);
 		} else {
-			CuckooLib.CHANNEL.sendTo(new MessageGuiToClient(buffer, this.windowId),
-					((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.getNetworkManager(),
+			CuckooLib.CHANNEL.sendTo(new MessageGuiToClient(buffer, this.containerId),
+					((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.connection,
 					NetworkDirection.PLAY_TO_CLIENT);
 		}
 	}
@@ -174,7 +174,7 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
 		buffer.writeInt(widgetId);
 		data.accept(buffer);
-		CuckooLib.CHANNEL.sendToServer(new MessageGuiToServer(buffer, this.windowId));
+		CuckooLib.CHANNEL.sendToServer(new MessageGuiToServer(buffer, this.containerId));
 	}
 
 	@Override
@@ -182,25 +182,25 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		if (isEnable && !this.slotMap.containsKey(widget)) {
 			Slot slotAdd = widget.getSlot();
 			this.slotMap.put((ISlotWidget) widget, slotAdd);
-			OptionalInt optional = this.inventorySlots.stream().filter((slot) -> slot instanceof EmptySlot)
-					.mapToInt((slot) -> slot.slotNumber).findFirst();
+			OptionalInt optional = this.slots.stream().filter((slot) -> slot instanceof EmptySlot)
+					.mapToInt((slot) -> slot.index).findFirst();
 			if (optional.isPresent()) {
 				int idx = optional.getAsInt();
-				slotAdd.slotNumber = idx;
-				this.inventorySlots.set(idx, slotAdd);
+				slotAdd.index = idx;
+				this.slots.set(idx, slotAdd);
 				this.setInventoryItemStacks(idx, ItemStack.EMPTY);
 				widget.setSlotCount(idx);
 			} else {
 				this.addSlot(slotAdd);
-				widget.setSlotCount(slotAdd.slotNumber);
+				widget.setSlotCount(slotAdd.index);
 			}
 		} else if (!isEnable && this.slotMap.containsKey(widget)) {
 			Slot slotRemove = widget.getSlot();
 			this.slotMap.remove(widget);
 			EmptySlot emptySlot = new EmptySlot();
-			emptySlot.slotNumber = slotRemove.slotNumber;
-			this.inventorySlots.set(slotRemove.slotNumber, emptySlot);
-			this.setInventoryItemStacks(slotRemove.slotNumber, ItemStack.EMPTY);
+			emptySlot.index = slotRemove.index;
+			this.slots.set(slotRemove.index, emptySlot);
+			this.setInventoryItemStacks(slotRemove.index, ItemStack.EMPTY);
 		}
 	}
 
@@ -222,31 +222,31 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		private static final IInventory EMPTY_INVENTORY = new Inventory(0);
 
 		public EmptySlot() {
-			super(EMPTY_INVENTORY, 0, -0, -0);
+			super(EMPTY_INVENTORY, 0, 0, 0);
 		}
 
 		@Override
-		public ItemStack getStack() {
+		public ItemStack getItem() {
 			return ItemStack.EMPTY;
 		}
 
 		@Override
-		public void putStack(ItemStack stack) {
+		public void set(ItemStack stack) {
 
 		}
 
 		@Override
-		public boolean isItemValid(ItemStack stack) {
+		public boolean mayPlace(ItemStack stack) {
 			return false;
 		}
 
 		@Override
-		public boolean canTakeStack(PlayerEntity playerIn) {
+		public boolean mayPickup(PlayerEntity playerIn) {
 			return false;
 		}
 
 		@Override
-		public boolean isEnabled() {
+		public boolean isActive() {
 			return false;
 		}
 	}

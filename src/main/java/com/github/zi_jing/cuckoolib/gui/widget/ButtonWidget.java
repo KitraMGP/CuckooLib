@@ -38,7 +38,7 @@ public class ButtonWidget extends WidgetBase {
 		this.writePacketToServer(this.id, (buf) -> {
 			data.writeToBuf(buf);
 		});
-		Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+		Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 		return true;
 	}
 
