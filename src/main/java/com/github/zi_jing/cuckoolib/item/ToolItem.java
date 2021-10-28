@@ -31,11 +31,10 @@ import net.minecraftforge.common.ToolType;
 public class ToolItem extends ItemBase {
 	public static final List<ToolItem> REGISTERED_TOOL_ITEM = new ArrayList<ToolItem>();
 
-	protected String modid, name;
 	protected IToolInfo toolInfo;
 
-	public ToolItem(String modid, String name, ItemGroup group, IToolInfo toolInfo) {
-		super(modid, name, group);
+	public ToolItem(ItemGroup group, IToolInfo toolInfo) {
+		super(group);
 		this.toolInfo = toolInfo;
 		REGISTERED_TOOL_ITEM.add(this);
 	}
@@ -82,8 +81,7 @@ public class ToolItem extends ItemBase {
 
 	@Override
 	public int getHarvestLevel(ItemStack stack, ToolType tool, PlayerEntity player, BlockState state) {
-		return this.toolInfo.canHarvestBlock(stack, state) ? this.toolInfo.getHarvestLevel(stack, tool, player, state)
-				: -1;
+		return this.toolInfo.canHarvestBlock(stack, state) ? this.toolInfo.getHarvestLevel(stack, tool, player, state) : -1;
 	}
 
 	@Override
@@ -136,9 +134,7 @@ public class ToolItem extends ItemBase {
 			return false;
 		}
 		try {
-			Field fieldItem = Arrays.stream(ItemStack.class.getDeclaredFields())
-					.filter(field -> field.getType() == Item.class).findFirst()
-					.orElseThrow(ReflectiveOperationException::new);
+			Field fieldItem = Arrays.stream(ItemStack.class.getDeclaredFields()).filter(field -> field.getType() == Item.class).findFirst().orElseThrow(ReflectiveOperationException::new);
 			fieldItem.setAccessible(true);
 			fieldItem.set(stack, Items.AIR);
 		} catch (SecurityException | ReflectiveOperationException e) {

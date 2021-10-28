@@ -19,8 +19,8 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.NonNullList;
 
 public class MaterialToolItem extends ToolItem {
-	public MaterialToolItem(String modid, String name, ItemGroup group, IToolInfo toolInfo) {
-		super(modid, name, group, toolInfo);
+	public MaterialToolItem(ItemGroup group, IToolInfo toolInfo) {
+		super(group, toolInfo);
 	}
 
 	public static Map<Integer, Pair<String, MaterialBase>> getToolAllMaterial(ItemStack stack) {
@@ -31,8 +31,7 @@ public class MaterialToolItem extends ToolItem {
 			Map<Integer, Pair<String, MaterialBase>> map = new HashMap<Integer, Pair<String, MaterialBase>>();
 			while (ite.hasNext()) {
 				CompoundNBT compound = (CompoundNBT) ite.next();
-				map.put(compound.getInt("index"), Pair.of(compound.getString("part"),
-						MaterialBase.getMaterialByName(compound.getString("material"))));
+				map.put(compound.getInt("index"), Pair.of(compound.getString("part"), MaterialBase.getMaterialByName(compound.getString("material"))));
 			}
 			return map;
 		}
@@ -86,8 +85,7 @@ public class MaterialToolItem extends ToolItem {
 
 	public ItemStack createItemStack(int count) {
 		ItemStack stack = new ItemStack(this, count);
-		this.toolInfo.getDefaultMaterial()
-				.forEach((index, pair) -> setToolMaterial(stack, index, pair.getLeft(), pair.getRight()));
+		this.toolInfo.getDefaultMaterial().forEach((index, pair) -> setToolMaterial(stack, index, pair.getLeft(), pair.getRight()));
 		CompoundNBT nbt = getToolBaseNBT(stack);
 		return stack;
 	}

@@ -34,7 +34,7 @@ public class MaterialBase {
 	protected String name;
 	protected int color, durability, harvestLevel;
 	protected long flagValue;
-	protected float efficiency, meltingPoint, boilingPoint, plasmaPoint;
+	protected float efficiency, meltingPoint, boilingPoint, heatCapacity;
 
 	static {
 		ModMaterials.register();
@@ -65,18 +65,25 @@ public class MaterialBase {
 		return ret;
 	}
 
-	public void setPointTemp(float meltingPoint, float boilingPoint, float plasmaPoint) {
-		if (!this.validatePointTemp(meltingPoint, boilingPoint, plasmaPoint)) {
-			throw new IllegalArgumentException("The matter state points [ " + meltingPoint + ", " + boilingPoint + ", "
-					+ plasmaPoint + " ] is invalied");
+	public void setPointTemp(float meltingPoint, float boilingPoint) {
+		if (!this.validatePointTemp(meltingPoint, boilingPoint)) {
+			throw new IllegalArgumentException(
+					"The matter state points [ " + meltingPoint + ", " + boilingPoint + ", " + " ] is invalied");
 		}
 		this.meltingPoint = meltingPoint;
 		this.boilingPoint = boilingPoint;
-		this.plasmaPoint = plasmaPoint;
 	}
 
-	public boolean validatePointTemp(float meltingPoint, float boilingPoint, float plasmaPoint) {
-		return plasmaPoint >= boilingPoint && boilingPoint >= meltingPoint && meltingPoint >= 0;
+	public void setHeatCapacity(float heatCapacity) {
+		this.heatCapacity = heatCapacity > 0 ? heatCapacity : 1600;
+	}
+
+	public float getHeatCapacity() {
+		return this.heatCapacity;
+	}
+
+	public boolean validatePointTemp(float meltingPoint, float boilingPoint) {
+		return boilingPoint >= meltingPoint && meltingPoint >= 0;
 	}
 
 	public MatterState getState(float temp) {
@@ -86,10 +93,7 @@ public class MaterialBase {
 		if (temp < this.boilingPoint) {
 			return MatterState.LIQUID;
 		}
-		if (temp < this.plasmaPoint) {
-			return MatterState.GAS;
-		}
-		return MatterState.PLASMA;
+		return MatterState.GAS;
 	}
 
 	public boolean existState(MatterState state) {
@@ -99,8 +103,6 @@ public class MaterialBase {
 		case LIQUID:
 			return this.meltingPoint <= this.boilingPoint;
 		case GAS:
-			return this.boilingPoint <= this.plasmaPoint;
-		case PLASMA:
 			return true;
 		default:
 			return false;
