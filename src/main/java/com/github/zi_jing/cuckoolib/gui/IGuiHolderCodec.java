@@ -5,11 +5,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public interface IGuiHolderCodec {
+public interface IGuiHolderCodec<T extends IModularGuiHolder> {
 	ResourceLocation getRegistryName();
 
-	void writeHolder(PacketBuffer buf, IModularGuiHolder holder);
+	void writeHolder(PacketBuffer buf, T holder);
 
 	@OnlyIn(Dist.CLIENT)
-	IModularGuiHolder readHolder(PacketBuffer buf);
+	T readHolder(PacketBuffer buf);
 }

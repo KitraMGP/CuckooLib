@@ -10,7 +10,6 @@ import com.github.zi_jing.cuckoolib.material.type.MaterialBase;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -40,10 +39,6 @@ public interface IToolInfo {
 	boolean canHarvestBlock(ItemStack stack, BlockState state);
 
 	float getDestroySpeed(ItemStack stack);
-
-	default void onPlayerStoppedUsing(ItemStack stack, World world, LivingEntity entityLiving, int timeLeft) {
-
-	}
 
 	default Map<Integer, Pair<String, MaterialBase>> getDefaultMaterial() {
 		return Collections.emptyMap();

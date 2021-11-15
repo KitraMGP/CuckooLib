@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.github.zi_jing.cuckoolib.gui.CapabilityListener;
 import com.github.zi_jing.cuckoolib.item.IItemTipInfo;
+import com.github.zi_jing.cuckoolib.material.MaterialEntry;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -53,6 +55,10 @@ public class EventHandler {
 		ItemStack stack = e.getItemStack();
 		Item item = stack.getItem();
 		List<ITextComponent> tooltip = e.getToolTip();
+		if (LibRegistryHandler.ITEM_MATERIAL_REGISTRY.containsKey(item)) {
+			MaterialEntry entry = LibRegistryHandler.ITEM_MATERIAL_REGISTRY.get(item);
+			tooltip.add(new StringTextComponent(TextFormatting.GOLD + I18n.get("cuckoolib.info.material.ore") + TextFormatting.GREEN + entry.getShape().getLocalizedname(entry.getMaterial())));
+		}
 		LibRegistryHandler.ITEM_TIP_INFO.entrySet().forEach((entry) -> {
 			if (entry.getKey().test(stack)) {
 				IItemTipInfo info = entry.getValue();
@@ -64,8 +70,7 @@ public class EventHandler {
 					tooltip.add(new StringTextComponent(color + " | " + TextFormatting.RESET + list.get(i)));
 				}
 				if (size > 0) {
-					tooltip.add(
-							new StringTextComponent(color + " | " + TextFormatting.RESET + list.get(list.size() - 1)));
+					tooltip.add(new StringTextComponent(color + " | " + TextFormatting.RESET + list.get(list.size() - 1)));
 				}
 			}
 		});

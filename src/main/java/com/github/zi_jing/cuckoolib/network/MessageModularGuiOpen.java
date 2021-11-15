@@ -17,17 +17,18 @@ public class MessageModularGuiOpen implements IMessage {
 	private PacketBuffer[] parentHolderPackets;
 	private List<PacketBuffer> updateData;
 	private int window;
+	private int[] args;
 
 	public MessageModularGuiOpen() {
 
 	}
 
-	public MessageModularGuiOpen(PacketBuffer holderPacket, PacketBuffer[] parentHolderPacket,
-			List<PacketBuffer> updateData, int window) {
+	public MessageModularGuiOpen(PacketBuffer holderPacket, PacketBuffer[] parentHolderPacket, List<PacketBuffer> updateData, int window, int[] args) {
 		this.holderPacket = holderPacket;
 		this.parentHolderPackets = parentHolderPacket;
 		this.updateData = updateData;
 		this.window = window;
+		this.args = args;
 	}
 
 	public static MessageModularGuiOpen decode(PacketBuffer buf) {
@@ -44,6 +45,11 @@ public class MessageModularGuiOpen implements IMessage {
 			msg.updateData.add(new PacketBuffer(Unpooled.copiedBuffer(buf.readBytes(buf.readInt()))));
 		}
 		msg.window = buf.readInt();
+		size = buf.readInt();
+		msg.args = new int[size];
+		for (int i = 0; i < size; i++) {
+			msg.args[i] = buf.readInt();
+		}
 		return msg;
 	}
 
@@ -62,6 +68,10 @@ public class MessageModularGuiOpen implements IMessage {
 			buf.writeBytes(data);
 		});
 		buf.writeInt(this.window);
+		buf.writeInt(this.args.length);
+		for (int arg : this.args) {
+			buf.writeInt(arg);
+		}
 	}
 
 	@Override
@@ -77,12 +87,9 @@ public class MessageModularGuiOpen implements IMessage {
 				if (!ModularGuiInfo.REGISTRY.containsKey(parentCodecName)) {
 					throw new RuntimeException("The gui holder registry name is invalid");
 				}
-				parentHolders[i] = ModularGuiInfo.REGISTRY.getValue(parentCodecName)
-						.readHolder(this.parentHolderPackets[i]);
+				parentHolders[i] = ModularGuiInfo.REGISTRY.getValue(parentCodecName).readHolder(this.parentHolderPackets[i]);
 			}
-			ModularGuiInfo.openClientModularGui(this.window,
-					ModularGuiInfo.REGISTRY.getValue(codecName).readHolder(this.holderPacket), parentHolders,
-					this.updateData);
+			ModularGuiInfo.openClientModularGui(this.window, ModularGuiInfo.REGISTRY.getValue(codecName).readHolder(this.holderPacket), parentHolders, this.updateData);
 		});
 	}
 }

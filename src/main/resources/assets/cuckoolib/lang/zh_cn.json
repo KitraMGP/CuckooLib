@@ -7,6 +7,13 @@
 	"cuckoolib.tipinfo.fuel.mass": "燃料质量: ",
 	"cuckoolib.tipinfo.fuel.calorific_value": "热值: ",
 	"cuckoolib.tipinfo.fuel.ignition_point": "燃点: ",
+	
+	"cuckoolib.info.material.ore": "矿物词典信息: ",
+	
+	"cuckoolib.material.state.solid": "固态",
+	"cuckoolib.material.state.liquid": "液态",
+	"cuckoolib.material.state.gas": "气态",
+	"cuckoolib.material.state.plasma": "等离子态",
 
 	"cuckoolib.shape.dusts.name": "%s粉",
 	"cuckoolib.shape.ingots.name": "%s锭",

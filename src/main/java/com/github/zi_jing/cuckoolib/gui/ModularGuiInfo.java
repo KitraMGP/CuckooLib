@@ -48,24 +48,23 @@ public class ModularGuiInfo {
 	protected IWidgetRenderer background;
 	protected Map<Integer, IWidget> widgets;
 	protected List<Consumer<ModularContainer>> openListeners, closeListeners;
+	protected int[] args;
 
-	public ModularGuiInfo(Vector2i size, IWidgetRenderer background, Map<Integer, IWidget> widgets,
-			List<Consumer<ModularContainer>> openListeners, List<Consumer<ModularContainer>> closeListeners,
-			PlayerEntity player) {
+	public ModularGuiInfo(Vector2i size, IWidgetRenderer background, Map<Integer, IWidget> widgets, List<Consumer<ModularContainer>> openListeners, List<Consumer<ModularContainer>> closeListeners, PlayerEntity player, int[] args) {
 		this.size = size;
 		this.background = background;
 		this.widgets = widgets;
 		this.openListeners = openListeners;
 		this.closeListeners = closeListeners;
 		this.player = player;
+		this.args = args;
 	}
 
-	public static void openModularGui(IModularGuiHolder holder, ServerPlayerEntity player) {
-		openModularGui(holder, player, new IModularGuiHolder[0]);
+	public static void openModularGui(IModularGuiHolder holder, ServerPlayerEntity player, int... args) {
+		openModularGui(holder, player, new IModularGuiHolder[0], args);
 	}
 
-	public static void openModularGui(IModularGuiHolder holder, ServerPlayerEntity player,
-			IModularGuiHolder[] parentHolders) {
+	public static void openModularGui(IModularGuiHolder holder, ServerPlayerEntity player, IModularGuiHolder[] parentHolders, int... args) {
 		if (player.level.isClientSide) {
 			return;
 		}
@@ -80,9 +79,9 @@ public class ModularGuiInfo {
 		player.nextContainerCounter();
 		ModularGuiInfo guiInfo = holder.createGuiInfo(player);
 		guiInfo.title = holder.getTitle(player);
+		guiInfo.args = args;
 		guiInfo.initWidgets();
-		ModularContainer container = new ModularContainer(null, player.containerCounter, guiInfo,
-				ArrayUtils.add(parentHolders, holder));
+		ModularContainer container = new ModularContainer(null, player.containerCounter, guiInfo, ArrayUtils.add(parentHolders, holder));
 		container.setDataBlocked(true);
 		container.broadcastChanges();
 		List<PacketBuffer> updateData = new ArrayList<PacketBuffer>(container.getBlockedData());
@@ -101,38 +100,33 @@ public class ModularGuiInfo {
 			parentHolderBuf[i].writeResourceLocation(parentCodec.getRegistryName());
 			parentCodec.writeHolder(parentHolderBuf[i], parentHolders[i]);
 		}
-		CuckooLib.CHANNEL.sendTo(
-				new MessageModularGuiOpen(holderBuf, parentHolderBuf, updateData, player.containerCounter),
-				player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+		CuckooLib.CHANNEL.sendTo(new MessageModularGuiOpen(holderBuf, parentHolderBuf, updateData, player.containerCounter, args), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 		player.containerMenu = container;
 		player.containerMenu.addSlotListener(player);
 		MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, container));
 	}
 
-	public static void backToParentGui(ModularContainer container) {
+	public static void backToParentGui(ModularContainer container, int... args) {
 		IModularGuiHolder[] parentHolders = container.getParentGuiHolders();
 		if (parentHolders.length >= 2) {
-			openModularGui(parentHolders[parentHolders.length - 2], (ServerPlayerEntity) container.guiInfo.player,
-					Arrays.copyOf(parentHolders, parentHolders.length - 2));
+			openModularGui(parentHolders[parentHolders.length - 2], (ServerPlayerEntity) container.guiInfo.player, Arrays.copyOf(parentHolders, parentHolders.length - 2), args);
 		}
 	}
 
-	public static void refreshGui(ModularContainer container) {
+	public static void refreshGui(ModularContainer container, int... args) {
 		IModularGuiHolder[] parentHolders = container.parentGuiHolders;
-		openModularGui(parentHolders[parentHolders.length - 1], (ServerPlayerEntity) container.guiInfo.player,
-				Arrays.copyOf(parentHolders, parentHolders.length - 1));
+		openModularGui(parentHolders[parentHolders.length - 1], (ServerPlayerEntity) container.guiInfo.player, Arrays.copyOf(parentHolders, parentHolders.length - 1), args);
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void openClientModularGui(int window, IModularGuiHolder holder, IModularGuiHolder[] parentHolders,
-			List<PacketBuffer> updateData) {
+	public static void openClientModularGui(int window, IModularGuiHolder holder, IModularGuiHolder[] parentHolders, List<PacketBuffer> updateData, int... args) {
 		Minecraft minecraft = Minecraft.getInstance();
 		ClientPlayerEntity player = minecraft.player;
 		ModularGuiInfo guiInfo = holder.createGuiInfo(player);
 		guiInfo.title = holder.getTitle(player);
+		guiInfo.args = args;
 		guiInfo.initWidgets();
-		ModularScreen screen = new ModularScreen(window, guiInfo, ArrayUtils.add(parentHolders, holder),
-				player.inventory, guiInfo.title);
+		ModularScreen screen = new ModularScreen(window, guiInfo, ArrayUtils.add(parentHolders, holder), player.inventory, guiInfo.title);
 		updateData.forEach((data) -> {
 			IWidget widget = guiInfo.container.getGuiInfo().getWidget(data.readInt());
 			widget.receiveMessageFromServer(data);
@@ -161,6 +155,14 @@ public class ModularGuiInfo {
 		return this.player;
 	}
 
+	public int[] getArgs() {
+		return this.args;
+	}
+
+	public int getArg(int i) {
+		return this.args[i];
+	}
+
 	public int getWidth() {
 		return this.size.getX();
 	}
@@ -184,12 +186,11 @@ public class ModularGuiInfo {
 	}
 
 	public void onGuiClosed() {
-		this.openListeners.forEach((listener) -> listener.accept(this.container));
+		this.closeListeners.forEach((listener) -> listener.accept(this.container));
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void drawInBackground(MatrixStack transform, float partialTicks, int mouseX, int mouseY, int guiLeft,
-			int guiTop) {
+	public void drawInBackground(MatrixStack transform, float partialTicks, int mouseX, int mouseY, int guiLeft, int guiTop) {
 		this.widgets.forEach((id, widget) -> {
 			if (widget.isEnable()) {
 				widget.drawInBackground(transform, partialTicks, mouseX, mouseY, guiLeft, guiTop);
@@ -270,10 +271,10 @@ public class ModularGuiInfo {
 			this.openListeners = new ArrayList<Consumer<ModularContainer>>();
 			this.closeListeners = new ArrayList<Consumer<ModularContainer>>();
 			this.addInternalWidget(new ButtonWidget(-1, this.size.getX() - 19, -9, 9, 9, (data, container) -> {
-				backToParentGui(container);
+				backToParentGui(container, container.guiInfo.args);
 			}).setRenderer(ModularScreen.BACK));
 			this.addInternalWidget(new ButtonWidget(-2, this.size.getX() - 9, -9, 9, 9, (data, container) -> {
-				refreshGui(container);
+				refreshGui(container, container.guiInfo.args);
 			}).setRenderer(ModularScreen.REFRESH));
 		}
 
@@ -296,17 +297,28 @@ public class ModularGuiInfo {
 		}
 
 		public Builder addPlayerInventory(PlayerInventory inventory) {
-			return this.addPlayerInventory(inventory, 8, 84);
+			return this.addPlayerInventory(inventory, 8, 84, false);
 		}
 
 		public Builder addPlayerInventory(PlayerInventory inventory, int x, int y) {
+			return this.addPlayerInventory(inventory, x, y, false);
+		}
+
+		public Builder addPlayerInventory(PlayerInventory inventory, boolean lockSelectedSlot) {
+			return this.addPlayerInventory(inventory, 8, 84, lockSelectedSlot);
+		}
+
+		public Builder addPlayerInventory(PlayerInventory inventory, int x, int y, boolean lockSelectedSlot) {
 			for (int i = 0; i < 9; i++) {
-				this.addInternalWidget(new SlotWidget(x + i * 18, y + 58, new PlayerMainInvWrapper(inventory), i));
+				if (lockSelectedSlot && inventory.selected == i) {
+					this.addInternalWidget(new SlotWidget(x + i * 18, y + 58, new PlayerMainInvWrapper(inventory), i, false, false));
+				} else {
+					this.addInternalWidget(new SlotWidget(x + i * 18, y + 58, new PlayerMainInvWrapper(inventory), i));
+				}
 			}
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 9; j++) {
-					this.addInternalWidget(new SlotWidget(x + j * 18, y + i * 18, new PlayerMainInvWrapper(inventory),
-							(i + 1) * 9 + j));
+					this.addInternalWidget(new SlotWidget(x + j * 18, y + i * 18, new PlayerMainInvWrapper(inventory), (i + 1) * 9 + j));
 				}
 			}
 			return this;
@@ -322,12 +334,11 @@ public class ModularGuiInfo {
 			return this;
 		}
 
-		public ModularGuiInfo build(PlayerEntity player) {
+		public ModularGuiInfo build(PlayerEntity player, int... args) {
 			if (player instanceof FakePlayer) {
 				throw new IllegalArgumentException("The player of the gui info can't be fake");
 			}
-			return new ModularGuiInfo(this.size, this.background, this.widgets, this.openListeners, this.closeListeners,
-					player);
+			return new ModularGuiInfo(this.size, this.background, this.widgets, this.openListeners, this.closeListeners, player, args);
 		}
 	}
 }

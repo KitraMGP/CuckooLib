@@ -7,4 +7,10 @@ public interface IMaterialFlag {
 	public default long getValue() {
 		return 1 << this.getId();
 	}
+
+	public default void setFlagForMaterial(MaterialBase... materials) {
+		for (MaterialBase material : materials) {
+			material.addFlag(this);
+		}
+	}
 }

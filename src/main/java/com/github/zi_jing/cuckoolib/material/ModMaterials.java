@@ -124,16 +124,7 @@ public class ModMaterials {
 	public static final DustMaterial WOOD = new DustMaterial("wood", 0x8c5a28);
 
 	public static void register() {
-		COPPER.addFlag(MaterialBase.GENERATE_TOOL);
-		IRON.addFlag(MaterialBase.GENERATE_TOOL);
-		WROUGHT_IRON.addFlag(MaterialBase.GENERATE_TOOL);
-		PIG_IRON.addFlag(MaterialBase.GENERATE_TOOL);
-		STEEL.addFlag(MaterialBase.GENERATE_TOOL);
-		BRONZE.addFlag(MaterialBase.GENERATE_TOOL);
-		BLACK_BRONZE.addFlag(MaterialBase.GENERATE_TOOL);
-		BISMUTH_BRONZE.addFlag(MaterialBase.GENERATE_TOOL);
-		FLINT.addFlag(MaterialBase.GENERATE_TOOL);
-		STONE.addFlag(MaterialBase.GENERATE_TOOL);
+		MaterialBase.GENERATE_TOOL.setFlagForMaterial(COPPER, IRON, WROUGHT_IRON, PIG_IRON, STEEL, BRONZE, BLACK_BRONZE, BISMUTH_BRONZE, FLINT, STONE);
 
 		COPPER.setToolProperty(51200, 2, 5);
 		IRON.setToolProperty(204800, 2, 6);

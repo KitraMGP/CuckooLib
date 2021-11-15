@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.github.zi_jing.cuckoolib.CuckooLib;
 import com.github.zi_jing.cuckoolib.material.MatterState;
-import com.github.zi_jing.cuckoolib.material.ModMaterials;
 import com.github.zi_jing.cuckoolib.util.data.UnorderedRegistry;
 
 import net.minecraft.client.resources.I18n;
@@ -34,11 +33,8 @@ public class MaterialBase {
 	protected String name;
 	protected int color, durability, harvestLevel;
 	protected long flagValue;
-	protected float efficiency, meltingPoint, boilingPoint, heatCapacity;
-
-	static {
-		ModMaterials.register();
-	}
+	protected float efficiency;
+	protected double meltingPoint, boilingPoint, heatCapacity;
 
 	public MaterialBase(String name, int color) {
 		this.name = name;
@@ -65,28 +61,27 @@ public class MaterialBase {
 		return ret;
 	}
 
-	public void setPointTemp(float meltingPoint, float boilingPoint) {
+	public void setPointTemp(double meltingPoint, double boilingPoint) {
 		if (!this.validatePointTemp(meltingPoint, boilingPoint)) {
-			throw new IllegalArgumentException(
-					"The matter state points [ " + meltingPoint + ", " + boilingPoint + ", " + " ] is invalied");
+			throw new IllegalArgumentException("The matter state points [ " + meltingPoint + ", " + boilingPoint + ", " + " ] is invalied");
 		}
 		this.meltingPoint = meltingPoint;
 		this.boilingPoint = boilingPoint;
 	}
 
-	public void setHeatCapacity(float heatCapacity) {
+	public void setHeatCapacity(double heatCapacity) {
 		this.heatCapacity = heatCapacity > 0 ? heatCapacity : 1600;
 	}
 
-	public float getHeatCapacity() {
+	public double getHeatCapacity() {
 		return this.heatCapacity;
 	}
 
-	public boolean validatePointTemp(float meltingPoint, float boilingPoint) {
+	public boolean validatePointTemp(double meltingPoint, double boilingPoint) {
 		return boilingPoint >= meltingPoint && meltingPoint >= 0;
 	}
 
-	public MatterState getState(float temp) {
+	public MatterState getState(double temp) {
 		if (temp < this.meltingPoint) {
 			return MatterState.SOLID;
 		}
@@ -149,10 +144,6 @@ public class MaterialBase {
 	}
 
 	public Fluid getGas() {
-		return null;
-	}
-
-	public Fluid getPlasma() {
 		return null;
 	}
 

@@ -14,8 +14,7 @@ public class ModSolidShapes {
 	public static final SolidShape KNIFE_HEAD = new SolidShape("knife_heads", 144, flag(MaterialBase.GENERATE_TOOL));
 	public static final SolidShape HAMMER_HEAD = new SolidShape("hammer_heads", 144, flag(MaterialBase.GENERATE_TOOL));
 	public static final SolidShape CHISEL_HEAD = new SolidShape("chisel_heads", 144, flag(MaterialBase.GENERATE_TOOL));
-	public static final SolidShape JAVELIN_HEAD = new SolidShape("javelin_heads", 144,
-			flag(MaterialBase.GENERATE_TOOL));
+	public static final SolidShape JAVELIN_HEAD = new SolidShape("javelin_heads", 144, flag(MaterialBase.GENERATE_TOOL));
 
 	public static Predicate<MaterialBase> flag(IMaterialFlag flag) {
 		return (material) -> material.hasFlag(flag);
@@ -23,9 +22,7 @@ public class ModSolidShapes {
 
 	public static void register() {
 		DUST.addIgnoredMaterial(ModMaterials.REDSTONE);
-		INGOT.addIgnoredMaterial(ModMaterials.IRON);
-		INGOT.addIgnoredMaterial(ModMaterials.GOLD);
-		NUGGET.addIgnoredMaterial(ModMaterials.IRON);
-		NUGGET.addIgnoredMaterial(ModMaterials.GOLD);
+		INGOT.addIgnoredMaterial(ModMaterials.IRON, ModMaterials.GOLD);
+		NUGGET.addIgnoredMaterial(ModMaterials.IRON, ModMaterials.GOLD);
 	}
 }

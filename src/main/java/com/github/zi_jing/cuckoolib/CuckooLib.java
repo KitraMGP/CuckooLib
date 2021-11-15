@@ -8,8 +8,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.zi_jing.cuckoolib.gui.ModularGuiInfo;
 import com.github.zi_jing.cuckoolib.gui.impl.PlanGuiCodec;
+import com.github.zi_jing.cuckoolib.gui.impl.PlayerGuiCodec;
 import com.github.zi_jing.cuckoolib.gui.impl.TileEntityCodec;
 import com.github.zi_jing.cuckoolib.item.MaterialToolItem;
+import com.github.zi_jing.cuckoolib.material.ModMaterials;
+import com.github.zi_jing.cuckoolib.material.ModSolidShapes;
 import com.github.zi_jing.cuckoolib.network.IMessage;
 import com.github.zi_jing.cuckoolib.network.MessageCapabilityUpdate;
 import com.github.zi_jing.cuckoolib.network.MessageGuiTask;
@@ -42,9 +45,7 @@ public class CuckooLib {
 
 	private static final Logger LOGGER = LogManager.getLogger("CuckooLib");
 
-	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
-			.named(new ResourceLocation(MODID, "main")).networkProtocolVersion(() -> VERSION)
-			.serverAcceptedVersions(VERSION::equals).clientAcceptedVersions(VERSION::equals).simpleChannel();
+	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder.named(new ResourceLocation(MODID, "main")).networkProtocolVersion(() -> VERSION).serverAcceptedVersions(VERSION::equals).clientAcceptedVersions(VERSION::equals).simpleChannel();
 
 	public static final ItemGroup GROUP_MATERIAL = new ItemGroup(MODID + "_material") {
 		@Override
@@ -56,6 +57,8 @@ public class CuckooLib {
 	public CuckooLib() {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		LibRegistryHandler.register();
+		ModMaterials.register();
+		ModSolidShapes.register();
 		LibRegistryHandler.RECIPE_SERIALIZERS.register(bus);
 	}
 
@@ -68,11 +71,11 @@ public class CuckooLib {
 		registerMessage(0, MessageModularGuiOpen.class, MessageModularGuiOpen::decode, NetworkDirection.PLAY_TO_CLIENT);
 		registerMessage(1, MessageGuiToServer.class, MessageGuiToServer::decode, NetworkDirection.PLAY_TO_SERVER);
 		registerMessage(2, MessageGuiToClient.class, MessageGuiToClient::decode, NetworkDirection.PLAY_TO_CLIENT);
-		registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode,
-				NetworkDirection.PLAY_TO_CLIENT);
+		registerMessage(3, MessageCapabilityUpdate.class, MessageCapabilityUpdate::decode, NetworkDirection.PLAY_TO_CLIENT);
 		registerMessage(4, MessageGuiTask.class, MessageGuiTask::decode, NetworkDirection.PLAY_TO_CLIENT);
 		ModularGuiInfo.registerGuiHolderCodec(TileEntityCodec.INSTANCE);
 		ModularGuiInfo.registerGuiHolderCodec(PlanGuiCodec.INSTANCE);
+		ModularGuiInfo.registerGuiHolderCodec(PlayerGuiCodec.INSTANCE);
 		MaterialToolItem.REGISTERED_TOOL_ITEM.forEach((item) -> {
 			if (item instanceof MaterialToolItem) {
 				Minecraft.getInstance().getItemColors().register(((MaterialToolItem) item)::getItemColor, item);
@@ -80,8 +83,7 @@ public class CuckooLib {
 		});
 	}
 
-	private static <T extends IMessage> void registerMessage(int id, Class<T> type, Function<PacketBuffer, T> decoder,
-			NetworkDirection direction) {
+	private static <T extends IMessage> void registerMessage(int id, Class<T> type, Function<PacketBuffer, T> decoder, NetworkDirection direction) {
 		CHANNEL.registerMessage(id, type, (msg, buf) -> {
 			msg.encode(buf);
 		}, decoder, (msg, ctx) -> {

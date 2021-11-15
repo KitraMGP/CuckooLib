@@ -75,8 +75,7 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 
 	public static List<IContainerListener> getContainerListeners(Container container) {
 		try {
-			return (List<IContainerListener>) ObfuscationReflectionHelper.findField(Container.class, "field_75149_d")
-					.get(container);
+			return (List<IContainerListener>) ObfuscationReflectionHelper.findField(Container.class, "field_75149_d").get(container);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -129,6 +128,12 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 	}
 
 	@Override
+	public void removed(PlayerEntity player) {
+		super.removed(player);
+		this.guiInfo.onGuiClosed();
+	}
+
+	@Override
 	public void broadcastChanges() {
 		super.broadcastChanges();
 		List<IContainerListener> listListener = getContainerListeners(this);
@@ -149,9 +154,7 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 			holder.executeTask(this, id);
 		}
 		if (!this.guiInfo.player.level.isClientSide) {
-			CuckooLib.CHANNEL.sendTo(new MessageGuiTask(this.containerId, tasks),
-					((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.connection,
-					NetworkDirection.PLAY_TO_CLIENT);
+			CuckooLib.CHANNEL.sendTo(new MessageGuiTask(this.containerId, tasks), ((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 		}
 	}
 
@@ -163,9 +166,7 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		if (this.isDataBlocked) {
 			this.blockedData.add(buffer);
 		} else {
-			CuckooLib.CHANNEL.sendTo(new MessageGuiToClient(buffer, this.containerId),
-					((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.connection,
-					NetworkDirection.PLAY_TO_CLIENT);
+			CuckooLib.CHANNEL.sendTo(new MessageGuiToClient(buffer, this.containerId), ((ServerPlayerEntity) (this.guiInfo.getPlayer())).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 		}
 	}
 
@@ -182,8 +183,7 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 		if (isEnable && !this.slotMap.containsKey(widget)) {
 			Slot slotAdd = widget.getSlot();
 			this.slotMap.put((ISlotWidget) widget, slotAdd);
-			OptionalInt optional = this.slots.stream().filter((slot) -> slot instanceof EmptySlot)
-					.mapToInt((slot) -> slot.index).findFirst();
+			OptionalInt optional = this.slots.stream().filter((slot) -> slot instanceof EmptySlot).mapToInt((slot) -> slot.index).findFirst();
 			if (optional.isPresent()) {
 				int idx = optional.getAsInt();
 				slotAdd.index = idx;
@@ -207,9 +207,7 @@ public class ModularContainer extends Container implements ISyncedWidgetList {
 	protected void setInventoryItemStacks(int slotNumber, ItemStack stack) {
 		Field fieldItemStacks;
 		try {
-			fieldItemStacks = Arrays.stream(Container.class.getDeclaredFields())
-					.filter(field -> field.getType() == NonNullList.class).findFirst()
-					.orElseThrow(ReflectiveOperationException::new);
+			fieldItemStacks = Arrays.stream(Container.class.getDeclaredFields()).filter(field -> field.getType() == NonNullList.class).findFirst().orElseThrow(ReflectiveOperationException::new);
 			fieldItemStacks.setAccessible(true);
 			NonNullList itemStacks = (NonNullList) fieldItemStacks.get(this);
 			itemStacks.set(slotNumber, stack);

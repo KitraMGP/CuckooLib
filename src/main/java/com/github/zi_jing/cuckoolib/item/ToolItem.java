@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.github.zi_jing.cuckoolib.tool.IToolInfo;
+import com.github.zi_jing.cuckoolib.tool.IToolUsable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -112,12 +113,6 @@ public class ToolItem extends ItemBase {
 		return 0x00ff00;
 	}
 
-	@Override
-	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-		player.startUsingItem(hand);
-		return ActionResult.consume(player.getItemInHand(hand));
-	}
-
 	public boolean enableItemDamage(ItemStack stack) {
 		return this.toolInfo.getMaxDamage(stack) > 0;
 	}
@@ -159,22 +154,41 @@ public class ToolItem extends ItemBase {
 	}
 
 	@Override
+	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+		if (this.toolInfo instanceof IToolUsable) {
+			return ((IToolUsable) this.toolInfo).use(world, player, hand);
+		}
+		return ActionResult.success(player.getItemInHand(hand));
+	}
+
+	@Override
 	public int getUseDuration(ItemStack stack) {
-		return 72000;
+		if (this.toolInfo instanceof IToolUsable) {
+			return ((IToolUsable) this.toolInfo).getUseDuration(stack);
+		}
+		return 0;
 	}
 
 	@Override
 	public UseAction getUseAnimation(ItemStack stack) {
+		if (this.toolInfo instanceof IToolUsable) {
+			return ((IToolUsable) this.toolInfo).getUseAnimation(stack);
+		}
 		return UseAction.NONE;
 	}
 
 	@Override
 	public ActionResultType useOn(ItemUseContext context) {
+		if (this.toolInfo instanceof IToolUsable) {
+			return ((IToolUsable) this.toolInfo).useOn(context);
+		}
 		return ActionResultType.CONSUME;
 	}
 
 	@Override
 	public void releaseUsing(ItemStack stack, World world, LivingEntity entity, int timeLeft) {
-		this.toolInfo.onPlayerStoppedUsing(stack, world, entity, timeLeft);
+		if (this.toolInfo instanceof IToolUsable) {
+			((IToolUsable) this.toolInfo).releaseUsing(stack, world, entity, timeLeft);
+		}
 	}
 }

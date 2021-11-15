@@ -8,6 +8,13 @@
 	"cuckoolib.tipinfo.fuel.calorific_value": "Calorific Value: ",
 	"cuckoolib.tipinfo.fuel.ignition_point": "Ignition Point: ",
 
+	"cuckoolib.info.material.ore": "Ore Dictionary Info: ",
+
+	"cuckoolib.material.state.solid": "Solid",
+	"cuckoolib.material.state.liquid": "Liquid",
+	"cuckoolib.material.state.gas": "Gas",
+	"cuckoolib.material.state.plasma": "Plasma",
+
 	"cuckoolib.shape.dusts.name": "%s Dust",
 	"cuckoolib.shape.ingots.name": "%s Ingot",
 	"cuckoolib.shape.nuggets.name": "%s Nugget",

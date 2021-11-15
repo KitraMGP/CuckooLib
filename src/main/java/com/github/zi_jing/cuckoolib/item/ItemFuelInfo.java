@@ -24,14 +24,9 @@ public class ItemFuelInfo implements IItemTipInfo {
 			return new ArrayList<String>();
 		}
 		ItemFuelEntry entry = LibRegistryHandler.ITEM_FUEL_REGISTRY.get(item);
-		return Arrays.asList(
-				TextFormatting.BLUE + I18n.get("cuckoolib.tipinfo.fuel.mass") + TextFormatting.AQUA
-						+ entry.getFuelMass() + TextFormatting.GREEN + "kg",
-				TextFormatting.BLUE + I18n.get("cuckoolib.tipinfo.fuel.calorific_value") + TextFormatting.AQUA
-						+ entry.getFuleInfo().getCalorificValue() + TextFormatting.GREEN + "J/kg",
-				TextFormatting.BLUE + I18n.get("cuckoolib.tipinfo.fuel.ignition_point") + TextFormatting.AQUA
-						+ (entry.getFuleInfo().getIgnitionPoint() * entry.getFlameRetardancy()) + TextFormatting.GREEN
-						+ "K");
+		return Arrays.asList(TextFormatting.BLUE + I18n.get("cuckoolib.tipinfo.fuel.mass") + TextFormatting.AQUA + String.format("%.2f", entry.getFuelMass()) + TextFormatting.GREEN + "kg",
+				TextFormatting.BLUE + I18n.get("cuckoolib.tipinfo.fuel.calorific_value") + TextFormatting.AQUA + String.format("%.2f", entry.getCalorificValue()) + TextFormatting.GREEN + "J/kg",
+				TextFormatting.BLUE + I18n.get("cuckoolib.tipinfo.fuel.ignition_point") + TextFormatting.AQUA + String.format("%.2f", entry.getRealIgnitionPoint()) + TextFormatting.GREEN + "K");
 	}
 
 	@Override

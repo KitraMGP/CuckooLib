@@ -6,9 +6,9 @@ import com.github.zi_jing.cuckoolib.material.MatterState;
 public class FuelInfo {
 	protected MatterState state;
 	// 单位: K
-	protected float ignitionPoint;
+	protected double ignitionPoint;
 	// 单位: J/kg (固体); J/L (流体)
-	protected float calorificValue;
+	protected double calorificValue;
 
 	public static FuelInfo of(MatterState state, float ignitionPoint, float calorificValue) {
 		FuelInfo info = new FuelInfo();
@@ -22,19 +22,19 @@ public class FuelInfo {
 		return this.state;
 	}
 
-	public float getIgnitionPoint() {
+	public double getIgnitionPoint() {
 		return this.ignitionPoint;
 	}
 
-	public float getCalorificValue() {
+	public double getCalorificValue() {
 		return this.calorificValue;
 	}
 
-	public ItemFuelEntry toEntry(float fuelMass) {
+	public ItemFuelEntry toEntry(double fuelMass) {
 		return new ItemFuelEntry(this, fuelMass);
 	}
 
-	public ItemFuelEntry toEntry(float fuelMass, float flameRetardancy) {
+	public ItemFuelEntry toEntry(double fuelMass, double flameRetardancy) {
 		return new ItemFuelEntry(this, fuelMass, flameRetardancy);
 	}
 }

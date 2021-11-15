@@ -15,6 +15,10 @@ public class MaterialEntry {
 		this.material = material;
 	}
 
+	public static MaterialEntry of(SolidShape shape, MaterialBase material) {
+		return new MaterialEntry(shape, material);
+	}
+
 	public SolidShape getShape() {
 		return this.shape;
 	}
