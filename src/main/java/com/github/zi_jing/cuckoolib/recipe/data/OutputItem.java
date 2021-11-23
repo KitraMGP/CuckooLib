@@ -22,7 +22,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 public abstract class OutputItem implements Supplier<ItemStack> {
 	public abstract JsonElement serialize();
 
-	public static OutputItem fromItemProvider(IItemProvider item) {
+	public static OutputItem fromItem(IItemProvider item) {
 		return fromItemStack(new ItemStack(item));
 	}
 
@@ -36,7 +36,7 @@ public abstract class OutputItem implements Supplier<ItemStack> {
 
 	public static OutputItem fromJson(JsonElement element) {
 		if (element.isJsonPrimitive()) {
-			return fromItemProvider(JSONUtils.convertToItem(element, "item"));
+			return fromItem(JSONUtils.convertToItem(element, "item"));
 		}
 		if (!element.isJsonObject()) {
 			throw new JsonSyntaxException("JsonElement for OutputItem must be String or JsonObject");

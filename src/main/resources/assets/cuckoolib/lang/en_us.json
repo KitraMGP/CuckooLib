@@ -22,6 +22,7 @@
 	"cuckoolib.shape.knife_heads.name": "%s Knife Head",
 	"cuckoolib.shape.hammer_heads.name": "%s Hammer Head",
 	"cuckoolib.shape.chisel_heads.name": "%s Chisel Head",
+	"cuckoolib.shape.javelin_heads.name": "%s Javelin Head",
 
 	"cuckoolib.material.hydrogen.name": "Hydrogen",
 	"cuckoolib.material.helium.name": "Helium",

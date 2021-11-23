@@ -22,6 +22,7 @@
 	"cuckoolib.shape.knife_heads.name": "%s刀头",
 	"cuckoolib.shape.hammer_heads.name": "%s锤头",
 	"cuckoolib.shape.chisel_heads.name": "%s凿子头",
+	"cuckoolib.shape.javelin_heads.name": "%s标枪头",
 
 	"cuckoolib.material.hydrogen.name": "氢气",
 	"cuckoolib.material.helium.name": "氦气",

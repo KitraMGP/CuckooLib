@@ -3,6 +3,8 @@ package com.github.zi_jing.cuckoolib.util.math;
 import java.util.Arrays;
 import java.util.Random;
 
+import net.minecraft.util.math.MathHelper;
+
 public class MathUtil {
 	public static boolean between(int value, int min, int max) {
 		return value >= min && value <= max;
@@ -91,5 +93,10 @@ public class MathUtil {
 			copy[i] = val;
 		}
 		return copy;
+	}
+
+	public static double getTriangularWave(int period, double min, double max) {
+		double x = ((double) (System.currentTimeMillis() % period)) / period;
+		return MathHelper.lerp((x > 0.5 ? 1 - x : x) * 2, min, max);
 	}
 }

@@ -3,8 +3,11 @@ package com.github.zi_jing.cuckoolib.recipe.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.github.zi_jing.cuckoolib.LibRegistryHandler;
@@ -12,6 +15,7 @@ import com.github.zi_jing.cuckoolib.recipe.IngredientIndex;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
@@ -24,13 +28,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class DataRecipeBuilder implements IFinishedRecipe {
 	protected ResourceLocation id, advancementId;
-	protected List<Consumer<JsonElement>> properties;
+	protected Map<String, Supplier<JsonElement>> properties;
 	protected List<IngredientIndex> inputs;
 	protected List<OutputItemChanceEntry> outputs;
 	protected Advancement.Builder advancement;
 
 	private DataRecipeBuilder() {
-		this.properties = new ArrayList<Consumer<JsonElement>>();
+		this.properties = new HashMap<String, Supplier<JsonElement>>();
 		this.inputs = new ArrayList<IngredientIndex>();
 		this.outputs = new ArrayList<OutputItemChanceEntry>();
 		this.advancement = Advancement.Builder.advancement();
@@ -59,8 +63,7 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 	}
 
 	public DataRecipeBuilder output(Collection<OutputItem> output) {
-		this.outputs.addAll(output.stream().map((outputItem) -> new OutputItemChanceEntry(outputItem))
-				.collect(Collectors.toList()));
+		this.outputs.addAll(output.stream().map((outputItem) -> new OutputItemChanceEntry(outputItem)).collect(Collectors.toList()));
 		return this;
 	}
 
@@ -72,6 +75,9 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 		this.outputs.forEach((entry) -> outputArray.add(entry.serialize()));
 		json.add("inputs", inputArray);
 		json.add("outputs", outputArray);
+		this.properties.forEach((id, supplier) -> {
+			json.add(id, supplier.get());
+		});
 	}
 
 	@Override
@@ -94,8 +100,24 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 		return new ResourceLocation(this.id.getNamespace(), "recipes/test/" + this.id.getPath());
 	}
 
-	public DataRecipeBuilder addProperty(Consumer<JsonElement> property) {
-		this.properties.add(property);
+	public DataRecipeBuilder addPropertyPrimitive(String id, Boolean value) {
+		return this.addProperty(id, () -> new JsonPrimitive(value));
+	}
+
+	public DataRecipeBuilder addPropertyPrimitive(String id, Number value) {
+		return this.addProperty(id, () -> new JsonPrimitive(value));
+	}
+
+	public DataRecipeBuilder addPropertyPrimitive(String id, String value) {
+		return this.addProperty(id, () -> new JsonPrimitive(value));
+	}
+
+	public DataRecipeBuilder addPropertyPrimitive(String id, Character value) {
+		return this.addProperty(id, () -> new JsonPrimitive(value));
+	}
+
+	public DataRecipeBuilder addProperty(String id, Supplier<JsonElement> property) {
+		this.properties.put(id, property);
 		return this;
 	}
 
@@ -106,9 +128,7 @@ public class DataRecipeBuilder implements IFinishedRecipe {
 	public void build(Consumer<IFinishedRecipe> out, ResourceLocation id, String folder) {
 		this.id = id;
 		this.advancementId = new ResourceLocation(id.getNamespace(), "recipes/" + folder + "/" + id.getPath());
-		this.advancement.parent(new ResourceLocation("recipes/root"))
-				.addCriterion("has_recipe", RecipeUnlockedTrigger.unlocked(id))
-				.rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+		this.advancement.parent(new ResourceLocation("recipes/root")).addCriterion("has_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
 		out.accept(this);
 	}
 }
